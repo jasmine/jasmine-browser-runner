@@ -1,0 +1,104 @@
+{
+  "name": "jasmine-browser",
+  "version": "0.0.1",
+  "description": "Serve and run your Jasmine specs in a browser",
+  "main": "index.js",
+  "bin": "bin/jasmine-browser",
+  "scripts": {
+    "posttest": "eslint bin/* lib/**/*.js spec/**/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js index.js",
+    "test": "jasmine",
+    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasmine/jasmine-browser.git"
+  },
+  "keywords": [
+    "jasmine",
+    "testing",
+    "tdd"
+  ],
+  "engines": {
+    "node": ">= 6.0"
+  },
+  "author": "Slackersoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasmine/jasmine-browser/issues"
+  },
+  "homepage": "https://github.com/jasmine/jasmine-browser#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "fast-glob": "^2.2.7",
+    "jasmine-core": "^3.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-jasmine": "^2.10.1",
+    "jasmine": "^3.4.0",
+    "prettier": "^1.17.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "eslintConfig": {
+    "env": {
+      "commonjs": true,
+      "es6": true,
+      "node": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018
+    },
+    "plugins": [
+      "jasmine"
+    ],
+    "rules": {
+      "quotes": [
+        "error",
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "no-unused-vars": [
+        "error",
+        {
+          "args": "none"
+        }
+      ],
+      "block-spacing": "error",
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ],
+      "func-call-spacing": [
+        "error",
+        "never"
+      ],
+      "key-spacing": "error",
+      "no-tabs": "error",
+      "no-trailing-spaces": "error",
+      "no-whitespace-before-property": "error",
+      "semi": [
+        "error",
+        "always"
+      ],
+      "space-before-blocks": "error",
+      "no-console": "off"
+    },
+    "overrides": {
+      "files": "spec/**/*.js",
+      "env": {
+        "jasmine": true
+      }
+    }
+  }
+}

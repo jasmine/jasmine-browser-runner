@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var Server = require('../lib/server');
+
+var config = require(path.resolve('spec/support/jasmine-browser.json'));
+var server = new Server(config);
+
+
+server.start();

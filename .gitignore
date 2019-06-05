@@ -1,0 +1,5 @@
+.idea/
+.DS_Store
+node_modules/
+tags
+sauce_connect.log
