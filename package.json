@@ -1,5 +1,5 @@
 {
-  "name": "jasmine-browser",
+  "name": "jasmine-browser-runner",
   "version": "0.0.1",
   "description": "Serve and run your Jasmine specs in a browser",
   "main": "index.js",
