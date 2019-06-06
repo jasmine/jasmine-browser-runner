@@ -5,9 +5,10 @@
   "main": "index.js",
   "bin": "bin/jasmine-browser",
   "scripts": {
-    "posttest": "eslint bin/* lib/**/*.js spec/**/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js index.js",
+    "posttest": "eslint bin/* lib/**/*.js spec/**/*.js scripts/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js scripts/*.js index.js",
     "test": "jasmine",
-    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js index.js"
+    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js scripts/*.js index.js",
+    "release": "node scripts/release.js"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,8 @@
     "eslint": "^5.16.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "jasmine": "^3.4.0",
-    "prettier": "^1.17.1"
+    "prettier": "^1.17.1",
+    "shelljs": "^0.8.3"
   },
   "prettier": {
     "singleQuote": true,
