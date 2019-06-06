@@ -197,7 +197,7 @@ describe('server', function() {
   });
 
   describe('starting the server', function() {
-    beforeEach(function() {
+    beforeEach(async function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -209,7 +209,7 @@ describe('server', function() {
         specFiles: ['**/*[sS]pec.js'],
       });
       spyOn(console, 'log');
-      this.httpServer = server.start({ port: 0 });
+      this.httpServer = await server.start({ port: 0 });
     });
 
     afterEach(function(done) {
