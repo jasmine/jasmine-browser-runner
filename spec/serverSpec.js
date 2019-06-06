@@ -89,6 +89,18 @@ describe('server', function() {
     );
   });
 
+  it('handles css files not being specified', async function() {
+    const server = new Server({
+      projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+      jasmineCore: this.fakeJasmine,
+      srcDir: 'sources',
+    });
+
+    const files = await server.allCss();
+    expect(files.length).toEqual(2);
+    expect(files).toEqual(['/__jasmine__/css.css', '/__jasmine__/two.css']);
+  });
+
   it('appends specified js files after Jasmines own', async function() {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
@@ -164,6 +176,24 @@ describe('server', function() {
         '/__spec__/imAspec.js',
       ])
     );
+  });
+
+  it('handles js files not being specified', async function() {
+    const server = new Server({
+      projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+      jasmineCore: this.fakeJasmine,
+      srcDir: 'sources',
+      specDir: 'specs',
+    });
+
+    const files = await server.allJs();
+    expect(files.length).toEqual(4);
+    expect(files).toEqual([
+      '/__jasmine__/jazz.js',
+      '/__jasmine__/min.js',
+      '/__boot__/bootboot.js',
+      '/__boot__/boot2.js',
+    ]);
   });
 
   describe('starting the server', function() {
