@@ -198,7 +198,7 @@ describe('server', function() {
 
   describe('starting the server', function() {
     beforeEach(async function() {
-      const server = new Server({
+      this.server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
         srcDir: 'sources',
@@ -209,7 +209,7 @@ describe('server', function() {
         specFiles: ['**/*[sS]pec.js'],
       });
       spyOn(console, 'log');
-      this.httpServer = await server.start({ port: 0 });
+      this.httpServer = await this.server.start({ port: 0 });
     });
 
     afterEach(function(done) {
@@ -268,6 +268,25 @@ describe('server', function() {
       expect(html).toContain('/__src__/thing1.js');
       expect(html).toContain('/__src__/other1.css');
       expect(html).toContain('/__spec__/iLikeSpec.js');
+      expect(html).not.toContain('/__support__');
+    });
+
+    it('can clear default reporters', async function() {
+      this.server.clearReporters = true;
+
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+      var html = await getFile(baseUrl);
+      expect(html).toContain('/__support__/clearReporters.js');
+    });
+
+    it('can add the batch reporter', async function() {
+      this.server.batchReporter = true;
+
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+      var html = await getFile(baseUrl);
+      expect(html).toContain('/__support__/batchReporter.js');
     });
   });
 });
