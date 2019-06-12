@@ -3,3 +3,4 @@
 node_modules/
 tags
 sauce_connect.log
+yarn.lock
