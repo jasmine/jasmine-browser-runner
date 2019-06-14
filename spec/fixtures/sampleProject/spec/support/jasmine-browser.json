@@ -1,0 +1,17 @@
+{
+  "srcDir": "sources/nested",
+  "srcFiles": [
+    "**/*.js"
+  ],
+  "specDir": "specs/nested",
+  "specFiles": [
+    "**/*[sS]pec.js"
+  ],
+  "helpers": [
+    "helpers/**/*.js"
+  ],
+  "random": false,
+  "browser": {
+    "name": "chrome"
+  }
+}

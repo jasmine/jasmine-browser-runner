@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
-var path = require('path');
-var Server = require('../lib/server');
+var path = require('path'),
+  jasmineCore = require('jasmine-core'),
+  Command = require('../lib/command'),
+  jasmineBrowser = require('../index.js');
 
-var config = require(path.resolve('spec/support/jasmine-browser.json'));
-var server = new Server(config);
+var command = new Command({
+  baseDir: path.resolve(),
+  jasmineCore,
+  jasmineBrowser,
+  console,
+});
 
-
-server.start();
+command.run(process.argv.slice(2));

@@ -5,9 +5,9 @@
   "main": "index.js",
   "bin": "bin/jasmine-browser",
   "scripts": {
-    "posttest": "eslint bin/* lib/**/*.js spec/**/*.js scripts/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js scripts/*.js index.js",
+    "posttest": "eslint bin/* lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
     "test": "jasmine",
-    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/**/*.js spec/**/*.js scripts/*.js index.js",
+    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
     "release": "node scripts/release.js"
   },
   "repository": {
@@ -33,7 +33,8 @@
     "express": "^4.16.4",
     "fast-glob": "^2.2.7",
     "jasmine": "^3.4.0",
-    "jasmine-core": "^3.4.0"
+    "jasmine-core": "^3.4.0",
+    "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",

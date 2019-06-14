@@ -33,10 +33,18 @@ Add a `spec/support/jasmine-browser.json`. For example:
 }
 ```
 
+You can also use the `--config` option to specify a different file. This file can be a JSON file or a javascript file that exports a object that looks like the JSON above.
+
 Start the server:
 
 ```
-npx jasmine-browser
+npx jasmine-browser serve
+```
+
+Run the tests in a browser (defaults to Firefox)
+
+```
+npx jasmine-browser runSpecs
 ```
 
 ## Want more control?

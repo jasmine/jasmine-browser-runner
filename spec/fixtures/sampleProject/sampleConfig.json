@@ -1,0 +1,18 @@
+{
+  "srcDir": "sources",
+  "srcFiles": [
+    "**/*.js"
+  ],
+  "specDir": "specs",
+  "specFiles": [
+    "**/*[sS]pec.js"
+  ],
+  "helpers": [
+    "helpers/**/*.js"
+  ],
+  "random": true,
+  "port": 4321,
+  "browser": {
+    "name": "firefox"
+  }
+}

@@ -1,4 +1,5 @@
-const Runner = require('../lib/runner.js');
+const querystring = require('querystring'),
+  Runner = require('../lib/runner.js');
 
 function fakeReporter() {
   return jasmine.createSpyObj('reporter', [
@@ -191,5 +192,40 @@ describe('Runner', function() {
     driver.executeScript.calls.reset();
     jasmine.clock().tick(1000);
     expect(driver.executeScript).not.toHaveBeenCalled();
+  });
+
+  it('passes runtime options through to the browser', async function() {
+    const getPromise = new Promise(function() {}),
+      driver = jasmine.createSpyObj('webdriver', {
+        get: getPromise,
+      }),
+      reporter = fakeReporter(),
+      runner = new Runner({
+        webdriver: driver,
+        reporter: reporter,
+        host: 'things',
+      });
+
+    runner.run({
+      random: true,
+      seed: 435,
+      failFast: false,
+      stopOnFailure: false,
+      filter: 'specs and things',
+    });
+    expect(driver.get).toHaveBeenCalledWith(
+      jasmine.stringMatching(/^things\?/)
+    );
+    const urlParams = querystring.parse(
+      driver.get.calls.mostRecent().args[0].split('?')[1]
+    );
+
+    expect(urlParams).toEqual({
+      random: 'true',
+      seed: '435',
+      failFast: 'false',
+      throwFailures: 'false',
+      spec: 'specs and things',
+    });
   });
 });
