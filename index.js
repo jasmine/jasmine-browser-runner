@@ -65,7 +65,8 @@ module.exports = {
     const webdriver = buildWebdriver(options.browser);
 
     const reporter = createReporter(options);
-    const httpServer = await server.start({ port: 0 });
+    const portRequest = options.browser.useSauce ? 5555 : 0;
+    const httpServer = await server.start({ port: portRequest });
     const host = `http://localhost:${httpServer.address().port}`;
     const runner = new Runner({ webdriver, reporter, host });
 
@@ -73,10 +74,11 @@ module.exports = {
     return runner
       .run(options)
       .catch(function(err) {
-        console.log(err);
+        console.error(err);
       })
       .then(async function(details) {
-        process.exitCode = details.overallStatus === 'passed' ? 0 : 1;
+        process.exitCode =
+          details && details.overallStatus === 'passed' ? 0 : 1;
         await new Promise(function(resolve) {
           httpServer.close(function() {
             resolve();
@@ -84,8 +86,8 @@ module.exports = {
         });
 
         if (options.browser.useSauce) {
-          webdriver.executeScript(
-            `sauce:job-result=${details.overallStatus === 'passed'}`
+          await webdriver.executeScript(
+            `sauce:job-result=${process.exitCode === 0}`
           );
         }
 
