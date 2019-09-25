@@ -5,13 +5,13 @@ This is still a bit of a work in progress, working towards making this package u
 # Getting started
 
 ```bash
-npm install --save-dev jasmine-browser
+npm install --save-dev jasmine-browser-runner
 ```
 
 or
 
 ```bash
-yarn add -D jasmine-browser
+yarn add -D jasmine-browser-runner
 ```
 
 Add a `spec/support/jasmine-browser.json`. For example:
@@ -38,20 +38,20 @@ You can also use the `--config` option to specify a different file. This file ca
 Start the server:
 
 ```
-npx jasmine-browser serve
+npx jasmine-browser-runner serve
 ```
 
 Run the tests in a browser (defaults to Firefox)
 
 ```
-npx jasmine-browser runSpecs
+npx jasmine-browser-runner runSpecs
 ```
 
 ## Want more control?
 
 ```javascript
 var path = require('path'),
-  jasmineBrowser = require('jasmine-browser'),
+  jasmineBrowser = require('jasmine-browser-runner'),
   jasmineCore = require('../../lib/jasmine-core.js');
 
 var config = require(path.resolve('spec/support/jasmine-browser.json'));
