@@ -25,7 +25,9 @@ function buildWebdriver(browserInfo) {
       'tunnel-identifier': sauce.tunnelIdentifier,
     })
     .usingServer(
-      `http://${sauce.username}:${sauce.accessKey}@localhost:4445/wd/hub`
+      browserInfo.useSauce
+        ? `http://${sauce.username}:${sauce.accessKey}@ondemand.saucelabs.com/wd/hub`
+        : 'http://@localhost:4445/wd/hub'
     )
     .build();
 }
