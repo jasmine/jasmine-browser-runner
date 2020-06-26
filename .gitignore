@@ -1,7 +1,0 @@
-.idea/
-.DS_Store
-node_modules/
-tags
-sauce_connect.log
-yarn.lock
-package-lock.json
