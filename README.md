@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jasmine/jasmine-browser.svg?branch=master)](https://travis-ci.org/jasmine/jasmine-browser)
+[![Build Status](https://travis-ci.org/jasmine/jasmine-browser.svg?branch=main)](https://travis-ci.org/jasmine/jasmine-browser)
 
 This is still a bit of a work in progress, working towards making this package usable by more than just Jasmine itself.
 

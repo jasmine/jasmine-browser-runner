@@ -11,5 +11,5 @@ function exec(string) {
 }
 
 exec(`git tag v${pkg.version}`);
-exec('git push origin master --tags');
+exec('git push origin main --tags');
 exec('npm publish');
