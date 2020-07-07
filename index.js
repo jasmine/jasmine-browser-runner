@@ -82,10 +82,12 @@ module.exports = {
         process.exitCode =
           details && details.overallStatus === 'passed' ? 0 : 1;
         await new Promise(function(resolve) {
+          console.log('Stopping HTTP server');
           httpServer.close(function() {
             resolve();
           });
         });
+        console.log('Stopped HTTP server');
 
         if (options.browser.useSauce) {
           await webdriver.executeScript(
@@ -93,7 +95,9 @@ module.exports = {
           );
         }
 
+        console.log('Closing webdriver');
         await webdriver.close();
+        console.log('Closed webdriver');
         return details;
       });
   },
