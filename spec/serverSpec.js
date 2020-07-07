@@ -288,5 +288,43 @@ describe('server', function() {
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
     });
+
+    it('enables IE compatibility when the browser is IE', async function() {
+      this.server = new Server({
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        specDir: 'specs',
+        browser: {
+          name: 'internet explorer',
+        },
+      });
+      await new Promise(resolve => {
+        this.httpServer.close(resolve);
+      });
+      this.httpServer = await this.server.start({ port: 0 });
+
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const html = await getFile(baseUrl);
+      expect(html).toContain('/__support__/ieCompat.js');
+    });
+
+    it('does not enable IE compatibility when the browser is IE', async function() {
+      this.server = new Server({
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        specDir: 'specs',
+        browser: {
+          name: 'not IE',
+        },
+      });
+      await new Promise(resolve => {
+        this.httpServer.close(resolve);
+      });
+      this.httpServer = await this.server.start({ port: 0 });
+
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const html = await getFile(baseUrl);
+      expect(html).not.toContain('/__support__/ieCompat.js');
+    });
   });
 });
