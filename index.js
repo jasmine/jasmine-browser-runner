@@ -62,7 +62,12 @@ module.exports = {
     return server.start(serverOptions || {});
   },
   runSpecs: async function(options) {
-    options.batchReporter = true;
+    if (options.browser && options.browser.name === 'internet explorer') {
+      options.jsonDomReporter = true;
+    } else {
+      options.batchReporter = true;
+    }
+
     const server = new Server(options);
     const webdriver = buildWebdriver(options.browser);
 

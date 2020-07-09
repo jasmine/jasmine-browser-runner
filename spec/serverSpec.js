@@ -197,30 +197,38 @@ describe('server', function() {
   });
 
   describe('starting the server', function() {
-    beforeEach(async function() {
-      this.server = new Server({
-        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-        jasmineCore: this.fakeJasmine,
-        srcDir: 'sources',
-        cssFiles: ['other*.css', 'extra*.css'],
-        srcFiles: ['thing2.js', '**/*.js'],
-        specDir: 'specs',
-        helpers: ['helpers/**/*.js'],
-        specFiles: ['**/*[sS]pec.js'],
-      });
+    beforeEach(function() {
       spyOn(console, 'log');
-      this.httpServer = await this.server.start({ port: 0 });
+      this.startServer = async function(extraOptions) {
+        const options = Object.assign(
+          {
+            projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+            jasmineCore: this.fakeJasmine,
+            srcDir: 'sources',
+            cssFiles: ['other*.css', 'extra*.css'],
+            srcFiles: ['thing2.js', '**/*.js'],
+            specDir: 'specs',
+            helpers: ['helpers/**/*.js'],
+            specFiles: ['**/*[sS]pec.js'],
+          },
+          extraOptions
+        );
+        this.server = new Server(options);
+        this.httpServer = await this.server.start({ port: 0 });
+      };
     });
 
     afterEach(function(done) {
       this.httpServer.close(done);
     });
 
-    it('finds a random open port when a `0` is specified', function() {
+    it('finds a random open port when a `0` is specified', async function() {
+      await this.startServer();
       expect(this.httpServer.address().port).not.toEqual(0);
     });
 
     it('starts a server and serves the Jasmine files', async function() {
+      await this.startServer();
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
       var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
@@ -246,6 +254,7 @@ describe('server', function() {
     });
 
     it('starts a server and serves the project files', async function() {
+      await this.startServer();
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
       var thing1 = await getFile(baseUrl + '/__src__/thing1.js');
@@ -256,6 +265,7 @@ describe('server', function() {
     });
 
     it('serves an html file to run the specs', async function() {
+      await this.startServer();
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
       var html = await getFile(baseUrl);
@@ -272,6 +282,7 @@ describe('server', function() {
     });
 
     it('can clear default reporters', async function() {
+      await this.startServer();
       this.server.clearReporters = true;
 
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
@@ -281,12 +292,21 @@ describe('server', function() {
     });
 
     it('can add the batch reporter', async function() {
-      this.server.batchReporter = true;
+      await this.startServer({ batchReporter: true });
 
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
+    });
+
+    it('can add the json dom reporter', async function() {
+      await this.startServer({ jsonDomReporter: true });
+
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+      var html = await getFile(baseUrl);
+      expect(html).toContain('/__support__/jsonDomReporter.js');
     });
   });
 });
