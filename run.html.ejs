@@ -8,8 +8,15 @@
   <% cssFiles.forEach(function(cssFile) { %>
     <link rel="stylesheet" href="<%= cssFile %>" type="text/css" media="screen"/>
   <% }) %>
-  <% jsFiles.forEach(function(jsFile) { %>
-  <script src="<%= jsFile %>" type="text/javascript"></script>
+  <% jasmineJsFiles.forEach(function(jsFile) { %>
+    <script src="<%= jsFile %>" type="text/javascript"></script>
+  <% }) %>
+  <% userJsFiles.forEach(function(jsFile) { %>
+    <% if (jsFile.endsWith('.mjs')) { %>
+      <script type="module">loadJasmineBrowserScript('<%= jsFile %>')</script>
+    <% } else { %>
+      <script src="<%= jsFile %>" type="text/javascript"></script>
+    <% } %>
   <% }) %>
 
 </head>

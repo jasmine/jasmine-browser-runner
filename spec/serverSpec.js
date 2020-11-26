@@ -101,99 +101,107 @@ describe('server', function() {
     expect(files).toEqual(['/__jasmine__/css.css', '/__jasmine__/two.css']);
   });
 
-  it('appends specified js files after Jasmines own', async function() {
-    const server = new Server({
-      projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      jasmineCore: this.fakeJasmine,
-      srcDir: 'sources',
-      srcFiles: ['thing2.js', '**/*.js'],
-      specDir: 'specs',
-      helpers: ['helpers/**/*.js'],
-      specFiles: ['**/*[sS]pec.js'],
-    });
+  describe('#jasmineJs', function() {
+    it('includes both core files and the ES module aware script loader', function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        srcFiles: [],
+        specDir: 'specs',
+        helpers: [],
+        specFiles: [],
+      });
 
-    const files = await server.allJs();
-    expect(files.length).toEqual(12);
-    expect(files.slice(0, 5)).toEqual([
-      '/__jasmine__/jazz.js',
-      '/__jasmine__/min.js',
-      '/__boot__/bootboot.js',
-      '/__boot__/boot2.js',
-      '/__src__/thing2.js',
-    ]);
-    expect(files.slice(5, 7)).toEqual(
-      jasmine.arrayWithExactContents([
-        '/__src__/thing1.js',
-        '/__src__/nested/thing1.js',
-      ])
-    );
-    expect(files.slice(7, 9)).toEqual(
-      jasmine.arrayWithExactContents([
-        '/__spec__/helpers/halp.js',
-        '/__spec__/helpers/things/stuff.js',
-      ])
-    );
-    expect(files.slice(9)).toEqual(
-      jasmine.arrayWithExactContents([
-        '/__spec__/iLikeSpec.js',
-        '/__spec__/imAspec.js',
-        '/__spec__/nested/specSpec.js',
-      ])
-    );
+      const files = server.jasmineJs();
+      expect(files.length).toEqual(5);
+      expect(files).toEqual([
+        '/__jasmine__/jazz.js',
+        '/__jasmine__/min.js',
+        '/__boot__/bootboot.js',
+        '/__boot__/boot2.js',
+        '/__support__/loadScript.js',
+      ]);
+    });
   });
 
-  it('allows js files to be excluded', async function() {
-    const server = new Server({
-      projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      jasmineCore: this.fakeJasmine,
-      srcDir: 'sources',
-      srcFiles: ['**/*.js', '!nested/**'],
-      specDir: 'specs',
-      helpers: ['helpers/**/*.js', '!helpers/things/**'],
-      specFiles: ['**/*[sS]pec.js', '!nested/**'],
+  describe('#userJs', function() {
+    it('includes source files followed by helpers, in glob order', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        srcFiles: ['thing2.js', '**/*.js'],
+        specDir: 'specs',
+        helpers: ['helpers/**/*.js'],
+        specFiles: ['**/*[sS]pec.js'],
+      });
+
+      const files = await server.userJs();
+      expect(files.length).toEqual(8);
+      expect(files.slice(0, 1)).toEqual(['/__src__/thing2.js']);
+      expect(files.slice(1, 3)).toEqual(
+        jasmine.arrayWithExactContents([
+          '/__src__/thing1.js',
+          '/__src__/nested/thing1.js',
+        ])
+      );
+      expect(files.slice(3, 5)).toEqual(
+        jasmine.arrayWithExactContents([
+          '/__spec__/helpers/halp.js',
+          '/__spec__/helpers/things/stuff.js',
+        ])
+      );
+      expect(files.slice(5)).toEqual(
+        jasmine.arrayWithExactContents([
+          '/__spec__/iLikeSpec.js',
+          '/__spec__/imAspec.js',
+          '/__spec__/nested/specSpec.js',
+        ])
+      );
     });
 
-    const files = await server.allJs();
-    expect(files.length).toEqual(9);
-    expect(files.slice(0, 4)).toEqual([
-      '/__jasmine__/jazz.js',
-      '/__jasmine__/min.js',
-      '/__boot__/bootboot.js',
-      '/__boot__/boot2.js',
-    ]);
-    expect(files.slice(4, 6)).toEqual(
-      jasmine.arrayWithExactContents([
-        '/__src__/thing1.js',
-        '/__src__/thing2.js',
-      ])
-    );
-    expect(files.slice(6, 7)).toEqual(
-      jasmine.arrayWithExactContents(['/__spec__/helpers/halp.js'])
-    );
-    expect(files.slice(7)).toEqual(
-      jasmine.arrayWithExactContents([
-        '/__spec__/iLikeSpec.js',
-        '/__spec__/imAspec.js',
-      ])
-    );
-  });
+    it('allows js files to be excluded', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        srcFiles: ['**/*.js', '!nested/**'],
+        specDir: 'specs',
+        helpers: ['helpers/**/*.js', '!helpers/things/**'],
+        specFiles: ['**/*[sS]pec.js', '!nested/**'],
+      });
 
-  it('handles js files not being specified', async function() {
-    const server = new Server({
-      projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      jasmineCore: this.fakeJasmine,
-      srcDir: 'sources',
-      specDir: 'specs',
+      const files = await server.userJs();
+      expect(files.length).toEqual(5);
+      expect(files.slice(0, 2)).toEqual(
+        jasmine.arrayWithExactContents([
+          '/__src__/thing1.js',
+          '/__src__/thing2.js',
+        ])
+      );
+      expect(files.slice(2, 3)).toEqual(
+        jasmine.arrayWithExactContents(['/__spec__/helpers/halp.js'])
+      );
+      expect(files.slice(3)).toEqual(
+        jasmine.arrayWithExactContents([
+          '/__spec__/iLikeSpec.js',
+          '/__spec__/imAspec.js',
+        ])
+      );
     });
 
-    const files = await server.allJs();
-    expect(files.length).toEqual(4);
-    expect(files).toEqual([
-      '/__jasmine__/jazz.js',
-      '/__jasmine__/min.js',
-      '/__boot__/bootboot.js',
-      '/__boot__/boot2.js',
-    ]);
+    it('handles js files not being specified', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        specDir: 'specs',
+      });
+
+      const files = await server.userJs();
+      expect(files).toEqual([]);
+    });
   });
 
   describe('starting the server', function() {
@@ -278,7 +286,53 @@ describe('server', function() {
       expect(html).toContain('/__src__/thing1.js');
       expect(html).toContain('/__src__/other1.css');
       expect(html).toContain('/__spec__/iLikeSpec.js');
-      expect(html).not.toContain('/__support__');
+    });
+
+    it('includes the ES module aware script loader', async function() {
+      await this.startServer();
+      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+      var html = await getFile(baseUrl);
+      expect(html).toContain('/__support__/loadScript.js');
+    });
+
+    describe('loading sources, specs, and helpers', function() {
+      it('loads .js files as regular scripts', async function() {
+        await this.startServer();
+        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+        var html = await getFile(baseUrl);
+        expect(html).toContain(
+          '<script src="/__src__/thing1.js" type="text/javascript">'
+        );
+        expect(html).toContain(
+          '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
+        );
+        expect(html).toContain(
+          '<script src="/__spec__/imAspec.js" type="text/javascript">'
+        );
+      });
+
+      it('loads .mjs files as ES modules', async function() {
+        await this.startServer({
+          srcFiles: ['**/*.mjs'],
+          helpers: ['helpers/**/*.mjs'],
+          specFiles: ['**/*[sS]pec.mjs'],
+        });
+        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+        var html = await getFile(baseUrl);
+        console.log(html);
+        expect(html).toContain(
+          '<script type="module">loadJasmineBrowserScript(\'/__src__/esm.mjs\')</script>'
+        );
+        expect(html).toContain(
+          '<script type="module">loadJasmineBrowserScript(\'/__spec__/helpers/esm.mjs\')</script>'
+        );
+        expect(html).toContain(
+          '<script type="module">loadJasmineBrowserScript(\'/__spec__/esmSpec.mjs\')</script>'
+        );
+      });
     });
 
     it('can clear default reporters', async function() {
