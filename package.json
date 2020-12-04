@@ -55,7 +55,8 @@
     "extends": "eslint:recommended",
     "globals": {
       "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
+      "SharedArrayBuffer": "readonly",
+      "expectAsync": "readonly"
     },
     "parserOptions": {
       "ecmaVersion": 2018

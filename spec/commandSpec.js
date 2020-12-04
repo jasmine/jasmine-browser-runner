@@ -88,7 +88,9 @@ describe('Command', function() {
 
     it('propagates errors', async () => {
       const error = new Error('nope'),
-        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', ['startServer']),
+        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'startServer',
+        ]),
         command = new Command({
           jasmineBrowser: fakeJasmineBrowser,
           console: this.console,
@@ -104,7 +106,9 @@ describe('Command', function() {
   describe('runSpecs', function() {
     it('propagates errors', async () => {
       const error = new Error('nope'),
-        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', ['runSpecs']),
+        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'runSpecs',
+        ]),
         command = new Command({
           jasmineBrowser: fakeJasmineBrowser,
           console: this.console,
