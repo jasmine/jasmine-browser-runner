@@ -85,5 +85,35 @@ describe('Command', function() {
 
       expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
     });
+
+    it('propagates errors', async () => {
+      const error = new Error('nope'),
+        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', ['startServer']),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
+
+      fakeJasmineBrowser.startServer.and.callFake(() => Promise.reject(error));
+
+      await expectAsync(command.run(['serve'])).toBeRejectedWith(error);
+    });
+  });
+
+  describe('runSpecs', function() {
+    it('propagates errors', async () => {
+      const error = new Error('nope'),
+        fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', ['runSpecs']),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
+
+      fakeJasmineBrowser.runSpecs.and.callFake(() => Promise.reject(error));
+
+      await expectAsync(command.run(['runSpecs'])).toBeRejectedWith(error);
+    });
   });
 });
