@@ -23,65 +23,67 @@ describe('Command', function() {
     this.console = new console.Console(this.writer);
   });
 
-  it('starts a server', function() {
-    const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
-        'startServer',
-      ]),
-      command = new Command({
-        jasmineBrowser: fakeJasmineBrowser,
-        console: this.console,
-        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      });
+  describe('serve', () => {
+    it('starts a server', function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'startServer',
+        ]),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
 
-    command.run(['serve', '--config=sampleConfig.json']);
+      command.run(['serve', '--config=sampleConfig.json']);
 
-    const options = require(path.join(
-      __dirname,
-      'fixtures/sampleProject/sampleConfig.json'
-    ));
+      const options = require(path.join(
+        __dirname,
+        'fixtures/sampleProject/sampleConfig.json'
+      ));
 
-    expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
-  });
+      expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
+    });
 
-  it('finds a default config when serving', function() {
-    const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
-        'startServer',
-      ]),
-      command = new Command({
-        jasmineBrowser: fakeJasmineBrowser,
-        console: this.console,
-        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      });
+    it('finds a default config when serving', function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'startServer',
+        ]),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
 
-    command.run(['serve']);
+      command.run(['serve']);
 
-    const options = require(path.join(
-      __dirname,
-      'fixtures/sampleProject/spec/support/jasmine-browser.json'
-    ));
+      const options = require(path.join(
+        __dirname,
+        'fixtures/sampleProject/spec/support/jasmine-browser.json'
+      ));
 
-    expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
-  });
+      expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
+    });
 
-  it('allows CLI args to override config file when serving', function() {
-    const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
-        'startServer',
-      ]),
-      command = new Command({
-        jasmineBrowser: fakeJasmineBrowser,
-        console: this.console,
-        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
-      });
+    it('allows CLI args to override config file when serving', function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'startServer',
+        ]),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
 
-    command.run(['serve', '--config=sampleConfig.json', '--port=2345']);
+      command.run(['serve', '--config=sampleConfig.json', '--port=2345']);
 
-    const options = require(path.join(
-      __dirname,
-      'fixtures/sampleProject/sampleConfig.json'
-    ));
+      const options = require(path.join(
+        __dirname,
+        'fixtures/sampleProject/sampleConfig.json'
+      ));
 
-    options.port = 2345;
+      options.port = 2345;
 
-    expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
+      expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
+    });
   });
 });
