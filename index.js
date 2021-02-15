@@ -1,36 +1,8 @@
 const ConsoleReporter = require('jasmine').ConsoleReporter,
+  buildWebdriver = require('./lib/webdriver').buildWebdriver,
   util = require('util'),
   Server = require('./lib/server'),
   Runner = require('./lib/runner');
-
-function buildWebdriver(browserInfo) {
-  const webdriver = require('selenium-webdriver'),
-    Capability = webdriver.Capability;
-
-  if (typeof browserInfo === 'string' || !browserInfo.useSauce) {
-    const browserName =
-      typeof browserInfo === 'string' ? browserInfo : browserInfo.name;
-    return new webdriver.Builder().forBrowser(browserName).build();
-  }
-
-  const sauce = browserInfo.sauce;
-  return new webdriver.Builder()
-    .withCapabilities({
-      name: sauce.name,
-      [Capability.PLATFORM]: sauce.os,
-      [Capability.BROWSER_NAME]: browserInfo.name,
-      [Capability.VERSION]: sauce.browserVersion,
-      build: sauce.build,
-      tags: sauce.tags,
-      'tunnel-identifier': sauce.tunnelIdentifier,
-    })
-    .usingServer(
-      browserInfo.useSauce
-        ? `http://${sauce.username}:${sauce.accessKey}@ondemand.saucelabs.com/wd/hub`
-        : 'http://@localhost:4445/wd/hub'
-    )
-    .build();
-}
 
 function createReporter(options) {
   if (options.reporter) {
