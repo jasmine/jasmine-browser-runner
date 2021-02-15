@@ -35,7 +35,7 @@ describe('webdriver', function() {
       it('uses browserInfo.name as the browser name', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({name: 'IE'}, builder);
+        buildWebdriver({ name: 'IE' }, builder);
 
         expect(builder.browserName).toEqual('IE');
       });
@@ -47,14 +47,13 @@ describe('webdriver', function() {
           buildWebdriver({}, builder);
 
           expect(builder.browserName).toEqual('firefox');
-
         });
       });
 
       it('does not use Sauce', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({name: 'a browser name'}, builder);
+        buildWebdriver({ name: 'a browser name' }, builder);
 
         expect(builder.server).not.toMatch(/saucelabs/);
       });
@@ -65,7 +64,7 @@ describe('webdriver', function() {
     it('uses browserInfo.name as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver({useSauce: true, sauce: {}, name: 'IE'}, builder);
+      buildWebdriver({ useSauce: true, sauce: {}, name: 'IE' }, builder);
 
       expect(builder.browserName).toEqual('IE');
     });
@@ -74,7 +73,7 @@ describe('webdriver', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({useSauce: true, sauce: {}}, builder);
+        buildWebdriver({ useSauce: true, sauce: {} }, builder);
 
         expect(builder.browserName).toEqual('firefox');
       });
@@ -83,7 +82,10 @@ describe('webdriver', function() {
     it('uses Sauce', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver({useSauce: true, sauce: {}, name: 'a browser name'}, builder);
+      buildWebdriver(
+        { useSauce: true, sauce: {}, name: 'a browser name' },
+        builder
+      );
 
       expect(builder.server).toMatch(/saucelabs/);
     });
@@ -106,6 +108,5 @@ class MockWebdriverBuilder {
     return this;
   }
 
-  build() {
-  }
+  build() {}
 }
