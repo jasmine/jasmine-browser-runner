@@ -44,7 +44,8 @@ module.exports = {
     const webdriver = buildWebdriver(options.browser);
 
     const reporter = createReporter(options);
-    const portRequest = options.browser.useSauce ? 5555 : 0;
+    const useSauce = options.browser && options.browser.useSauce;
+    const portRequest = useSauce ? 5555 : 0;
     const httpServer = await server.start({ port: portRequest });
     const host = `http://localhost:${httpServer.address().port}`;
     const runner = new Runner({ webdriver, reporter, host });
@@ -64,7 +65,7 @@ module.exports = {
           });
         });
 
-        if (options.browser.useSauce) {
+        if (useSauce) {
           await webdriver.executeScript(
             `sauce:job-result=${process.exitCode === 0}`
           );

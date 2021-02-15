@@ -21,6 +21,16 @@ describe('webdriver', function() {
       });
     });
 
+    describe('When browserInfo is undefined', function() {
+      it('defaults to firefox', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver(undefined, builder);
+
+        expect(builder.browserName).toEqual('firefox');
+      });
+    });
+
     describe('When browserInfo is an object without useSauce=true', function() {
       it('uses browserInfo.name as the browser name', function() {
         const builder = new MockWebdriverBuilder();
@@ -28,6 +38,17 @@ describe('webdriver', function() {
         buildWebdriver({name: 'IE'}, builder);
 
         expect(builder.browserName).toEqual('IE');
+      });
+
+      describe('When browserInfo.name is undefined', function() {
+        it('defaults to firefox', function() {
+          const builder = new MockWebdriverBuilder();
+
+          buildWebdriver({}, builder);
+
+          expect(builder.browserName).toEqual('firefox');
+
+        });
       });
 
       it('does not use Sauce', function() {
@@ -47,6 +68,16 @@ describe('webdriver', function() {
       buildWebdriver({useSauce: true, sauce: {}, name: 'IE'}, builder);
 
       expect(builder.browserName).toEqual('IE');
+    });
+
+    describe('When browserInfo.name is undefined', function() {
+      it('defaults to firefox', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver({useSauce: true, sauce: {}}, builder);
+
+        expect(builder.browserName).toEqual('firefox');
+      });
     });
 
     it('uses Sauce', function() {
