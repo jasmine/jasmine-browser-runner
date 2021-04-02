@@ -57,8 +57,13 @@ module.exports = {
         console.error(err);
       })
       .then(async function(details) {
-        process.exitCode =
-          details && details.overallStatus === 'passed' ? 0 : 1;
+        if (details.overallStatus === 'passed') {
+          process.exitCode = 0;
+        } else if (details.overallStatus === 'incomplete') {
+          process.exitCode = 2;
+        } else {
+          process.exitCode = 1;
+        }
         await new Promise(function(resolve) {
           httpServer.close(function() {
             resolve();
