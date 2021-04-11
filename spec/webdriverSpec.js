@@ -1,5 +1,4 @@
 const buildWebdriver = require('../lib/webdriver').buildWebdriver;
-const Capability = require('selenium-webdriver').Capability;
 
 describe('webdriver', function() {
   describe('buildWebdriver', function() {
@@ -66,7 +65,7 @@ describe('webdriver', function() {
 
       buildWebdriver({ useSauce: true, sauce: {}, name: 'IE' }, builder);
 
-      expect(builder.browserName).toEqual('IE');
+      expect(builder.capabilities.browserName).toEqual('IE');
     });
 
     describe('When browserInfo.name is undefined', function() {
@@ -75,7 +74,7 @@ describe('webdriver', function() {
 
         buildWebdriver({ useSauce: true, sauce: {} }, builder);
 
-        expect(builder.browserName).toEqual('firefox');
+        expect(builder.capabilities.browserName).toEqual('firefox');
       });
     });
 
@@ -89,12 +88,100 @@ describe('webdriver', function() {
 
       expect(builder.server).toMatch(/saucelabs/);
     });
+
+    it('uses JWP keys for old Safari versions, as required by Saucelabs', function() {
+      const builder = new MockWebdriverBuilder();
+      function makeSafari(version) {
+        buildWebdriver(
+          {
+            useSauce: true,
+            name: 'safari',
+            sauce: { os: 'OS X someversion', browserVersion: version },
+          },
+          builder
+        );
+      }
+
+      makeSafari('11');
+      expect(builder.capabilities.platform).toEqual('OS X someversion');
+      expect(builder.capabilities.version).toEqual('11');
+      expect(builder.capabilities.platformName).toBeUndefined();
+      expect(builder.capabilities.browserVersion).toBeUndefined();
+
+      makeSafari('10');
+      expect(builder.capabilities.platform).toEqual('OS X someversion');
+      expect(builder.capabilities.version).toEqual('10');
+      expect(builder.capabilities.platformName).toBeUndefined();
+      expect(builder.capabilities.browserVersion).toBeUndefined();
+
+      makeSafari('9');
+      expect(builder.capabilities.platform).toEqual('OS X someversion');
+      expect(builder.capabilities.version).toEqual('9');
+      expect(builder.capabilities.platformName).toBeUndefined();
+      expect(builder.capabilities.browserVersion).toBeUndefined();
+
+      makeSafari('8');
+      expect(builder.capabilities.platform).toEqual('OS X someversion');
+      expect(builder.capabilities.version).toEqual('8');
+      expect(builder.capabilities.platformName).toBeUndefined();
+      expect(builder.capabilities.browserVersion).toBeUndefined();
+    });
+
+    it('uses W3C keys for everything except old Safari versions', function() {
+      const builder = new MockWebdriverBuilder();
+      function makeBrowser(name, version) {
+        buildWebdriver(
+          {
+            useSauce: true,
+            name: name,
+            sauce: { os: 'MULTICS', browserVersion: version },
+          },
+          builder
+        );
+      }
+
+      makeBrowser('safari', '12');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('12');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+
+      makeBrowser('firefox', '68');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('68');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+
+      makeBrowser('firefox', '');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+
+      makeBrowser('chrome', '');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+
+      makeBrowser('microsoftEdge', '');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+
+      makeBrowser('internet explorer', '10');
+      expect(builder.capabilities.platformName).toEqual('MULTICS');
+      expect(builder.capabilities.browserVersion).toEqual('10');
+      expect(builder.capabilities.platform).toBeUndefined();
+      expect(builder.capabilities.version).toBeUndefined();
+    });
   });
 });
 
 class MockWebdriverBuilder {
   withCapabilities(caps) {
-    this.browserName = caps[Capability.BROWSER_NAME];
+    this.capabilities = caps;
     return this;
   }
 
