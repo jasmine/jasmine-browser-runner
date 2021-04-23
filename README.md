@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/jasmine/jasmine-browser.svg?branch=main)](https://travis-ci.com/jasmine/jasmine-browser)
+[![Build Status](https://circleci.com/gh/jasmine/jasmine-browser.svg?style=shield)](https://circleci.com/gh/jasmine/jasmine-browser)
+
 
 This is still a bit of a work in progress, working towards making this package usable by more than just Jasmine itself.
 
