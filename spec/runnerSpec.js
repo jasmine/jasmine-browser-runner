@@ -21,7 +21,7 @@ describe('Runner', function() {
     jasmine.clock().uninstall();
   });
 
-  describe('When the browser is not IE', function() {
+  describe('When the batchReporter is specified', function() {
     it('loads the page and passes info to the reporter', async function() {
       const getPromise = Promise.resolve(),
         closePromise = Promise.resolve(),
@@ -49,8 +49,8 @@ describe('Runner', function() {
           host: 'things',
         });
 
-      runner.run();
-      expect(driver.get).toHaveBeenCalledWith('things');
+      runner.run({ batchReporter: true });
+      expect(driver.get).toHaveBeenCalledWith('things?');
       await getPromise;
 
       expect(driver.executeScript).toHaveBeenCalledWith(
@@ -132,8 +132,8 @@ describe('Runner', function() {
         batch4Promise
       );
 
-      runner.run();
-      expect(driver.get).toHaveBeenCalledWith('things');
+      runner.run({ batchReporter: true });
+      expect(driver.get).toHaveBeenCalledWith('things?');
       await getPromise;
 
       expect(driver.executeScript).toHaveBeenCalledWith(
@@ -200,12 +200,12 @@ describe('Runner', function() {
     });
   });
 
-  describe('When the browser is IE', function() {
+  describe('When the jsonDomReporter is specified', function() {
     beforeEach(function() {
       spyOn(console, 'log');
     });
 
-    it('passes events to the reporter after the jsDomReporter signals completion', async function() {
+    it('passes events to the reporter after the jsonDomReporter signals completion', async function() {
       const events = [
         ['jasmineStarted', { things: 'stuff' }],
         ['suiteStarted', { fullName: 'top' }],
@@ -239,11 +239,7 @@ describe('Runner', function() {
         reporter: reporter,
       });
 
-      const runPromise = runner.run({
-        browser: {
-          name: 'internet explorer',
-        },
-      });
+      const runPromise = runner.run({ jsonDomReporter: true });
 
       await Promise.resolve();
       expect(driver.findElement).toHaveBeenCalledWith({

@@ -34,6 +34,7 @@ module.exports = {
     return server.start(serverOptions || {});
   },
   runSpecs: async function(options, deps) {
+    options = options || {};
     if (options.browser && options.browser.name === 'internet explorer') {
       options.jsonDomReporter = true;
     } else {
@@ -59,7 +60,7 @@ module.exports = {
     console.log('Running tests in the browser...');
 
     try {
-      const details = await runner.run();
+      const details = await runner.run(options);
 
       if (details.overallStatus === 'passed') {
         setExitCode(0);
