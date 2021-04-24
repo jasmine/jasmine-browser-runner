@@ -1,5 +1,5 @@
 const ConsoleReporter = require('jasmine').ConsoleReporter,
-  buildWebdriver = require('./lib/webdriver').buildWebdriver,
+  webdriverModule = require('./lib/webdriver'),
   util = require('util'),
   Server = require('./lib/server'),
   Runner = require('./lib/runner');
@@ -33,14 +33,20 @@ module.exports = {
     const server = new Server(options);
     return server.start(serverOptions || {});
   },
-  runSpecs: async function(options) {
+  runSpecs: async function(options, deps) {
     if (options.browser && options.browser.name === 'internet explorer') {
       options.jsonDomReporter = true;
     } else {
       options.batchReporter = true;
     }
 
-    const server = new Server(options);
+    deps = deps || {};
+    const ServerClass = deps.Server || Server;
+    const RunnerClass = deps.Runner || Runner;
+    const buildWebdriver =
+      deps.buildWebdriver || webdriverModule.buildWebdriver;
+    const setExitCode = deps.setExitCode || (code => (process.exitCode = code));
+    const server = new ServerClass(options);
     const webdriver = buildWebdriver(options.browser);
 
     const reporter = createReporter(options);
@@ -48,22 +54,23 @@ module.exports = {
     const portRequest = useSauce ? 5555 : 0;
     await server.start({ port: portRequest });
     const host = `http://localhost:${server.port()}`;
-    const runner = new Runner({ webdriver, reporter, host });
+    const runner = new RunnerClass({ webdriver, reporter, host });
 
     console.log('Running tests in the browser...');
     return runner
       .run(options)
-      .catch(function(err) {
-        console.error(err);
-      })
       .then(async function(details) {
         if (details.overallStatus === 'passed') {
-          process.exitCode = 0;
+          setExitCode(0);
         } else if (details.overallStatus === 'incomplete') {
-          process.exitCode = 2;
+          setExitCode(2);
         } else {
-          process.exitCode = 1;
+          setExitCode(1);
         }
+
+        return details;
+      })
+      .finally(async function() {
         await server.stop();
 
         if (useSauce) {
@@ -73,7 +80,6 @@ module.exports = {
         }
 
         await webdriver.close();
-        return details;
       });
   },
   Server,
