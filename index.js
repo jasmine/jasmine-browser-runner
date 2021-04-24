@@ -46,8 +46,8 @@ module.exports = {
     const reporter = createReporter(options);
     const useSauce = options.browser && options.browser.useSauce;
     const portRequest = useSauce ? 5555 : 0;
-    const httpServer = await server.start({ port: portRequest });
-    const host = `http://localhost:${httpServer.address().port}`;
+    await server.start({ port: portRequest });
+    const host = `http://localhost:${server.port()}`;
     const runner = new Runner({ webdriver, reporter, host });
 
     console.log('Running tests in the browser...');
@@ -64,11 +64,7 @@ module.exports = {
         } else {
           process.exitCode = 1;
         }
-        await new Promise(function(resolve) {
-          httpServer.close(function() {
-            resolve();
-          });
-        });
+        await server.stop();
 
         if (useSauce) {
           await webdriver.executeScript(
