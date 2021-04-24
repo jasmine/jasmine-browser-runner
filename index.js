@@ -57,30 +57,30 @@ module.exports = {
     const runner = new RunnerClass({ webdriver, reporter, host });
 
     console.log('Running tests in the browser...');
-    return runner
-      .run(options)
-      .then(async function(details) {
-        if (details.overallStatus === 'passed') {
-          setExitCode(0);
-        } else if (details.overallStatus === 'incomplete') {
-          setExitCode(2);
-        } else {
-          setExitCode(1);
-        }
 
-        return details;
-      })
-      .finally(async function() {
-        await server.stop();
+    try {
+      const details = await runner.run();
 
-        if (useSauce) {
-          await webdriver.executeScript(
-            `sauce:job-result=${process.exitCode === 0}`
-          );
-        }
+      if (details.overallStatus === 'passed') {
+        setExitCode(0);
+      } else if (details.overallStatus === 'incomplete') {
+        setExitCode(2);
+      } else {
+        setExitCode(1);
+      }
 
-        await webdriver.close();
-      });
+      return details;
+    } finally {
+      await server.stop();
+
+      if (useSauce) {
+        await webdriver.executeScript(
+          `sauce:job-result=${process.exitCode === 0}`
+        );
+      }
+
+      await webdriver.close();
+    }
   },
   Server,
   Runner,
