@@ -13,8 +13,8 @@ describe('index', function() {
         server.stop.and.returnValue(Promise.resolve());
         server.port.and.returnValue(0);
         const runner = jasmine.createSpyObj('Runner', ['run']);
-        let resolveRun;
-        runner.run.and.returnValue(new Promise(res => (resolveRun = res)));
+        const details = {};
+        runner.run.and.returnValue(Promise.resolve(details));
 
         const promise = runSpecs(
           {},
@@ -30,12 +30,7 @@ describe('index', function() {
           }
         );
 
-        expect(server.stop).not.toHaveBeenCalled();
-        await expectAsync(promise).toBePending();
-        const details = {};
-        resolveRun(details);
         await expectAsync(promise).toBeResolvedTo(details);
-        expect(server.stop).toHaveBeenCalled();
       });
 
       it('sets the exit code to 0 when the run passes', async function() {
@@ -173,8 +168,42 @@ describe('index', function() {
     });
 
     describe('When the run fails to complete', function() {
-      it('sets the exit code to nonzero');
-      it('stops the server');
+      it('stops the server', async function() {
+        const server = jasmine.createSpyObj('Server', [
+          'start',
+          'stop',
+          'port',
+        ]);
+        server.start.and.returnValue(Promise.resolve(server));
+        server.stop.and.returnValue(Promise.resolve());
+        server.port.and.returnValue(0);
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        let rejectRun;
+        runner.run.and.returnValue(
+          new Promise((res, rej) => (rejectRun = rej))
+        );
+
+        const promise = runSpecs(
+          {},
+          {
+            Server: function() {
+              return server;
+            },
+            Runner: function() {
+              return runner;
+            },
+            buildWebdriver: buildStubWebdriver,
+            setExitCode: () => {},
+          }
+        );
+
+        expect(server.stop).not.toHaveBeenCalled();
+        await expectAsync(promise).toBePending();
+        const error = new Error('nope');
+        rejectRun(error);
+        await expectAsync(promise).toBeRejectedWithError('nope');
+        expect(server.stop).toHaveBeenCalled();
+      });
     });
   });
 });
