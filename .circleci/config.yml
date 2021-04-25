@@ -21,7 +21,7 @@ executors:
     working_directory: ~/workspace
 
 jobs:
-  build_and_test:
+  test:
     parameters:
       executor:
         type: executor
@@ -37,20 +37,54 @@ jobs:
       - run:
           name: Run tests
           command: yarn test
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  saucelabs_integration_test:
+    executor: node14
+    steps:
+    - attach_workspace:
+        at: .
+    - run:
+        name: Install Sauce Connect
+        command: |
+          cd /tmp
+          curl https://saucelabs.com/downloads/sc-4.6.4-linux.tar.gz | tar zxf -
+          chmod +x sc-4.6.4-linux/bin/sc
+          mkdir ~/bin
+          cp sc-4.6.4-linux/bin/sc ~/bin
+          ~/bin/sc --version
+    - run:
+        name: Run tests
+        command: |
+          export PATH=$PATH:$HOME/workspace/bin
+          export SAUCE_TUNNEL_IDENTIFIER=$CIRCLE_BUILD_NUM
+          export USE_SAUCE=true
+          scripts/start-sauce-connect sauce-pidfile
+          set +o errexit
+          npm test
+          exitcode=$?
+          set -o errexit
+          scripts/stop-sauce-connect $(cat sauce-pidfile)
+          exit $exitcode
 
 workflows:
   version: 2
   push: &push_workflow
     jobs:
-      - build_and_test:
-          executor: node14
-          name: node_14
-      - build_and_test:
-          executor: node12
-          name: node_12
-      - build_and_test:
-          executor: node10
-          name: node_10
+      - test:
+          matrix:
+            parameters:
+                executor: ["node14", "node12", "node10"]
+      - saucelabs_integration_test:
+          requires:
+            - "test-node14"
+          filters:
+            branches:
+              ignore: /pull\/.*/ # Don't run on pull requests.
+
   cron:
     <<: *push_workflow
     triggers:
