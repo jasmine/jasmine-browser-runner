@@ -120,7 +120,7 @@ describe('server', function() {
         '/__jasmine__/min.js',
         '/__boot__/bootboot.js',
         '/__boot__/boot2.js',
-        '/__support__/loadScript.js',
+        '/__support__/loadEsModule.js',
       ]);
     });
   });
@@ -288,23 +288,20 @@ describe('server', function() {
       expect(html).toContain('/__spec__/iLikeSpec.js');
     });
 
-    it('includes the ES module aware script loader', async function() {
+    it('includes the ES module loader', async function() {
       await this.startServer();
       const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
       var html = await getFile(baseUrl);
-      expect(html).toContain('/__support__/loadScript.js');
+      expect(html).toContain('/__support__/loadEsModule.js');
     });
 
-    describe('loading sources, specs, and helpers', function() {
+    describe('loading specs and helpers', function() {
       it('loads .js files as regular scripts', async function() {
         await this.startServer();
         const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
         var html = await getFile(baseUrl);
-        expect(html).toContain(
-          '<script src="/__src__/thing1.js" type="text/javascript">'
-        );
         expect(html).toContain(
           '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
         );
@@ -322,16 +319,38 @@ describe('server', function() {
         const baseUrl = `http://localhost:${this.httpServer.address().port}`;
 
         var html = await getFile(baseUrl);
-        console.log(html);
         expect(html).toContain(
-          '<script type="module">loadJasmineBrowserScript(\'/__src__/esm.mjs\')</script>'
+          '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
         );
         expect(html).toContain(
-          '<script type="module">loadJasmineBrowserScript(\'/__spec__/helpers/esm.mjs\')</script>'
+          '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
         );
+      });
+    });
+
+    describe('loading sources', function() {
+      it('loads .js files as regular scripts', async function() {
+        await this.startServer();
+        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+        var html = await getFile(baseUrl);
         expect(html).toContain(
-          '<script type="module">loadJasmineBrowserScript(\'/__spec__/esmSpec.mjs\')</script>'
+          '<script src="/__src__/thing1.js" type="text/javascript">'
         );
+      });
+
+      it('does not load .mjs files', async function() {
+        // ES modules in sources will normally be imported by the specs
+        // or by each other, so we don't load them automatically.
+        await this.startServer({
+          srcFiles: ['**/*.mjs'],
+          helpers: ['helpers/**/*.mjs'],
+          specFiles: ['**/*[sS]pec.mjs'],
+        });
+        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+
+        var html = await getFile(baseUrl);
+        expect(html).not.toContain('/__src__/esm.mjs');
       });
     });
 
