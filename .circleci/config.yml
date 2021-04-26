@@ -9,15 +9,15 @@ orbs:
 executors:
   node14:
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:14-browsers
     working_directory: ~/workspace
   node12:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:12-browsers
     working_directory: ~/workspace
   node10:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:10-browsers
     working_directory: ~/workspace
 
 jobs:
