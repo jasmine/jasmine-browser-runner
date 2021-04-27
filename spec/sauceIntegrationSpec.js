@@ -3,6 +3,23 @@ const os = require('os');
 const { exec } = require('child_process');
 
 describe('Sauce parameter handling', function() {
+  // To reduce the amount of output that devs have to scroll past, pend a single
+  // spec and don't create the rest if Sauce isn't available.
+  if (
+    !(
+      process.env.USE_SAUCE &&
+      process.env.SAUCE_USERNAME &&
+      process.env.SAUCE_ACCESS_KEY
+    )
+  ) {
+    it('passes params to Saucelabs correctly', function() {
+      pending(
+        "Can't run Sauce integration tests unless USE_SAUCE, SAUCE_USERNAME, and SAUCE_ACCESS_KEY are set"
+      );
+    });
+    return;
+  }
+
   // These specs use browser+version+OS combos that are supported by Saucelabs.
   // When more than one OS is supported, we use the older one to make sure that
   // the OS parameter is actually being passed correctly. (Saucelabs generally
@@ -93,7 +110,6 @@ describe('Sauce parameter handling', function() {
     it(
       `passes browser ${browser}, ${displayVersion}, and ${displayOS} correctly`,
       function(done) {
-        requireSauceEnv();
         const suiteDir = createSuite();
         const jasmineBrowserDir = process.cwd();
         let timedOut = false;
@@ -174,20 +190,6 @@ describe('Sauce parameter handling', function() {
       }, template);
 
       fs.writeFileSync(outPath, output);
-    }
-
-    function requireSauceEnv() {
-      if (
-        !(
-          process.env.USE_SAUCE &&
-          process.env.SAUCE_USERNAME &&
-          process.env.SAUCE_ACCESS_KEY
-        )
-      ) {
-        pending(
-          "Can't run Sauce integration tests unless USE_SAUCE, SAUCE_USERNAME, and SAUCE_ACCESS_KEY are set"
-        );
-      }
     }
   }
 });
