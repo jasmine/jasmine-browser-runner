@@ -120,4 +120,22 @@ describe('Command', function() {
       await expectAsync(command.run(['runSpecs'])).toBeRejectedWith(error);
     });
   });
+
+  describe('version', function() {
+    it('reports the version number', function() {
+      const jasmineBrowserVersion = require('../package.json').version;
+      const command = new Command({
+        jasmineBrowser: {},
+        jasmineCore: { version: () => '17.42' },
+        console: this.console,
+      });
+
+      command.run(['version']);
+
+      expect(this.writer.output).toContain('jasmine-core v17.42');
+      expect(this.writer.output).toContain(
+        'jasmine-browser-runner v' + jasmineBrowserVersion
+      );
+    });
+  });
 });
