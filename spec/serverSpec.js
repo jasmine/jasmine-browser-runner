@@ -222,22 +222,22 @@ describe('server', function() {
           extraOptions
         );
         this.server = new Server(options);
-        this.httpServer = await this.server.start({ port: 0 });
+        await this.server.start({ port: 0 });
       };
     });
 
-    afterEach(function(done) {
-      this.httpServer.close(done);
+    afterEach(async function() {
+      await this.server.stop();
     });
 
     it('finds a random open port when a `0` is specified', async function() {
       await this.startServer();
-      expect(this.httpServer.address().port).not.toEqual(0);
+      expect(this.server.port()).not.toEqual(0);
     });
 
     it('starts a server and serves the Jasmine files', async function() {
       await this.startServer();
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
       expect(jazz).toEqual('Jazzy\n');
@@ -263,7 +263,7 @@ describe('server', function() {
 
     it('starts a server and serves the project files', async function() {
       await this.startServer();
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var thing1 = await getFile(baseUrl + '/__src__/thing1.js');
       expect(thing1).toEqual('thing the first\n');
@@ -274,7 +274,7 @@ describe('server', function() {
 
     it('serves an html file to run the specs', async function() {
       await this.startServer();
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__jasmine__/jazz.js');
@@ -290,7 +290,7 @@ describe('server', function() {
 
     it('includes the ES module loader', async function() {
       await this.startServer();
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/loadEsModule.js');
@@ -299,7 +299,7 @@ describe('server', function() {
     describe('loading specs and helpers', function() {
       it('loads .js files as regular scripts', async function() {
         await this.startServer();
-        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+        const baseUrl = `http://localhost:${this.server.port()}`;
 
         var html = await getFile(baseUrl);
         expect(html).toContain(
@@ -316,7 +316,7 @@ describe('server', function() {
           helpers: ['helpers/**/*.mjs'],
           specFiles: ['**/*[sS]pec.mjs'],
         });
-        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+        const baseUrl = `http://localhost:${this.server.port()}`;
 
         var html = await getFile(baseUrl);
         expect(html).toContain(
@@ -331,7 +331,7 @@ describe('server', function() {
     describe('loading sources', function() {
       it('loads .js files as regular scripts', async function() {
         await this.startServer();
-        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+        const baseUrl = `http://localhost:${this.server.port()}`;
 
         var html = await getFile(baseUrl);
         expect(html).toContain(
@@ -347,7 +347,7 @@ describe('server', function() {
           helpers: ['helpers/**/*.mjs'],
           specFiles: ['**/*[sS]pec.mjs'],
         });
-        const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+        const baseUrl = `http://localhost:${this.server.port()}`;
 
         var html = await getFile(baseUrl);
         expect(html).not.toContain('/__src__/esm.mjs');
@@ -358,7 +358,7 @@ describe('server', function() {
       await this.startServer();
       this.server.clearReporters = true;
 
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/clearReporters.js');
@@ -367,7 +367,7 @@ describe('server', function() {
     it('can add the batch reporter', async function() {
       await this.startServer({ batchReporter: true });
 
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
@@ -376,7 +376,7 @@ describe('server', function() {
     it('can add the json dom reporter', async function() {
       await this.startServer({ jsonDomReporter: true });
 
-      const baseUrl = `http://localhost:${this.httpServer.address().port}`;
+      const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/jsonDomReporter.js');
