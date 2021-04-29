@@ -52,6 +52,7 @@ describe('Runner', function() {
       runner.run({ batchReporter: true });
       expect(driver.get).toHaveBeenCalledWith('things?');
       await getPromise;
+      jasmine.clock().tick(250);
 
       expect(driver.executeScript).toHaveBeenCalledWith(
         jasmine.stringMatching('batchReporter.getBatch()')
@@ -135,6 +136,7 @@ describe('Runner', function() {
       runner.run({ batchReporter: true });
       expect(driver.get).toHaveBeenCalledWith('things?');
       await getPromise;
+      jasmine.clock().tick(250);
 
       expect(driver.executeScript).toHaveBeenCalledWith(
         jasmine.stringMatching('batchReporter.getBatch()')
@@ -197,6 +199,36 @@ describe('Runner', function() {
       driver.executeScript.calls.reset();
       jasmine.clock().tick(1000);
       expect(driver.executeScript).not.toHaveBeenCalled();
+    });
+
+    it("handles errors from the webdriver's executeScript method in runTillEnd", async function() {
+      const driver = jasmine.createSpyObj('webdriver', {
+          get: Promise.resolve(),
+          executeScript: null,
+          close: Promise.resolve(),
+        }),
+        reporter = fakeReporter(),
+        runner = new Runner({
+          webdriver: driver,
+          reporter: reporter,
+          host: 'things',
+        });
+
+      driver.executeScript.and.callFake(function() {
+        return Promise.reject(new Error('nope'));
+      });
+
+      const resultPromise = runner.run({ batchReporter: true });
+
+      expect(driver.get).toHaveBeenCalled();
+      await Promise.resolve();
+      jasmine.clock().tick(250);
+      expect(driver.executeScript).toHaveBeenCalledTimes(1);
+      await expectAsync(resultPromise).toBeRejectedWithError('nope');
+
+      // Should not fetch another batch after the failure
+      jasmine.clock().tick(250);
+      expect(driver.executeScript).toHaveBeenCalledTimes(1);
     });
   });
 
