@@ -1,7 +1,10 @@
 const util = require('util'),
   path = require('path'),
   Writable = require('stream').Writable,
-  Command = require('../lib/command');
+  Command = require('../lib/command'),
+  defaultConfig = require('../lib/default_config'),
+  fs = require('fs'),
+  os = require('os');
 
 function StringWriter(options) {
   if (!(this instanceof StringWriter)) {
@@ -21,6 +24,23 @@ describe('Command', function() {
   beforeEach(function() {
     this.writer = new StringWriter();
     this.console = new console.Console(this.writer);
+  });
+
+  describe('With no subcommand specified', function() {
+    it('runs the serve subcommand', function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+          'startServer',
+        ]),
+        command = new Command({
+          jasmineBrowser: fakeJasmineBrowser,
+          console: this.console,
+          baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        });
+
+      command.run([]);
+
+      expect(fakeJasmineBrowser.startServer).toHaveBeenCalled();
+    });
   });
 
   describe('serve', () => {
@@ -136,6 +156,59 @@ describe('Command', function() {
       expect(this.writer.output).toContain(
         'jasmine-browser-runner v' + jasmineBrowserVersion
       );
+    });
+  });
+
+  describe('init', function() {
+    beforeEach(function() {
+      const tempDir = fs.mkdtempSync(`${os.tmpdir()}/jasmine-browser-command-`);
+      this.prevDir = process.cwd();
+      process.chdir(tempDir);
+    });
+
+    afterEach(function() {
+      process.chdir(this.prevDir);
+    });
+
+    describe('When spec/support/jasmine-browser.json does not exist', function() {
+      it('creates the file', function() {
+        const command = new Command({
+          jasmineBrowser: {},
+          jasmineCore: {},
+          console: this.console,
+        });
+
+        command.run(['init']);
+
+        const actualContents = fs.readFileSync(
+          'spec/support/jasmine-browser.json',
+          { encoding: 'utf8' }
+        );
+        expect(actualContents).toEqual(defaultConfig);
+      });
+    });
+
+    describe('When spec/support/jasmine-browser.json already exists', function() {
+      it('does not create the file', function() {
+        const command = new Command({
+          jasmineBrowser: {},
+          jasmineCore: {},
+          console: this.console,
+        });
+        fs.mkdirSync('spec/support', { recursive: true });
+        fs.writeFileSync(
+          'spec/support/jasmine-browser.json',
+          'initial contents'
+        );
+
+        command.run(['init']);
+
+        const actualContents = fs.readFileSync(
+          'spec/support/jasmine-browser.json',
+          { encoding: 'utf8' }
+        );
+        expect(actualContents).toEqual('initial contents');
+      });
     });
   });
 });
