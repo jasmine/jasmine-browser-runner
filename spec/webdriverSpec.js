@@ -11,6 +11,22 @@ describe('webdriver', function() {
         expect(builder.browserName).toEqual('IE');
       });
 
+      it('handles headlessChrome as a special case', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver('headlessChrome', builder);
+
+        expect(builder.browserName).toEqual('chrome');
+        expect(builder.capabilities.get('goog:chromeOptions')).toEqual({
+          args: [
+            '--headless',
+            '--no-sandbox',
+            'window-size=1024,768',
+            '--disable-gpu',
+          ],
+        });
+      });
+
       it('does not use Sauce', function() {
         const builder = new MockWebdriverBuilder();
 

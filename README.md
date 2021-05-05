@@ -48,6 +48,19 @@ Run the tests in a browser (defaults to Firefox)
 npx jasmine-browser-runner runSpecs
 ```
 
+To use a browser other than Firefox, add a `browser` field to 
+`jasmine-browser.json`:
+
+```javascript
+{
+  // ...
+  "browser": "chrome"
+}
+```
+
+Its value can be `"internet explorer"`, `"firefox"`, `"safari"`, 
+`"MicrosoftEdge"`, `"chrome"`, or `"headlessChrome"`.
+
 ## ES module support
 
 If a source, spec, or helper file's name ends in `.mjs`, it will be loaded as
