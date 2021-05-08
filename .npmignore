@@ -4,3 +4,6 @@ spec/
 node_modules/
 release_notes/
 scripts/
+.idea/
+.circleci/
+.styleignore
