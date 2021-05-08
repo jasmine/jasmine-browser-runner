@@ -1,7 +1,9 @@
 [![Build Status](https://circleci.com/gh/jasmine/jasmine-browser.svg?style=shield)](https://circleci.com/gh/jasmine/jasmine-browser)
 
 
-This is still a bit of a work in progress, working towards making this package usable by more than just Jasmine itself.
+jasmine-browser-runner runs your Jasmine specs in a browser. It's suitable for
+interactive use with normal browsers as well as running specs in CI builds
+using either headless Chrome or Saucelabs.
 
 # Getting started
 
