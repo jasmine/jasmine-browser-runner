@@ -7,6 +7,10 @@ orbs:
   win: circleci/windows@2.2.0
 
 executors:
+  node16:
+    docker:
+      - image: cimg/node:16.1.0-browsers
+    working_directory: ~/workspace
   node14:
     docker:
       - image: circleci/node:14-browsers
@@ -77,7 +81,7 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node14", "node12", "node10"]
+                executor: ["node16", "node14", "node12", "node10"]
       - saucelabs_integration_test:
           requires:
             - "test-node14"
