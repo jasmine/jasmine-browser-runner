@@ -99,7 +99,7 @@ describe('Sauce parameter handling', function() {
     'MicrosoftEdge',
     '',
     'Windows 10',
-    /Windows NT 10\.0.*Edg\/90\.[0-9.]+$/
+    /Windows NT 10\.0.*Edg\/[0-9]+\.[0-9.]+$/
   );
 
   function createSpec(browser, version, sauceOS, expectedUserAgentRegex) {
