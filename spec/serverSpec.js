@@ -44,7 +44,7 @@ describe('server', function() {
     expect(server.projectBaseDir).toEqual(path.resolve());
   });
 
-  it('appends specified css files after Jasmines own', async function() {
+  it('appends specified css files after Jasmines own', function() {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
@@ -52,7 +52,7 @@ describe('server', function() {
       cssFiles: ['other*.css', 'extra*.css'],
     });
 
-    const files = await server.allCss();
+    const files = server.allCss();
     expect(files.length).toEqual(5);
     expect(files.slice(0, 2)).toEqual([
       '/__jasmine__/css.css',
@@ -67,7 +67,7 @@ describe('server', function() {
     );
   });
 
-  it('allows css files to be excluded', async function() {
+  it('allows css files to be excluded', function() {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
@@ -75,7 +75,7 @@ describe('server', function() {
       cssFiles: ['other*.css', 'extra*.css', '!*1.css'],
     });
 
-    const files = await server.allCss();
+    const files = server.allCss();
     expect(files.length).toEqual(4);
     expect(files.slice(0, 2)).toEqual([
       '/__jasmine__/css.css',
@@ -89,14 +89,14 @@ describe('server', function() {
     );
   });
 
-  it('handles css files not being specified', async function() {
+  it('handles css files not being specified', function() {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
       srcDir: 'sources',
     });
 
-    const files = await server.allCss();
+    const files = server.allCss();
     expect(files.length).toEqual(2);
     expect(files).toEqual(['/__jasmine__/css.css', '/__jasmine__/two.css']);
   });
@@ -126,7 +126,7 @@ describe('server', function() {
   });
 
   describe('#userJs', function() {
-    it('includes source files followed by helpers, in glob order', async function() {
+    it('includes source files followed by helpers, in glob order', function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -137,7 +137,7 @@ describe('server', function() {
         specFiles: ['**/*[sS]pec.js'],
       });
 
-      const files = await server.userJs();
+      const files = server.userJs();
       expect(files.length).toEqual(8);
       expect(files.slice(0, 1)).toEqual(['/__src__/thing2.js']);
       expect(files.slice(1, 3)).toEqual(
@@ -161,7 +161,7 @@ describe('server', function() {
       );
     });
 
-    it('allows js files to be excluded', async function() {
+    it('allows js files to be excluded', function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -172,7 +172,7 @@ describe('server', function() {
         specFiles: ['**/*[sS]pec.js', '!nested/**'],
       });
 
-      const files = await server.userJs();
+      const files = server.userJs();
       expect(files.length).toEqual(5);
       expect(files.slice(0, 2)).toEqual(
         jasmine.arrayWithExactContents([
@@ -191,7 +191,21 @@ describe('server', function() {
       );
     });
 
-    it('handles js files not being specified', async function() {
+    it('allows js files to be excluded via pattern and later included', function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/excludeInclude'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'sources',
+        srcFiles: ['[^a].js', 'a.js'],
+        specDir: 'specs',
+      });
+
+      const files = server.userJs();
+
+      expect(files).toEqual(['/__src__/b.js', '/__src__/a.js']);
+    });
+
+    it('handles js files not being specified', function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -199,7 +213,7 @@ describe('server', function() {
         specDir: 'specs',
       });
 
-      const files = await server.userJs();
+      const files = server.userJs();
       expect(files).toEqual([]);
     });
   });
