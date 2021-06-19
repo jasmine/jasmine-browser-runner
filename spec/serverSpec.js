@@ -1,4 +1,5 @@
 const path = require('path'),
+  os = require('os'),
   http = require('http'),
   Server = require('../lib/server');
 
@@ -254,25 +255,25 @@ describe('server', function() {
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
-      expect(jazz).toEqual('Jazzy\n');
+      expect(jazz).toEqual('Jazzy' + os.EOL);
 
       var min = await getFile(baseUrl + '/__jasmine__/min.js');
-      expect(min).toEqual('minified\n');
+      expect(min).toEqual('minified' + os.EOL);
 
       var bootboot = await getFile(baseUrl + '/__boot__/bootboot.js');
-      expect(bootboot).toEqual('booot\n');
+      expect(bootboot).toEqual('booot' + os.EOL);
 
       var boot2 = await getFile(baseUrl + '/__boot__/boot2.js');
-      expect(boot2).toEqual('Boot the second\n');
+      expect(boot2).toEqual('Boot the second' + os.EOL);
 
       var css = await getFile(baseUrl + '/__jasmine__/css.css');
-      expect(css).toEqual('CSS\n');
+      expect(css).toEqual('CSS' + os.EOL);
 
       var two = await getFile(baseUrl + '/__jasmine__/two.css');
-      expect(two).toEqual('two csses\n');
+      expect(two).toEqual('two csses' + os.EOL);
 
       var image = await getFile(baseUrl + '/__images__/things.txt');
-      expect(image).toEqual("pretend I'm an image\n");
+      expect(image).toEqual("pretend I'm an image" + os.EOL);
     });
 
     it('starts a server and serves the project files', async function() {
@@ -280,10 +281,10 @@ describe('server', function() {
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var thing1 = await getFile(baseUrl + '/__src__/thing1.js');
-      expect(thing1).toEqual('thing the first\n');
+      expect(thing1).toEqual('thing the first' + os.EOL);
 
       var spec = await getFile(baseUrl + '/__spec__/iLikeSpec.js');
-      expect(spec).toEqual('I like specs\n');
+      expect(spec).toEqual('I like specs' + os.EOL);
     });
 
     it('serves an html file to run the specs', async function() {
