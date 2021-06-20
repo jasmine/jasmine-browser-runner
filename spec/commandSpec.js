@@ -211,4 +211,23 @@ describe('Command', function() {
       });
     });
   });
+
+  describe('help', function() {
+    it('wraps the help text to 80 columns', function() {
+      const command = new Command({
+        jasmineBrowser: {},
+        jasmineCore: {},
+        console: this.console,
+      });
+
+      command.run(['help']);
+
+      const lines = this.writer.output.split('\n');
+      expect(lines.length).toBeGreaterThan(0);
+
+      for (const line of lines) {
+        expect(line.length).toBeLessThanOrEqual(80);
+      }
+    });
+  });
 });
