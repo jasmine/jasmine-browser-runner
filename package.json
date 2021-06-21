@@ -4,6 +4,15 @@
   "description": "Serve and run your Jasmine specs in a browser",
   "main": "index.js",
   "bin": "bin/jasmine-browser",
+  "files": [
+    "MIT.LICENSE",
+    "README.md",
+    "package.json",
+    "index.js",
+    "run.html.ejs",
+    "bin/*.js",
+    "lib/**/*.js"
+  ],
   "scripts": {
     "posttest": "eslint bin/* lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
     "test": "jasmine",
@@ -40,7 +49,8 @@
     "eslint": "^5.16.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "prettier": "^1.17.1",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.3",
+    "temp": "^0.9.4"
   },
   "prettier": {
     "singleQuote": true,
