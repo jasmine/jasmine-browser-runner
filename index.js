@@ -4,20 +4,30 @@ const ConsoleReporter = require('jasmine').ConsoleReporter,
   Server = require('./lib/server'),
   Runner = require('./lib/runner');
 
-function createReporter(options) {
-  if (options.reporter) {
+function createReporters(options) {
+  if (!options.reporters) {
+    return createDefaultReporter(options);
+  }
+
+  const result = [];
+
+  for (const reporterName of options.reporters) {
     try {
-      var Report = require(options.reporter);
-      return new Report();
+      var Reporter = require(reporterName);
+      result.push(new Reporter());
     } catch (e) {
       console.log(
-        'failed to register reporter "' + options.reporter + '" using default'
+        'failed to register reporter "' + reporterName + '" using default'
       );
       console.log(e.message);
       console.log(e.stack);
     }
   }
 
+  return result;
+}
+
+function createDefaultReporter(options) {
   const reporter = new ConsoleReporter();
   reporter.setOptions({
     print: function() {
@@ -25,7 +35,7 @@ function createReporter(options) {
     },
     showColors: options.color === 'undefined' ? true : options.color,
   });
-  return reporter;
+  return [reporter];
 }
 
 module.exports = {
@@ -50,12 +60,12 @@ module.exports = {
     const server = new ServerClass(options);
     const webdriver = buildWebdriver(options.browser);
 
-    const reporter = createReporter(options);
+    const reporters = createReporters(options);
     const useSauce = options.browser && options.browser.useSauce;
     const portRequest = useSauce ? 5555 : 0;
     await server.start({ port: portRequest });
     const host = `http://localhost:${server.port()}`;
-    const runner = new RunnerClass({ webdriver, reporter, host });
+    const runner = new RunnerClass({ webdriver, reporters, host });
 
     console.log('Running tests in the browser...');
 

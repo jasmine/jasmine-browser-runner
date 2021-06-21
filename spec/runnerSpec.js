@@ -45,7 +45,7 @@ describe('Runner', function() {
         reporter = fakeReporter(),
         runner = new Runner({
           webdriver: driver,
-          reporter: reporter,
+          reporters: [reporter],
           host: 'things',
         });
 
@@ -121,7 +121,7 @@ describe('Runner', function() {
         reporter = fakeReporter(),
         runner = new Runner({
           webdriver: driver,
-          reporter: reporter,
+          reporters: [reporter],
           host: 'things',
         });
 
@@ -208,7 +208,7 @@ describe('Runner', function() {
         reporter = fakeReporter(),
         runner = new Runner({
           webdriver: driver,
-          reporter: reporter,
+          reporters: [reporter],
           host: 'things',
         });
 
@@ -240,7 +240,7 @@ describe('Runner', function() {
         reporter = fakeReporter(),
         runner = new Runner({
           webdriver: driver,
-          reporter: reporter,
+          reporters: [reporter],
           host: 'things',
         });
 
@@ -294,7 +294,7 @@ describe('Runner', function() {
       const reporter = fakeReporter();
       const runner = new Runner({
         webdriver: driver,
-        reporter: reporter,
+        reporters: [reporter],
       });
 
       const runPromise = runner.run({ jsonDomReporter: true });
@@ -363,7 +363,7 @@ describe('Runner', function() {
       reporter = fakeReporter(),
       runner = new Runner({
         webdriver: driver,
-        reporter: reporter,
+        reporters: [reporter],
         host: 'things',
       });
 
@@ -388,5 +388,35 @@ describe('Runner', function() {
       throwFailures: 'false',
       spec: 'specs and things',
     });
+  });
+
+  it('supports multiple reporters', async function() {
+    let resolve;
+    const executePromise = new Promise(res => (resolve = res)),
+      driver = jasmine.createSpyObj('webdriver', {
+        get: Promise.resolve(),
+        executeScript: executePromise,
+        close: Promise.resolve(),
+      }),
+      reporters = [fakeReporter(), fakeReporter()],
+      runner = new Runner({
+        webdriver: driver,
+        reporters,
+      });
+
+    const resultPromise = runner.run({ batchReporter: true });
+
+    expect(driver.get).toHaveBeenCalled();
+    await Promise.resolve();
+    expect(driver.executeScript).toHaveBeenCalled();
+    resolve([['jasmineDone', { overallStatus: 'complete' }]]);
+    await resultPromise;
+
+    expect(reporters[0].jasmineDone)
+      .withContext('first reporter')
+      .toHaveBeenCalled();
+    expect(reporters[1].jasmineDone)
+      .withContext('second reporter')
+      .toHaveBeenCalled();
   });
 });

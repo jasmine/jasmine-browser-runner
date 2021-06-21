@@ -1,4 +1,6 @@
 const { runSpecs } = require('../');
+const { ConsoleReporter } = require('jasmine');
+const CompletionReporter = require('jasmine/lib/reporters/completion_reporter');
 
 describe('index', function() {
   beforeEach(function() {
@@ -6,97 +8,156 @@ describe('index', function() {
   });
 
   describe('runSpecs', function() {
-    it('uses the jsonDomReporter for Internet Explorer', async function() {
-      const server = buildSpyServer();
-      const runner = jasmine.createSpyObj('Runner', ['run']);
-      runner.run.and.returnValue(pendingPromise());
-      const options = { browser: { name: 'internet explorer' } };
+    describe('Choosing the reporter that reports from -core to -browser-runner', function() {
+      it('uses the jsonDomReporter for Internet Explorer', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(pendingPromise());
+        const options = { browser: { name: 'internet explorer' } };
 
-      runSpecs(options, {
-        Server: function() {
-          return server;
-        },
-        Runner: function() {
-          return runner;
-        },
-        buildWebdriver: buildStubWebdriver,
-        setExitCode: () => {},
+        runSpecs(options, {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver: buildStubWebdriver,
+          setExitCode: () => {},
+        });
+        await server.start.calls.mostRecent().returnValue;
+
+        expect(runner.run).toHaveBeenCalledWith({
+          ...options,
+          jsonDomReporter: true,
+        });
       });
-      await server.start.calls.mostRecent().returnValue;
 
-      expect(runner.run).toHaveBeenCalledWith({
-        ...options,
-        jsonDomReporter: true,
+      it('uses the batchReporter for non-IE browsers', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(pendingPromise());
+        const options = { browser: { name: 'Classilla' } };
+
+        runSpecs(options, {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver: buildStubWebdriver,
+          setExitCode: () => {},
+        });
+        await server.start.calls.mostRecent().returnValue;
+
+        expect(runner.run).toHaveBeenCalledWith({
+          ...options,
+          batchReporter: true,
+        });
+      });
+
+      it('uses the batchReporter when the browser is not specified', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(pendingPromise());
+        const options = {};
+
+        runSpecs(options, {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver: buildStubWebdriver,
+          setExitCode: () => {},
+        });
+        await server.start.calls.mostRecent().returnValue;
+
+        expect(runner.run).toHaveBeenCalledWith({
+          ...options,
+          batchReporter: true,
+        });
+      });
+
+      it('sets reporter options when no options are provided', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(pendingPromise());
+
+        runSpecs(undefined, {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver: buildStubWebdriver,
+          setExitCode: () => {},
+        });
+        await server.start.calls.mostRecent().returnValue;
+
+        expect(runner.run).toHaveBeenCalledWith({
+          batchReporter: true,
+        });
       });
     });
 
-    it('uses the batchReporter for non-IE browsers', async function() {
-      const server = buildSpyServer();
-      const runner = jasmine.createSpyObj('Runner', ['run']);
-      runner.run.and.returnValue(pendingPromise());
-      const options = { browser: { name: 'Classilla' } };
+    describe('Specifying the reporter that reports to the user', function() {
+      it('uses the ConsoleReporter when no reporter is specified', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
 
-      runSpecs(options, {
-        Server: function() {
-          return server;
-        },
-        Runner: function() {
-          return runner;
-        },
-        buildWebdriver: buildStubWebdriver,
-        setExitCode: () => {},
+        await runSpecs(
+          {},
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+
+        expect(Runner).toHaveBeenCalledWith(
+          jasmine.objectContaining({
+            reporters: [jasmine.any(ConsoleReporter)],
+          })
+        );
       });
-      await server.start.calls.mostRecent().returnValue;
 
-      expect(runner.run).toHaveBeenCalledWith({
-        ...options,
-        batchReporter: true,
+      it('does not use the ConsoleReporter when reporters are specified', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+
+        await runSpecs(
+          { reporters: ['jasmine/lib/reporters/completion_reporter'] },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.any(CompletionReporter),
+        ]);
       });
-    });
 
-    it('uses the batchReporter when the browser is not specified', async function() {
-      const server = buildSpyServer();
-      const runner = jasmine.createSpyObj('Runner', ['run']);
-      runner.run.and.returnValue(pendingPromise());
-      const options = {};
+      it('supports multiple reporters', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
 
-      runSpecs(options, {
-        Server: function() {
-          return server;
-        },
-        Runner: function() {
-          return runner;
-        },
-        buildWebdriver: buildStubWebdriver,
-        setExitCode: () => {},
-      });
-      await server.start.calls.mostRecent().returnValue;
+        await runSpecs(
+          {
+            reporters: [
+              'jasmine/lib/reporters/completion_reporter',
+              'jasmine/lib/reporters/console_reporter',
+            ],
+          },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
 
-      expect(runner.run).toHaveBeenCalledWith({
-        ...options,
-        batchReporter: true,
-      });
-    });
-
-    it('sets reporter options when no options are provided', async function() {
-      const server = buildSpyServer();
-      const runner = jasmine.createSpyObj('Runner', ['run']);
-      runner.run.and.returnValue(pendingPromise());
-
-      runSpecs(undefined, {
-        Server: function() {
-          return server;
-        },
-        Runner: function() {
-          return runner;
-        },
-        buildWebdriver: buildStubWebdriver,
-        setExitCode: () => {},
-      });
-      await server.start.calls.mostRecent().returnValue;
-
-      expect(runner.run).toHaveBeenCalledWith({
-        batchReporter: true,
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.any(CompletionReporter),
+          jasmine.any(ConsoleReporter),
+        ]);
       });
     });
 
