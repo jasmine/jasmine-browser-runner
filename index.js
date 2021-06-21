@@ -13,14 +13,12 @@ function createReporters(options) {
 
   for (const reporterName of options.reporters) {
     try {
-      var Reporter = require(reporterName);
+      const Reporter = require(reporterName);
       result.push(new Reporter());
     } catch (e) {
-      console.log(
-        'failed to register reporter "' + reporterName + '" using default'
+      throw new Error(
+        `Failed to register reporter ${reporterName}: ${e.message}`
       );
-      console.log(e.message);
-      console.log(e.stack);
     }
   }
 

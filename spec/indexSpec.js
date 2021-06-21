@@ -159,6 +159,23 @@ describe('index', function() {
           jasmine.any(ConsoleReporter),
         ]);
       });
+
+      it('rejects the promise when a reporter cannot be instantiated', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+
+        const promise = runSpecs(
+          {
+            reporters: ['./no/such/module'],
+          },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+
+        await expectAsync(promise).toBeRejectedWithError(
+          "Failed to register reporter ./no/such/module: Cannot find module './no/such/module'"
+        );
+      });
     });
 
     describe('When the run completes', function() {
