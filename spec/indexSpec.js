@@ -173,7 +173,7 @@ describe('index', function() {
         );
 
         await expectAsync(promise).toBeRejectedWithError(
-          "Failed to register reporter ./no/such/module: Cannot find module './no/such/module'"
+          /Failed to register reporter \.\/no\/such\/module: Cannot find module/
         );
       });
     });
