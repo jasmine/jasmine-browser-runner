@@ -36,11 +36,28 @@ function createDefaultReporter(options) {
   return [reporter];
 }
 
+/**
+ * @module jasmine-browser-runner
+ */
 module.exports = {
+  /**
+   * Starts a {@link Server} that will serve the specs and supporting files via HTTP.
+   * @function
+   * @name startServer
+   * @param {ServerCtorOptions} options to use to construct the server
+   * @param {ServerStartOptions} serverOptions Options to use to start the server
+   * @return {Promise<undefined>} A promise that is resolved when the server is
+   * started.
+   */
   startServer: function(options, serverOptions) {
     const server = new Server(options);
     return server.start(serverOptions || {});
   },
+  /**
+   * Runs the specs.
+   * @param {RunSpecsOptions} options
+   * @return {Promise<JasmineDoneInfo>} A promise that resolves to the {@link https://jasmine.github.io/api/edge/global.html#JasmineDoneInfo|overall result} when the suite has finished running.
+   */
   runSpecs: async function(options, deps) {
     options = options || {};
     if (options.browser && options.browser.name === 'internet explorer') {
