@@ -42,8 +42,6 @@ function createDefaultReporter(options) {
 module.exports = {
   /**
    * Starts a {@link Server} that will serve the specs and supporting files via HTTP.
-   * @function
-   * @name startServer
    * @param {ServerCtorOptions} options to use to construct the server
    * @param {ServerStartOptions} serverOptions Options to use to start the server
    * @return {Promise<undefined>} A promise that is resolved when the server is
