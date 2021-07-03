@@ -46,7 +46,7 @@
     "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.8.0",
     "eslint-plugin-jasmine": "^2.10.1",
     "prettier": "^1.17.1",
     "shelljs": "^0.8.3",
@@ -69,7 +69,7 @@
       "expectAsync": "readonly"
     },
     "parserOptions": {
-      "ecmaVersion": 2018
+      "ecmaVersion": 11
     },
     "plugins": [
       "jasmine"
@@ -91,7 +91,13 @@
       "block-spacing": "error",
       "comma-dangle": [
         "error",
-        "always-multiline"
+        {
+          "arrays": "always-multiline",
+          "objects": "always-multiline",
+          "imports": "always-multiline",
+          "exports": "always-multiline",
+          "functions": "never"
+        }
       ],
       "func-call-spacing": [
         "error",
@@ -108,11 +114,13 @@
       "space-before-blocks": "error",
       "no-console": "off"
     },
-    "overrides": {
-      "files": "spec/**/*.js",
-      "env": {
-        "jasmine": true
+    "overrides": [
+      {
+        "files": "spec/**/*.js",
+        "env": {
+          "jasmine": true
+        }
       }
-    }
+    ]
   }
 }

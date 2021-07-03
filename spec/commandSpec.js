@@ -27,7 +27,7 @@ describe('Command', function() {
   });
 
   describe('With no subcommand specified', function() {
-    it('runs the serve subcommand', function() {
+    it('runs the serve subcommand', async function() {
       const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'startServer',
         ]),
@@ -37,14 +37,14 @@ describe('Command', function() {
           baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         });
 
-      command.run([]);
+      await command.run([]);
 
       expect(fakeJasmineBrowser.startServer).toHaveBeenCalled();
     });
   });
 
   describe('serve', () => {
-    it('starts a server', function() {
+    it('starts a server', async function() {
       const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'startServer',
         ]),
@@ -54,7 +54,7 @@ describe('Command', function() {
           baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         });
 
-      command.run(['serve', '--config=sampleConfig.json']);
+      await command.run(['serve', '--config=sampleConfig.json']);
 
       const options = require(path.join(
         __dirname,
@@ -64,7 +64,7 @@ describe('Command', function() {
       expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
     });
 
-    it('finds a default config when serving', function() {
+    it('finds a default config when serving', async function() {
       const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'startServer',
         ]),
@@ -74,7 +74,7 @@ describe('Command', function() {
           baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         });
 
-      command.run(['serve']);
+      await command.run(['serve']);
 
       const options = require(path.join(
         __dirname,
@@ -84,7 +84,7 @@ describe('Command', function() {
       expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
     });
 
-    it('allows CLI args to override config file when serving', function() {
+    it('allows CLI args to override config file when serving', async function() {
       const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'startServer',
         ]),
@@ -94,7 +94,7 @@ describe('Command', function() {
           baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         });
 
-      command.run(['serve', '--config=sampleConfig.json', '--port=2345']);
+      await command.run(['serve', '--config=sampleConfig.json', '--port=2345']);
 
       const options = require(path.join(
         __dirname,
@@ -142,7 +142,7 @@ describe('Command', function() {
   });
 
   describe('version', function() {
-    it('reports the version number', function() {
+    it('reports the version number', async function() {
       const jasmineBrowserVersion = require('../package.json').version;
       const command = new Command({
         jasmineBrowser: {},
@@ -150,7 +150,7 @@ describe('Command', function() {
         console: this.console,
       });
 
-      command.run(['version']);
+      await command.run(['version']);
 
       expect(this.writer.output).toContain('jasmine-core v17.42');
       expect(this.writer.output).toContain(
@@ -171,14 +171,14 @@ describe('Command', function() {
     });
 
     describe('When spec/support/jasmine-browser.json does not exist', function() {
-      it('creates the file', function() {
+      it('creates the file', async function() {
         const command = new Command({
           jasmineBrowser: {},
           jasmineCore: {},
           console: this.console,
         });
 
-        command.run(['init']);
+        await command.run(['init']);
 
         const actualContents = fs.readFileSync(
           'spec/support/jasmine-browser.json',
@@ -189,7 +189,7 @@ describe('Command', function() {
     });
 
     describe('When spec/support/jasmine-browser.json already exists', function() {
-      it('does not create the file', function() {
+      it('does not create the file', async function() {
         const command = new Command({
           jasmineBrowser: {},
           jasmineCore: {},
@@ -201,7 +201,7 @@ describe('Command', function() {
           'initial contents'
         );
 
-        command.run(['init']);
+        await command.run(['init']);
 
         const actualContents = fs.readFileSync(
           'spec/support/jasmine-browser.json',
@@ -213,14 +213,14 @@ describe('Command', function() {
   });
 
   describe('help', function() {
-    it('wraps the help text to 80 columns', function() {
+    it('wraps the help text to 80 columns', async function() {
       const command = new Command({
         jasmineBrowser: {},
         jasmineCore: {},
         console: this.console,
       });
 
-      command.run(['help']);
+      await command.run(['help']);
 
       const lines = this.writer.output.split('\n');
       expect(lines.length).toBeGreaterThan(0);
