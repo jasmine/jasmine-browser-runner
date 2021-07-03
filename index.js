@@ -1,12 +1,11 @@
-const ConsoleReporter = require('jasmine').ConsoleReporter,
+const DefaultReporter = require('./lib/default_reporter'),
   webdriverModule = require('./lib/webdriver'),
-  util = require('util'),
   Server = require('./lib/server'),
   Runner = require('./lib/runner');
 
 function createReporters(options) {
   if (!options.reporters) {
-    return createDefaultReporter(options);
+    return [new DefaultReporter(options)];
   }
 
   const result = [];
@@ -23,17 +22,6 @@ function createReporters(options) {
   }
 
   return result;
-}
-
-function createDefaultReporter(options) {
-  const reporter = new ConsoleReporter();
-  reporter.setOptions({
-    print: function() {
-      process.stdout.write(util.format.apply(this, arguments));
-    },
-    showColors: options.color === 'undefined' ? true : options.color,
-  });
-  return [reporter];
 }
 
 /**
@@ -108,4 +96,5 @@ module.exports = {
   },
   Server,
   Runner,
+  DefaultReporter,
 };

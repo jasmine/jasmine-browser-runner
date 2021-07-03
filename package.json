@@ -41,7 +41,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "glob": "^7.1.7",
-    "jasmine": "^3.6.0",
+    "jasmine": "^3.8.0",
     "jasmine-core": "^3.6.0",
     "selenium-webdriver": "^4.0.0-alpha.1"
   },

@@ -1,0 +1,12 @@
+{
+  "srcDir": "src",
+  "srcFiles": [],
+  "specDir": "spec",
+  "specFiles": ["aSpec.js"],
+  "helpers": [],
+  "reporters": ["./spec/fixtures/random/order_reporter", "./lib/default_reporter"],
+  "random": true,
+  "browser": {
+    "name": "firefox"
+  }
+}

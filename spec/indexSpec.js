@@ -1,5 +1,4 @@
-const { runSpecs } = require('../');
-const { ConsoleReporter } = require('jasmine');
+const { runSpecs, DefaultReporter } = require('../');
 const CompletionReporter = require('jasmine/lib/reporters/completion_reporter');
 
 describe('index', function() {
@@ -105,7 +104,7 @@ describe('index', function() {
     });
 
     describe('Specifying the reporter that reports to the user', function() {
-      it('uses the ConsoleReporter when no reporter is specified', async function() {
+      it('uses the DefaultReporter when no reporter is specified', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
           run: async () => ({}),
         });
@@ -115,14 +114,13 @@ describe('index', function() {
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
         );
 
-        expect(Runner).toHaveBeenCalledWith(
-          jasmine.objectContaining({
-            reporters: [jasmine.any(ConsoleReporter)],
-          })
-        );
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.any(DefaultReporter),
+        ]);
       });
 
-      it('does not use the ConsoleReporter when reporters are specified', async function() {
+      it('does not use the DefaultReporter when reporters are specified', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
           run: async () => ({}),
         });
@@ -147,7 +145,7 @@ describe('index', function() {
           {
             reporters: [
               'jasmine/lib/reporters/completion_reporter',
-              'jasmine/lib/reporters/console_reporter',
+              './lib/default_reporter',
             ],
           },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
@@ -156,7 +154,7 @@ describe('index', function() {
         expect(Runner).toHaveBeenCalled();
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
           jasmine.any(CompletionReporter),
-          jasmine.any(ConsoleReporter),
+          jasmine.any(DefaultReporter),
         ]);
       });
 
