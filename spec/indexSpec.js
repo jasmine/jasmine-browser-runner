@@ -24,6 +24,7 @@ describe('index', function() {
           buildWebdriver: buildStubWebdriver,
           setExitCode: () => {},
         });
+        await Promise.resolve();
         await server.start.calls.mostRecent().returnValue;
 
         expect(runner.run).toHaveBeenCalledWith({
@@ -48,6 +49,8 @@ describe('index', function() {
           buildWebdriver: buildStubWebdriver,
           setExitCode: () => {},
         });
+        await Promise.resolve();
+        expect(server.start).toHaveBeenCalled();
         await server.start.calls.mostRecent().returnValue;
 
         expect(runner.run).toHaveBeenCalledWith({
@@ -72,6 +75,7 @@ describe('index', function() {
           buildWebdriver: buildStubWebdriver,
           setExitCode: () => {},
         });
+        await Promise.resolve();
         await server.start.calls.mostRecent().returnValue;
 
         expect(runner.run).toHaveBeenCalledWith({
@@ -95,6 +99,7 @@ describe('index', function() {
           buildWebdriver: buildStubWebdriver,
           setExitCode: () => {},
         });
+        await Promise.resolve();
         await server.start.calls.mostRecent().returnValue;
 
         expect(runner.run).toHaveBeenCalledWith({
@@ -126,7 +131,7 @@ describe('index', function() {
         });
 
         await runSpecs(
-          { reporters: ['jasmine/lib/reporters/completion_reporter'] },
+          { reporters: ['jasmine/lib/reporters/completion_reporter.js'] },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
         );
 
@@ -144,8 +149,8 @@ describe('index', function() {
         await runSpecs(
           {
             reporters: [
-              'jasmine/lib/reporters/completion_reporter',
-              './lib/default_reporter',
+              'jasmine/lib/reporters/completion_reporter.js',
+              './lib/default_reporter.js',
             ],
           },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
@@ -155,6 +160,24 @@ describe('index', function() {
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
           jasmine.any(CompletionReporter),
           jasmine.any(DefaultReporter),
+        ]);
+      });
+
+      it('supports reporters that are ES modules', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+
+        await runSpecs(
+          {
+            reporters: ['./spec/fixtures/esmReporter/reporter.js'],
+          },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.objectContaining({ isEsmReporter: true }),
         ]);
       });
 

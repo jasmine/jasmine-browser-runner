@@ -1,18 +1,25 @@
 const DefaultReporter = require('./lib/default_reporter'),
   webdriverModule = require('./lib/webdriver'),
   Server = require('./lib/server'),
-  Runner = require('./lib/runner');
+  Runner = require('./lib/runner'),
+  ModuleLoader = require('./lib/moduleLoader');
 
-function createReporters(options) {
+async function createReporters(options) {
   if (!options.reporters) {
     return [new DefaultReporter(options)];
   }
 
   const result = [];
+  const loader = new ModuleLoader();
 
   for (const reporterName of options.reporters) {
     try {
-      const Reporter = require(reporterName);
+      // TODO: Where should relative imports be relative to?
+      // For now, they'll be relative to this module like they were before,
+      // but that's probably not what anyone actually using relative imports
+      // wants.
+      const fullPath = require.resolve(reporterName);
+      const Reporter = await loader.load(fullPath);
       result.push(new Reporter());
     } catch (e) {
       throw new Error(
@@ -61,7 +68,7 @@ module.exports = {
     const server = new ServerClass(options);
     const webdriver = buildWebdriver(options.browser);
 
-    const reporters = createReporters(options);
+    const reporters = await createReporters(options);
     const useSauce = options.browser && options.browser.useSauce;
     const portRequest = useSauce ? 5555 : 0;
     await server.start({ port: portRequest });

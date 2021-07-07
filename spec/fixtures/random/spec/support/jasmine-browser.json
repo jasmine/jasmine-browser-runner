@@ -4,7 +4,7 @@
   "specDir": "spec",
   "specFiles": ["aSpec.js"],
   "helpers": [],
-  "reporters": ["./spec/fixtures/random/order_reporter", "./lib/default_reporter"],
+  "reporters": ["./spec/fixtures/random/order_reporter.js", "./lib/default_reporter.js"],
   "random": true,
   "browser": {
     "name": "firefox"
