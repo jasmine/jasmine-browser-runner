@@ -21,7 +21,7 @@ describe('loadConfig', function() {
     await expectAsync(
       loadConfig('.', { config: 'no/such.json' })
     ).toBeRejectedWithError(
-      /^Could not find configuration file.\nTried:\n\* .*no\/such.json/gm
+      /^Could not find configuration file.\r?\nTried:\r?\n\* .*no[/\\]such.json/gm
     );
   });
 
@@ -44,11 +44,11 @@ describe('loadConfig', function() {
       });
 
       describe('and spec/support/jasmine-browser.json is also absent', function() {
-        it('thorws an error', async function() {
+        it('throws an error', async function() {
           await expectAsync(
             loadConfig('spec/fixtures/loadConfig/none', {})
           ).toBeRejectedWithError(
-            /^Could not find configuration file.\nTried:\n\* .*spec\/fixtures\/loadConfig\/none\/spec\/support\/jasmine-browser.js\n\* .*spec\/fixtures\/loadConfig\/none\/spec\/support\/jasmine-browser.json/
+            /^Could not find configuration file.\r?\nTried:\r?\n\* .*spec[\\/]fixtures[\\/]loadConfig[\\/]none[\\/]spec[\\/]support[\\/]jasmine-browser.js\n\* .*spec[\\/]fixtures[\\/]loadConfig[\\/]none[\\/]spec[\\/]support[\\/]jasmine-browser.json/
           );
         });
       });
