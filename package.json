@@ -4,6 +4,9 @@
   "description": "Serve and run your Jasmine specs in a browser",
   "main": "index.js",
   "bin": "bin/jasmine-browser",
+  "exports": {
+    "./": "index.js"
+  },
   "files": [
     "MIT.LICENSE",
     "README.md",
