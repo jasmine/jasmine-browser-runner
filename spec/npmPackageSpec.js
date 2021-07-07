@@ -1,11 +1,17 @@
-describe('npm package', function() {
-  const path = require('path'),
-    temp = require('temp').track(),
-    fs = require('fs');
+const path = require('path'),
+  temp = require('temp').track(),
+  fs = require('fs'),
+  shell = require('shelljs');
 
+describe('npm package', function() {
   beforeAll(function() {
-    const shell = require('shelljs'),
-      pack = shell.exec('npm pack', { silent: true });
+    this.hasTar = shell.exec('tar --help', { silent: true }).code === 0;
+
+    if (!this.hasTar) {
+      return;
+    }
+
+    const pack = shell.exec('npm pack', { silent: true });
 
     this.tarball = pack.stdout.split('\n')[0];
     this.tmpDir = temp.mkdirSync(); // automatically deleted on exit
@@ -20,10 +26,16 @@ describe('npm package', function() {
   });
 
   afterAll(function() {
-    fs.unlinkSync(this.tarball);
+    if (this.tarball) {
+      fs.unlinkSync(this.tarball);
+    }
   });
 
   it('does not have any unexpected files in the package directory', function() {
+    if (!this.hasTar) {
+      pending('System does not appear to have a tar command');
+    }
+
     const files = fs.readdirSync(path.resolve(this.tmpDir, 'package'));
     files.sort();
     expect(files).toEqual([
@@ -38,12 +50,20 @@ describe('npm package', function() {
   });
 
   it('only has jasmine-browser in the bin dir', function() {
+    if (!this.hasTar) {
+      pending('System does not appear to have a tar command');
+    }
+
     const files = fs.readdirSync(path.resolve(this.tmpDir, 'package/bin'));
     files.sort();
     expect(files).toEqual(['jasmine-browser']);
   });
 
   it('only has JS files in the lib dir', function() {
+    if (!this.hasTar) {
+      pending('System does not appear to have a tar command');
+    }
+
     const files = [];
 
     function getFiles(dir) {

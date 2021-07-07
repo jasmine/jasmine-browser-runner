@@ -1,5 +1,4 @@
 const path = require('path'),
-  os = require('os'),
   http = require('http'),
   Server = require('../lib/server');
 
@@ -24,6 +23,10 @@ function getFile(url) {
       .on('error', reject);
   });
 }
+
+// Note: various payload specs check for \r?\n instead of either \n or os.EOL
+// because the payloads sometimes contains \r\n and sometimes \n on Windows.
+// (TODO why?)
 
 describe('server', function() {
   beforeEach(function() {
@@ -255,25 +258,25 @@ describe('server', function() {
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
-      expect(jazz).toEqual('Jazzy' + os.EOL);
+      expect(jazz).toMatch(/^Jazzy\r?\n$/);
 
       var min = await getFile(baseUrl + '/__jasmine__/min.js');
-      expect(min).toEqual('minified' + os.EOL);
+      expect(min).toMatch(/^minified\r?\n$/);
 
       var bootboot = await getFile(baseUrl + '/__boot__/bootboot.js');
-      expect(bootboot).toEqual('booot' + os.EOL);
+      expect(bootboot).toMatch(/^booot\r?\n$/);
 
       var boot2 = await getFile(baseUrl + '/__boot__/boot2.js');
-      expect(boot2).toEqual('Boot the second' + os.EOL);
+      expect(boot2).toMatch(/^Boot the second\r?\n$/);
 
       var css = await getFile(baseUrl + '/__jasmine__/css.css');
-      expect(css).toEqual('CSS' + os.EOL);
+      expect(css).toMatch(/^CSS\r?\n$/);
 
       var two = await getFile(baseUrl + '/__jasmine__/two.css');
-      expect(two).toEqual('two csses' + os.EOL);
+      expect(two).toMatch(/^two csses\r?\n$/);
 
       var image = await getFile(baseUrl + '/__images__/things.txt');
-      expect(image).toEqual("pretend I'm an image" + os.EOL);
+      expect(image).toMatch(/^pretend I'm an image\r?\n$/);
     });
 
     it('starts a server and serves the project files', async function() {
@@ -281,10 +284,10 @@ describe('server', function() {
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var thing1 = await getFile(baseUrl + '/__src__/thing1.js');
-      expect(thing1).toEqual('thing the first' + os.EOL);
+      expect(thing1).toMatch(/^thing the first\r?\n$/);
 
       var spec = await getFile(baseUrl + '/__spec__/iLikeSpec.js');
-      expect(spec).toEqual('I like specs' + os.EOL);
+      expect(spec).toMatch(/^I like specs\r?\n$/);
     });
 
     it('serves an html file to run the specs', async function() {
