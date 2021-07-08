@@ -197,6 +197,23 @@ describe('index', function() {
           /Failed to register reporter \.\/no\/such\/module: Cannot find module/
         );
       });
+
+      it('supports passing an already-instantiated reporter', async function() {
+        const reporter = {};
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+
+        await runSpecs(
+          {
+            reporters: [reporter],
+          },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters[0]).toBe(reporter);
+      });
     });
 
     describe('When the run completes', function() {

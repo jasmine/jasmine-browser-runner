@@ -12,19 +12,23 @@ async function createReporters(options) {
   const result = [];
   const loader = new ModuleLoader();
 
-  for (const reporterName of options.reporters) {
-    try {
-      // TODO: Where should relative imports be relative to?
-      // For now, they'll be relative to this module like they were before,
-      // but that's probably not what anyone actually using relative imports
-      // wants.
-      const fullPath = require.resolve(reporterName);
-      const Reporter = await loader.load(fullPath);
-      result.push(new Reporter());
-    } catch (e) {
-      throw new Error(
-        `Failed to register reporter ${reporterName}: ${e.message}`
-      );
+  for (const reporterOrModuleName of options.reporters) {
+    if (typeof reporterOrModuleName === 'object') {
+      result.push(reporterOrModuleName);
+    } else {
+      try {
+        // TODO: Where should relative imports be relative to?
+        // For now, they'll be relative to this module like they were before,
+        // but that's probably not what anyone actually using relative imports
+        // wants.
+        const fullPath = require.resolve(reporterOrModuleName);
+        const Reporter = await loader.load(fullPath);
+        result.push(new Reporter());
+      } catch (e) {
+        throw new Error(
+          `Failed to register reporter ${reporterOrModuleName}: ${e.message}`
+        );
+      }
     }
   }
 
