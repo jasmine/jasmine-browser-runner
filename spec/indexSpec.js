@@ -181,6 +181,33 @@ describe('index', function() {
         ]);
       });
 
+      it('resolves reporters relative to the current working directory', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+
+        process.chdir('spec');
+        try {
+          await runSpecs(
+            {
+              reporters: ['./fixtures/esmReporter/reporter.js'],
+            },
+            {
+              Runner,
+              Server: buildSpyServer,
+              buildWebdriver: buildStubWebdriver,
+            }
+          );
+        } finally {
+          process.chdir('..');
+        }
+
+        expect(Runner).toHaveBeenCalled();
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.objectContaining({ isEsmReporter: true }),
+        ]);
+      });
+
       it('rejects the promise when a reporter cannot be instantiated', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
           run: async () => ({}),

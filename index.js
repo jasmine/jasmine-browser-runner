@@ -10,19 +10,16 @@ async function createReporters(options) {
   }
 
   const result = [];
-  const loader = new ModuleLoader();
+  // Resolve relative paths relative to the cwd, rather than the default
+  // which is the directory containing the moduleLoader module.
+  const loader = new ModuleLoader(process.cwd());
 
   for (const reporterOrModuleName of options.reporters) {
     if (typeof reporterOrModuleName === 'object') {
       result.push(reporterOrModuleName);
     } else {
       try {
-        // TODO: Where should relative imports be relative to?
-        // For now, they'll be relative to this module like they were before,
-        // but that's probably not what anyone actually using relative imports
-        // wants.
-        const fullPath = require.resolve(reporterOrModuleName);
-        const Reporter = await loader.load(fullPath);
+        const Reporter = await loader.load(reporterOrModuleName);
         result.push(new Reporter());
       } catch (e) {
         throw new Error(
