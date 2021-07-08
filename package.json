@@ -3,7 +3,7 @@
   "version": "0.6.0",
   "description": "Serve and run your Jasmine specs in a browser",
   "main": "index.js",
-  "bin": "bin/jasmine-browser",
+  "bin": "bin/jasmine-browser-runner",
   "exports": {
     "./": "index.js"
   },

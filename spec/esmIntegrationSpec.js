@@ -7,7 +7,7 @@ describe('ESM integration', function() {
       let timedOut = false;
       let timerId;
       const jasmineBrowserProcess = exec(
-        'node ../../../bin/jasmine-browser runSpecs',
+        'node ../../../bin/jasmine-browser-runner runSpecs',
         { cwd: 'spec/fixtures/esmIntegration' },
         function(err, stdout, stderr) {
           try {

@@ -49,14 +49,14 @@ describe('npm package', function() {
     ]);
   });
 
-  it('only has jasmine-browser in the bin dir', function() {
+  it('only has jasmine-browser-runner in the bin dir', function() {
     if (!this.hasTar) {
       pending('System does not appear to have a tar command');
     }
 
     const files = fs.readdirSync(path.resolve(this.tmpDir, 'package/bin'));
     files.sort();
-    expect(files).toEqual(['jasmine-browser']);
+    expect(files).toEqual(['jasmine-browser-runner']);
   });
 
   it('only has JS files in the lib dir', function() {

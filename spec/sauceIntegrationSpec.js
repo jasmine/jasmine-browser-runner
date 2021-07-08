@@ -117,7 +117,7 @@ describe('Sauce parameter handling', function() {
         console.log('Sauce test may take a minute or two');
 
         const jasmineBrowserProcess = exec(
-          `"${jasmineBrowserDir}/bin/jasmine-browser" runSpecs --config=jasmine-browser.json`,
+          `"${jasmineBrowserDir}/bin/jasmine-browser-runner" runSpecs --config=jasmine-browser.json`,
           { cwd: suiteDir },
           function(err, stdout, stderr) {
             try {

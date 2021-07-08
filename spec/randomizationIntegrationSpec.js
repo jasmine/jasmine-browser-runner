@@ -28,7 +28,7 @@ describe('Randomization integration', function() {
           let timedOut = false;
           let timerId;
           const jasmineBrowserProcess = exec(
-            'node ../../../bin/jasmine-browser runSpecs --seed=1234',
+            'node ../../../bin/jasmine-browser-runner runSpecs --seed=1234',
             { cwd: 'spec/fixtures/random' },
             function(err, stdout, stderr) {
               try {
