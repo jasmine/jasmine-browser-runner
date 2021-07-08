@@ -6,7 +6,8 @@ describe('Randomization integration', function() {
     async function() {
       const firstStdout = await run();
       expect(firstStdout).toContain(
-        'Randomized with seed 1234' + ' (jasmine-browser runSpecs --seed=1234'
+        'Randomized with seed 1234' +
+          ' (jasmine-browser-runner runSpecs --seed=1234'
       );
       const secondStdout = await run();
       const firstWithoutPort = removeVariableParts(firstStdout);
