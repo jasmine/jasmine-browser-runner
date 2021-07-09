@@ -67,39 +67,43 @@ module.exports = {
       deps.buildWebdriver || webdriverModule.buildWebdriver;
     const setExitCode = deps.setExitCode || (code => (process.exitCode = code));
     const server = new ServerClass(options);
-    const webdriver = buildWebdriver(options.browser);
 
     const reporters = await createReporters(options);
     const useSauce = options.browser && options.browser.useSauce;
     const portRequest = useSauce ? 5555 : 0;
     await server.start({ port: portRequest });
-    const host = `http://localhost:${server.port()}`;
-    const runner = new RunnerClass({ webdriver, reporters, host });
-
-    console.log('Running tests in the browser...');
 
     try {
-      const details = await runner.run(options);
+      const webdriver = buildWebdriver(options.browser);
 
-      if (details.overallStatus === 'passed') {
-        setExitCode(0);
-      } else if (details.overallStatus === 'incomplete') {
-        setExitCode(2);
-      } else {
-        setExitCode(1);
+      try {
+        const host = `http://localhost:${server.port()}`;
+        const runner = new RunnerClass({ webdriver, reporters, host });
+
+        console.log('Running tests in the browser...');
+
+        const details = await runner.run(options);
+
+        if (details.overallStatus === 'passed') {
+          setExitCode(0);
+        } else if (details.overallStatus === 'incomplete') {
+          setExitCode(2);
+        } else {
+          setExitCode(1);
+        }
+
+        return details;
+      } finally {
+        if (useSauce) {
+          await webdriver.executeScript(
+            `sauce:job-result=${process.exitCode === 0}`
+          );
+        }
+
+        await webdriver.close();
       }
-
-      return details;
     } finally {
       await server.stop();
-
-      if (useSauce) {
-        await webdriver.executeScript(
-          `sauce:job-result=${process.exitCode === 0}`
-        );
-      }
-
-      await webdriver.close();
     }
   },
   Server,

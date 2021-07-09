@@ -414,6 +414,64 @@ describe('index', function() {
         expect(server.stop).toHaveBeenCalled();
       });
     });
+
+    it('does not launch a browser if the server fails to start', async function() {
+      const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
+      server.start.and.returnValue(Promise.reject(new Error('nope')));
+      const runner = jasmine.createSpyObj('Runner', ['run']);
+      const buildWebdriver = jasmine
+        .createSpy('buildWebdriver')
+        .and.callFake(buildStubWebdriver);
+
+      const promise = runSpecs(
+        {},
+        {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver,
+          setExitCode: () => {},
+        }
+      );
+
+      await expectAsync(promise).toBeRejected();
+      expect(buildWebdriver).not.toHaveBeenCalled();
+    });
+
+    it('stops the browser and server if the runner fails to start', async function() {
+      const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
+      server.start.and.returnValue(Promise.resolve(server));
+      server.stop.and.returnValue(Promise.resolve());
+      server.port.and.returnValue(0);
+      const webdriver = jasmine.createSpyObj('webdriver', [
+        'close',
+        'executeScript',
+      ]);
+      webdriver.close.and.returnValue(Promise.resolve());
+
+      const promise = runSpecs(
+        {},
+        {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            throw new Error('nope');
+          },
+          buildWebdriver: function() {
+            return webdriver;
+          },
+          setExitCode: () => {},
+        }
+      );
+
+      await expectAsync(promise).toBeRejected();
+      expect(webdriver.close).toHaveBeenCalled();
+      expect(server.stop).toHaveBeenCalled();
+    });
   });
 });
 
