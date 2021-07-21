@@ -2,7 +2,7 @@ const util = require('util'),
   path = require('path'),
   Writable = require('stream').Writable,
   Command = require('../lib/command'),
-  defaultConfig = require('../lib/default_config'),
+  { defaultConfig } = require('../lib/config'),
   fs = require('fs'),
   os = require('os');
 
