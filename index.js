@@ -84,12 +84,16 @@ module.exports = {
 
         const details = await runner.run(options);
 
+        // Use 0 only for complete success
+        // Avoid 1 because Node uses that for unhandled exceptions etc., and
+        // some users have CI systems that want to distinguish between spec
+        // failures and crashes.
         if (details.overallStatus === 'passed') {
           setExitCode(0);
         } else if (details.overallStatus === 'incomplete') {
           setExitCode(2);
         } else {
-          setExitCode(1);
+          setExitCode(3);
         }
 
         return details;
