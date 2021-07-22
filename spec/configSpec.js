@@ -67,7 +67,6 @@ describe('config', function() {
         specFiles: ['**/*[sS]pec.?(m)js'],
         helpers: ['helpers/**/*.?(m)js'],
         random: true,
-        stopSpecOnExpectationFailure: false,
         browser: {
           name: 'firefox',
         },
