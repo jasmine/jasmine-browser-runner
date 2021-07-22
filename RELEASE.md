@@ -3,7 +3,9 @@ To make a release:
 1. Make sure that all specs are green on CI.
 2. Generate release notes in `release_notes` using the Anchorman gem and edit
 them.
-    * Include a table of supported Node versions and browsers.
+    * Include a table of supported Node versions and browsers. Check Saucelabs
+      for the current version of evergreen browsers (everything that doesn't
+      have a version specified in jasmine-core's scripts/run-all-browsers).
 3. Update the version in `package.json`.
 4. Commit the release notes and `package.json` change.
 5. Run `npm adduser` to save your credentials locally.
