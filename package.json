@@ -9,6 +9,7 @@
     "README.md",
     "package.json",
     "index.js",
+    "config.js.ejs",
     "run.html.ejs",
     "bin/*.js",
     "lib/**/*.js"

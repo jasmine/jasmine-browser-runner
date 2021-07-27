@@ -42,6 +42,7 @@ describe('npm package', function() {
       'MIT.LICENSE',
       'README.md',
       'bin',
+      'config.js.ejs',
       'index.js',
       'lib',
       'package.json',
