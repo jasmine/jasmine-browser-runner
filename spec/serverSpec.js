@@ -106,7 +106,7 @@ describe('server', function() {
   });
 
   describe('#jasmineJs', function() {
-    it('includes both core files and the ES module aware script loader', function() {
+    it('includes both core files and -browser-runner additions', function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -118,11 +118,12 @@ describe('server', function() {
       });
 
       const files = server.jasmineJs();
-      expect(files.length).toEqual(5);
+      expect(files.length).toEqual(6);
       expect(files).toEqual([
         '/__jasmine__/jazz.js',
         '/__jasmine__/min.js',
         '/__boot__/bootboot.js',
+        '/__config__/config.js',
         '/__boot__/boot2.js',
         '/__support__/loadEsModule.js',
       ]);
@@ -254,7 +255,11 @@ describe('server', function() {
     });
 
     it('starts a server and serves the Jasmine files', async function() {
-      await this.startServer();
+      await this.startServer({
+        env: {
+          someProp: 'someVal',
+        },
+      });
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
@@ -265,6 +270,11 @@ describe('server', function() {
 
       var bootboot = await getFile(baseUrl + '/__boot__/bootboot.js');
       expect(bootboot).toMatch(/^booot\r?\n$/);
+
+      var config = await getFile(baseUrl + '/__config__/config.js');
+      expect(config).toContain(
+        'jasmine.getEnv().configure({"someProp":"someVal"})'
+      );
 
       var boot2 = await getFile(baseUrl + '/__boot__/boot2.js');
       expect(boot2).toMatch(/^Boot the second\r?\n$/);
@@ -277,6 +287,17 @@ describe('server', function() {
 
       var image = await getFile(baseUrl + '/__images__/things.txt');
       expect(image).toMatch(/^pretend I'm an image\r?\n$/);
+    });
+
+    it('uses an empty config when none is specified', async function() {
+      await this.startServer({
+        env: undefined,
+      });
+
+      const baseUrl = `http://localhost:${this.server.port()}`;
+
+      var config = await getFile(baseUrl + '/__config__/config.js');
+      expect(config).toContain('jasmine.getEnv().configure({})');
     });
 
     it('starts a server and serves the project files', async function() {
@@ -298,6 +319,7 @@ describe('server', function() {
       expect(html).toContain('/__jasmine__/jazz.js');
       expect(html).toContain('/__jasmine__/min.js');
       expect(html).toContain('/__boot__/bootboot.js');
+      expect(html).toContain('/__config__/config.js');
       expect(html).toContain('/__boot__/boot2.js');
       expect(html).toContain('/__jasmine__/css.css');
       expect(html).toContain('/__jasmine__/two.css');

@@ -1,6 +1,13 @@
 const shell = require('shelljs'),
   pkg = require('../package.json');
 
+const coreVersion = pkg.dependencies['jasmine-core'];
+
+if (coreVersion.indexOf('git') !== -1 || coreVersion.indexOf('file:') !== -1) {
+  console.log('Incorrect jasmine-core version:', coreVersion);
+  process.exit(1);
+}
+
 function exec(string) {
   const result = shell.exec(string);
 
