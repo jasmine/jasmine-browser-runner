@@ -139,6 +139,31 @@ describe('Command', function() {
 
       await expectAsync(command.run(['runSpecs'])).toBeRejectedWith(error);
     });
+
+    describe('when --fail-fast is specified', function() {
+      it('sets the stopOnSpecFailure and stopSpecOnExpectationFailure env options to true', async function() {
+        const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+            'runSpecs',
+          ]),
+          command = new Command({
+            jasmineBrowser: fakeJasmineBrowser,
+            console: this.console,
+            baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+          });
+        fakeJasmineBrowser.runSpecs.and.returnValue(Promise.resolve());
+
+        await command.run(['runSpecs', '--fail-fast']);
+
+        expect(fakeJasmineBrowser.runSpecs).toHaveBeenCalledWith(
+          jasmine.objectContaining({
+            env: {
+              stopOnSpecFailure: true,
+              stopSpecOnExpectationFailure: true,
+            },
+          })
+        );
+      });
+    });
   });
 
   describe('version', function() {
@@ -228,6 +253,32 @@ describe('Command', function() {
       for (const line of lines) {
         expect(line.length).toBeLessThanOrEqual(80);
       }
+    });
+
+    it('includes the --no- prefix for reversable boolean options', async function() {
+      const command = new Command({
+        jasmineBrowser: {},
+        jasmineCore: {},
+        console: this.console,
+      });
+
+      await command.run(['help']);
+
+      expect(this.writer.output).toContain('--[no-]clear-reporters');
+      expect(this.writer.output).toContain('--[no-]color');
+      expect(this.writer.output).toContain('--[no-]random');
+    });
+
+    it('omits the --no- prefix for the fail-fast option', async function() {
+      const command = new Command({
+        jasmineBrowser: {},
+        jasmineCore: {},
+        console: this.console,
+      });
+
+      await command.run(['help']);
+
+      expect(this.writer.output).toContain('--fail-fast ');
     });
   });
 });
