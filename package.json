@@ -43,7 +43,7 @@
     "express": "^4.16.4",
     "glob": "^7.1.7",
     "jasmine": "^3.8.0",
-    "jasmine-core": "github:jasmine/jasmine",
+    "jasmine-core": "git://github.com/jasmine/jasmine.git",
     "selenium-webdriver": "^4.0.0-alpha.1"
   },
   "devDependencies": {

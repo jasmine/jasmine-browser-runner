@@ -1,0 +1,10 @@
+{
+  "srcDir": ".",
+  "srcFiles": [],
+  "specDir": "spec",
+  "specFiles": [
+    "**/*Spec.js"
+  ],
+  "helpers": [],
+  "random": false
+}

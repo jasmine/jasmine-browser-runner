@@ -370,8 +370,6 @@ describe('Runner', function() {
     runner.run({
       random: true,
       seed: 435,
-      failFast: false,
-      stopOnFailure: false,
       filter: 'specs and things',
     });
     expect(driver.get).toHaveBeenCalledWith(
@@ -384,8 +382,6 @@ describe('Runner', function() {
     expect(urlParams).toEqual({
       random: 'true',
       seed: '435',
-      failFast: 'false',
-      throwFailures: 'false',
       spec: 'specs and things',
     });
   });
