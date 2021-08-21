@@ -295,7 +295,7 @@ describe('index', function() {
         expect(setExitCode).toHaveBeenCalledWith(0);
       });
 
-      it('sets the exit code to 3 when the run fails', async function() {
+      it('sets the exit code to 1 when the run fails', async function() {
         const server = buildSpyServer();
         const runner = jasmine.createSpyObj('Runner', ['run']);
         runner.run.and.returnValue(
@@ -317,7 +317,7 @@ describe('index', function() {
           }
         );
 
-        expect(setExitCode).toHaveBeenCalledWith(3);
+        expect(setExitCode).toHaveBeenCalledWith(1);
       });
 
       it('sets the exit code to 2 when the run is incomplete', async function() {
