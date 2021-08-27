@@ -1,5 +1,5 @@
 const { runSpecs, DefaultReporter } = require('../');
-const CompletionReporter = require('jasmine/lib/reporters/completion_reporter');
+const CustomReporter = require('./fixtures/custom_reporter');
 
 describe('index', function() {
   beforeEach(function() {
@@ -131,13 +131,13 @@ describe('index', function() {
         });
 
         await runSpecs(
-          { reporters: ['jasmine/lib/reporters/completion_reporter.js'] },
+          { reporters: ['./spec/fixtures/custom_reporter.js'] },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
         );
 
         expect(Runner).toHaveBeenCalled();
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
-          jasmine.any(CompletionReporter),
+          jasmine.any(CustomReporter),
         ]);
       });
 
@@ -149,7 +149,7 @@ describe('index', function() {
         await runSpecs(
           {
             reporters: [
-              'jasmine/lib/reporters/completion_reporter.js',
+              './spec/fixtures/custom_reporter.js',
               './lib/default_reporter.js',
             ],
           },
@@ -158,7 +158,7 @@ describe('index', function() {
 
         expect(Runner).toHaveBeenCalled();
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
-          jasmine.any(CompletionReporter),
+          jasmine.any(CustomReporter),
           jasmine.any(DefaultReporter),
         ]);
       });
