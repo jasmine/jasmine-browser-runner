@@ -209,7 +209,8 @@ describe('Command', function() {
           'spec/support/jasmine-browser.json',
           { encoding: 'utf8' }
         );
-        expect(actualContents).toEqual(defaultConfig);
+        expect(actualContents).toEqual(defaultConfig());
+        expect(JSON.parse(actualContents).srcFiles).toEqual(['**/*.?(m)js']);
       });
     });
 

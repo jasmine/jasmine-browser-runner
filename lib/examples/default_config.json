@@ -1,0 +1,17 @@
+{
+  "srcDir": "src",
+  "srcFiles": [
+    "**/*.?(m)js"
+  ],
+  "specDir": "spec",
+  "specFiles": [
+    "**/*[sS]pec.?(m)js"
+  ],
+  "helpers": [
+    "helpers/**/*.?(m)js"
+  ],
+  "env": {},
+  "browser": {
+    "name": "firefox"
+  }
+}
