@@ -10,7 +10,11 @@
   "helpers": [
     "helpers/**/*.?(m)js"
   ],
-  "env": {},
+  "env": {
+    "stopSpecOnExpectationFailure": false,
+    "stopOnSpecFailure": false,
+    "random": true
+  },
   "browser": {
     "name": "firefox"
   }
