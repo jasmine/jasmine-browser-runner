@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jasmine/jasmine-browser.git"
+    "url": "git+https://github.com/jasmine/jasmine-browser-runner.git"
   },
   "keywords": [
     "jasmine",
@@ -35,9 +35,9 @@
   "author": "Slackersoft",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jasmine/jasmine-browser/issues"
+    "url": "https://github.com/jasmine/jasmine-browser-runner/issues"
   },
-  "homepage": "https://github.com/jasmine/jasmine-browser#readme",
+  "homepage": "https://github.com/jasmine/jasmine-browser-runner#readme",
   "dependencies": {
     "ejs": "^2.6.1",
     "express": "^4.16.4",
