@@ -60,7 +60,7 @@ describe('npm package', function() {
     expect(files).toEqual(['jasmine-browser-runner']);
   });
 
-  it('only has JS files in the lib dir', function() {
+  it('only has JS files and default config in the lib dir', function() {
     if (!this.hasTar) {
       pending('System does not appear to have a tar command');
     }
@@ -82,7 +82,7 @@ describe('npm package', function() {
     getFiles(path.resolve(this.tmpDir, 'package/lib'));
 
     for (const file of files) {
-      expect(file).toMatch(/\.(js|css)$/);
+      expect(file).toMatch(/(\.(js|css)|\/default_config.json)$/);
     }
   });
 });

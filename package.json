@@ -12,7 +12,8 @@
     "config.js.ejs",
     "run.html.ejs",
     "bin/*.js",
-    "lib/**/*.js"
+    "lib/**/*.js",
+    "lib/examples/default_config.json"
   ],
   "scripts": {
     "posttest": "eslint bin/* lib spec scripts index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
