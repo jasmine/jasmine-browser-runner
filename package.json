@@ -43,13 +43,16 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "glob": "^7.1.7",
-    "jasmine": "^3.8.0",
-    "jasmine-core": "^3.9.0",
     "selenium-webdriver": "^4.0.0-beta.4"
+  },
+  "peerDependencies": {
+    "jasmine-core": "^3.9.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-plugin-jasmine": "^2.10.1",
+    "jasmine": "^3.9.0",
+    "jasmine-core": "^3.9.0",
     "prettier": "^1.17.1",
     "shelljs": "^0.8.3",
     "temp": "^0.9.4"
