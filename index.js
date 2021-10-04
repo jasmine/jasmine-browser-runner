@@ -108,5 +108,5 @@ module.exports = {
   },
   Server,
   Runner,
-  DefaultReporter: ConsoleReporter, // TODO rename to ConsoleReporter for clarity
+  ConsoleReporter,
 };
