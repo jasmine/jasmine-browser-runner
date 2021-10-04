@@ -150,7 +150,7 @@ describe('index', function() {
           {
             reporters: [
               './spec/fixtures/custom_reporter.js',
-              './lib/default_reporter.js',
+              './lib/console_reporter.js',
             ],
           },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }

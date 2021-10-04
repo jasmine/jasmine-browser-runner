@@ -163,26 +163,7 @@ describe("ConsoleReporter", function() {
       }
     });
 
-    expect(this.out.getOutput()).toMatch(/Randomized with seed 12345 \(jasmine --random=true --seed=12345\)/);
-  });
-
-  it("allows the seed reproduction command to be overridden", function() {
-    const reporter = new ConsoleReporter("jasmine-some-other-tool");
-    reporter.setOptions({
-      print: this.out.print,
-      randomSeedReproductionCmd: function(seed) {
-        return `jasmine-some-other-tool --randomSeed=${seed}`;
-      }
-    });
-
-    reporter.jasmineDone({
-      order: {
-        random: true,
-        seed: '12345'
-      }
-    });
-
-    expect(this.out.getOutput()).toMatch(/Randomized with seed 12345 \(jasmine-some-other-tool --randomSeed=12345\)/);
+    expect(this.out.getOutput()).toMatch(/Randomized with seed 12345 \(jasmine-browser-runner runSpecs --seed=12345\)/);
   });
 
   it("reports a summary when done (singular spec and time)", function() {
@@ -568,7 +549,7 @@ describe("ConsoleReporter", function() {
       const reporter = new ConsoleReporter();
       reporter.setOptions({
         print: this.out.print,
-        showColors: true
+        color: true
       });
 
       reporter.jasmineStarted();
@@ -580,7 +561,7 @@ describe("ConsoleReporter", function() {
       const reporter = new ConsoleReporter();
       reporter.setOptions({
         print: this.out.print,
-        showColors: true
+        color: true
       });
 
       reporter.specDone({status: "passed"});
@@ -592,7 +573,7 @@ describe("ConsoleReporter", function() {
       const reporter = new ConsoleReporter();
       reporter.setOptions({
         print: this.out.print,
-        showColors: true
+        color: true
       });
 
       reporter.specDone({status: 'disabled'});
@@ -604,7 +585,7 @@ describe("ConsoleReporter", function() {
       const reporter = new ConsoleReporter();
       reporter.setOptions({
         print: this.out.print,
-        showColors: true
+        color: true
       });
 
       reporter.specDone({status: 'failed'});

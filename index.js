@@ -1,4 +1,4 @@
-const DefaultReporter = require('./lib/default_reporter'),
+const ConsoleReporter = require('./lib/console_reporter'),
   webdriverModule = require('./lib/webdriver'),
   Server = require('./lib/server'),
   Runner = require('./lib/runner'),
@@ -6,7 +6,7 @@ const DefaultReporter = require('./lib/default_reporter'),
 
 async function createReporters(options) {
   if (!options.reporters) {
-    return [new DefaultReporter(options)];
+    return [new ConsoleReporter(options)];
   }
 
   const result = [];
@@ -108,5 +108,5 @@ module.exports = {
   },
   Server,
   Runner,
-  DefaultReporter,
+  DefaultReporter: ConsoleReporter, // TODO rename to ConsoleReporter for clarity
 };
