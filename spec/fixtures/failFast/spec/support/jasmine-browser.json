@@ -6,5 +6,6 @@
     "**/*Spec.js"
   ],
   "helpers": [],
-  "random": false
+  "random": false,
+  "browser": "headlessChrome"
 }

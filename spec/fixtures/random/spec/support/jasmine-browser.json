@@ -7,6 +7,6 @@
   "reporters": ["./order_reporter.js", "../../../lib/console_reporter.js"],
   "random": true,
   "browser": {
-    "name": "firefox"
+    "name": "headlessChrome"
   }
 }

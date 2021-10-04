@@ -12,6 +12,6 @@
   ],
   "random": false,
   "browser": {
-    "name": "firefox"
+    "name": "headlessChrome"
   }
 }

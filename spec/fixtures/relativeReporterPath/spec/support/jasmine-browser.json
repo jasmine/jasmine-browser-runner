@@ -3,5 +3,6 @@
   "srcDir": "src",
   "specFiles": ["aSpec.js"],
   "reporters": ["./spec/someReporter.js"],
-  "jsLoader": "require"
+  "jsLoader": "require",
+  "browser": "headlessChrome"
 }
