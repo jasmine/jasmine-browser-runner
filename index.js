@@ -6,7 +6,9 @@ const ConsoleReporter = require('./lib/console_reporter'),
 
 async function createReporters(options) {
   if (!options.reporters) {
-    return [new ConsoleReporter(options)];
+    const reporter = new ConsoleReporter();
+    reporter.setOptions({ color: options.color });
+    return [reporter];
   }
 
   const result = [];

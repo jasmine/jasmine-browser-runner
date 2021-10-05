@@ -97,6 +97,7 @@ describe('ConsoleReporter', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
+      color: false,
     });
 
     reporter.specDone({status: 'passed'});
@@ -119,6 +120,7 @@ describe('ConsoleReporter', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
+      color: false,
     });
 
     reporter.specDone({status: 'failed'});
@@ -130,11 +132,25 @@ describe('ConsoleReporter', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
+      color: false,
     });
 
     reporter.specDone({status: 'pending'});
 
     expect(this.out.getOutput()).toEqual('*');
+  });
+
+  it('colorizes by default', function() {
+    const reporter = new ConsoleReporter();
+    reporter.setOptions({
+      print: this.out.print,
+    });
+
+    reporter.specDone({status: 'passed'});
+    reporter.specDone({status: 'failed'});
+    reporter.specDone({status: 'pending'});
+
+    expect(this.out.getOutput()).toEqual('\x1B[32m.\x1B[0m\x1B[31mF\x1B[0m\x1B[33m*\x1B[0m');
   });
 
   it('alerts user if there are no specs', function() {
