@@ -27,8 +27,8 @@ jobs:
       - run:
           name: Report Node and Yarn versions
           command: echo "Using Node $(node --version) and Yarn $(yarn --version)"
-      - browser-tools/install-firefox
-      - browser-tools/install-geckodriver
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run:
           name: Install dependencies
           command: yarn install
