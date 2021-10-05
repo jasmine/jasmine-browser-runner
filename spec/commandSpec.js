@@ -106,7 +106,7 @@ describe('Command', function() {
       expect(fakeJasmineBrowser.startServer).toHaveBeenCalledWith(options);
     });
 
-    it('propagates errors', async () => {
+    it('propagates errors', async function() {
       const error = new Error('nope'),
         fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'startServer',
@@ -124,7 +124,7 @@ describe('Command', function() {
   });
 
   describe('runSpecs', function() {
-    it('propagates errors', async () => {
+    it('propagates errors', async function() {
       const error = new Error('nope'),
         fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
           'runSpecs',
