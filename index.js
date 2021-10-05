@@ -61,7 +61,7 @@ module.exports = {
   },
   /**
    * Runs the specs.
-   * @param {RunSpecsOptions} options
+   * @param {Configuration} options
    * @return {Promise<JasmineDoneInfo>} A promise that resolves to the {@link https://jasmine.github.io/api/edge/global.html#JasmineDoneInfo|overall result} when the suite has finished running.
    */
   runSpecs: async function(options, deps) {
