@@ -5,30 +5,40 @@ const ConsoleReporter = require('./lib/console_reporter'),
   ModuleLoader = require('./lib/moduleLoader');
 
 async function createReporters(options) {
-  if (!options.reporters) {
-    const reporter = new ConsoleReporter();
-    reporter.setOptions({ color: options.color });
-    return [reporter];
+  const result = [];
+
+  if (options.useConsoleReporter !== false) {
+    const consoleReporter = new ConsoleReporter();
+    consoleReporter.setOptions({ color: options.color });
+    result.push(consoleReporter);
   }
 
-  const result = [];
-  // Resolve relative paths relative to the cwd, rather than the default
-  // which is the directory containing the moduleLoader module.
-  const loader = new ModuleLoader(process.cwd());
+  if (options.reporters) {
+    // Resolve relative paths relative to the cwd, rather than the default
+    // which is the directory containing the moduleLoader module.
+    const loader = new ModuleLoader(process.cwd());
 
-  for (const reporterOrModuleName of options.reporters) {
-    if (typeof reporterOrModuleName === 'object') {
-      result.push(reporterOrModuleName);
-    } else {
-      try {
-        const Reporter = await loader.load(reporterOrModuleName);
-        result.push(new Reporter());
-      } catch (e) {
-        throw new Error(
-          `Failed to register reporter ${reporterOrModuleName}: ${e.message}`
-        );
+    for (const reporterOrModuleName of options.reporters) {
+      if (typeof reporterOrModuleName === 'object') {
+        result.push(reporterOrModuleName);
+      } else {
+        try {
+          const Reporter = await loader.load(reporterOrModuleName);
+          result.push(new Reporter());
+        } catch (e) {
+          throw new Error(
+            `Failed to register reporter ${reporterOrModuleName}: ${e.message}`
+          );
+        }
       }
     }
+  }
+
+  if (result.length === 0) {
+    throw new Error(
+      'No reporters were specified. Either add a reporter or remove ' +
+        '`useConsoleReporter: false`.'
+    );
   }
 
   return result;

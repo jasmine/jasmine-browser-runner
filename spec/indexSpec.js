@@ -109,7 +109,7 @@ describe('index', function() {
     });
 
     describe('Specifying the reporter that reports to the user', function() {
-      it('uses the ConsoleReporter when no reporter is specified', async function() {
+      it('uses the ConsoleReporter by default', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
           run: async () => ({}),
         });
@@ -125,42 +125,71 @@ describe('index', function() {
         ]);
       });
 
-      it('does not use the ConsoleReporter when reporters are specified', async function() {
-        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
-          run: async () => ({}),
+      describe('When custom reporters are specified', function() {
+        it('includes them as well as the ConsoleReporter by default', async function() {
+          const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+            run: async () => ({}),
+          });
+
+          await runSpecs(
+            { reporters: ['./spec/fixtures/custom_reporter.js'] },
+            { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+          );
+
+          expect(Runner).toHaveBeenCalled();
+          expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+            jasmine.any(ConsoleReporter),
+            jasmine.any(CustomReporter),
+          ]);
         });
 
-        await runSpecs(
-          { reporters: ['./spec/fixtures/custom_reporter.js'] },
-          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
-        );
+        it('omits the console reporter when useConsoleReporter is false', async function() {
+          const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+            run: async () => ({}),
+          });
 
-        expect(Runner).toHaveBeenCalled();
-        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
-          jasmine.any(CustomReporter),
-        ]);
+          await runSpecs(
+            {
+              reporters: ['./spec/fixtures/custom_reporter.js'],
+              useConsoleReporter: false,
+            },
+            { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+          );
+
+          expect(Runner).toHaveBeenCalled();
+          expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+            jasmine.any(CustomReporter),
+          ]);
+        });
       });
 
-      it('supports multiple reporters', async function() {
+      it('throws if useConsoleReporter is false but there are no custom reporters', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
           run: async () => ({}),
         });
 
-        await runSpecs(
+        const withNoReporters = runSpecs(
           {
-            reporters: [
-              './spec/fixtures/custom_reporter.js',
-              './lib/console_reporter.js',
-            ],
+            useConsoleReporter: false,
+          },
+          { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+        );
+        const withEmptyReporters = runSpecs(
+          {
+            reporters: [],
+            useConsoleReporter: false,
           },
           { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
         );
 
-        expect(Runner).toHaveBeenCalled();
-        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
-          jasmine.any(CustomReporter),
-          jasmine.any(ConsoleReporter),
-        ]);
+        await expectAsync(withNoReporters).toBeRejectedWithError(
+          'No reporters were specified. Either add a reporter or remove ' +
+            '`useConsoleReporter: false`.'
+        );
+        await expectAsync(withEmptyReporters).toBeRejectedWithError(
+          'No reporters were specified. Either add a reporter or remove ' +
+            '`useConsoleReporter: false`.'
+        );
       });
 
       it('supports reporters that are ES modules', async function() {
@@ -177,6 +206,7 @@ describe('index', function() {
 
         expect(Runner).toHaveBeenCalled();
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.any(ConsoleReporter),
           jasmine.objectContaining({ isEsmReporter: true }),
         ]);
       });
@@ -204,6 +234,7 @@ describe('index', function() {
 
         expect(Runner).toHaveBeenCalled();
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([
+          jasmine.any(ConsoleReporter),
           jasmine.objectContaining({ isEsmReporter: true }),
         ]);
       });
@@ -239,7 +270,7 @@ describe('index', function() {
         );
 
         expect(Runner).toHaveBeenCalled();
-        expect(Runner.calls.argsFor(0)[0].reporters[0]).toBe(reporter);
+        expect(Runner.calls.argsFor(0)[0].reporters[1]).toBe(reporter);
       });
     });
 

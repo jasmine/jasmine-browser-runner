@@ -265,7 +265,6 @@ describe('Command', function() {
 
       await command.run(['help']);
 
-      expect(this.writer.output).toContain('--[no-]clear-reporters');
       expect(this.writer.output).toContain('--[no-]color');
       expect(this.writer.output).toContain('--[no-]random');
     });
