@@ -66,12 +66,6 @@ module.exports = {
    */
   runSpecs: async function(options, deps) {
     options = options || {};
-    if (options.browser && options.browser.name === 'internet explorer') {
-      options.jsonDomReporter = true;
-    } else {
-      options.batchReporter = true;
-    }
-
     deps = deps || {};
     const ServerClass = deps.Server || Server;
     const RunnerClass = deps.Runner || Runner;

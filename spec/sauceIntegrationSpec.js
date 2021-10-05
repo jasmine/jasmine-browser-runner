@@ -26,18 +26,6 @@ describe('Sauce parameter handling', function() {
   // defaults to the newest OS that has the requested browser version if the OS
   // is not specified.)
 
-  createSpec(
-    'internet explorer',
-    '11',
-    'Windows 8.1',
-    /Windows NT 6.3;.*Trident\/7\.0.*rv:11\.0/
-  );
-  createSpec(
-    'internet explorer',
-    '10',
-    'Windows 8',
-    /MSIE 10\.0;.*Windows NT 6\.2;.*Trident\/6\.0/
-  );
   createSpec('firefox', '', '', /Gecko\/[0-9]+ Firefox\/[0-9.]+$/);
   createSpec(
     'firefox',

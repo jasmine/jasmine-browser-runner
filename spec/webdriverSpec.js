@@ -221,16 +221,6 @@ describe('webdriver', function() {
       expect(builder.capabilities.platform).toBeUndefined();
       expect(builder.capabilities.version).toBeUndefined();
       expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
-
-      makeBrowser('internet explorer', '10');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('10');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
-      });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
     });
   });
 });
