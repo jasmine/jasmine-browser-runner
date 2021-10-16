@@ -54,36 +54,6 @@ describe('Sauce parameter handling', function() {
     /Mac OS X 10_15.*Version\/13[0-9.]+ Safari/
   );
   createSpec(
-    'safari',
-    '12',
-    'OS X 10.13',
-    /Mac OS X 10_13.*Version\/12[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '11',
-    'OS X 10.12',
-    /Mac OS X 10_12.*Version\/11[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '10',
-    'OS X 10.11',
-    /Mac OS X 10_11.*Version\/10[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '9',
-    'OS X 10.11',
-    /Mac OS X 10_11.*Version\/9[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '8',
-    'OS X 10.10',
-    /Mac OS X 10_10.*Version\/8\.0[0-9.]+ Safari/
-  );
-  createSpec(
     'MicrosoftEdge',
     '',
     'Windows 10',
