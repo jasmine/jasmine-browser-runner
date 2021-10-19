@@ -221,6 +221,20 @@ describe('server', function() {
       const files = server.userJs();
       expect(files).toEqual([]);
     });
+
+    it('supports http and https URLs', function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'anything',
+        srcFiles: [],
+        specDir: 'anything',
+        helpers: [],
+        specFiles: ['http://localhost/foo', 'https://localhost/bar'],
+      });
+
+      expect(server.userJs()).toEqual(['http://localhost/foo', 'https://localhost/bar']);
+    });
   });
 
   describe('starting the server', function() {
