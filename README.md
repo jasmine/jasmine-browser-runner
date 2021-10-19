@@ -14,7 +14,7 @@ npm install --save-dev jasmine-browser-runner jasmine-core
 or
 
 ```bash
-yarn add -D jasmine-browser-runner
+yarn add -D jasmine-browser-runner jasmine-core
 ```
 
 Add a `spec/support/jasmine-browser.json`. For example:
