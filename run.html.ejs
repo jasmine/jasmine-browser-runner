@@ -8,6 +8,8 @@
   <% cssFiles.forEach(function(cssFile) { %>
     <link rel="stylesheet" href="<%= cssFile %>" type="text/css" media="screen"/>
   <% }) %>
+</head>
+<body>
   <% jasmineJsFiles.forEach(function(jsFile) { %>
     <script src="<%= jsFile %>" type="text/javascript"></script>
   <% }) %>
@@ -19,8 +21,6 @@
     <% } %>
   <% }) %>
 
-</head>
-<body>
 <div id="jasmine_content"></div>
 </body>
 </html>
