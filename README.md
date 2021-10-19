@@ -8,7 +8,7 @@ using either headless Chrome or Saucelabs.
 # Getting started
 
 ```bash
-npm install --save-dev jasmine-browser-runner
+npm install --save-dev jasmine-browser-runner jasmine-core
 ```
 
 or
