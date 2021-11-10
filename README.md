@@ -73,6 +73,11 @@ modules. ES modules will silently fail to load in browsers that don't
 support them. Other kinds of load-time errors are detected and reported as suite
 errors.
 
+To allow spec files to import source files via relative paths, set the `specDir`
+config field to something that's high enough up to include both spec and source
+files, and set `srcFiles` to `[]`. You can autogenerate such a configuration by
+running `npx jasmine-browser-runner init --esm`.
+
 ## Use with Rails
 
 You can use jasmine-browser-runner to test your Rails application's JavaScript,

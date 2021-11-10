@@ -195,23 +195,15 @@ describe('Command', function() {
       process.chdir(this.prevDir);
     });
 
-    const prompt = 'Will you be using ES modules (<script type="module">)? (y/n) ';
-
     describe('When spec/support/jasmine-browser.json does not exist', function() {
-      describe('and the user says yes to ES modules', function() {
+      describe('and --esm was passed', function() {
         it('creates a config file that works for ES modules', async function() {
-          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
           const command = new Command({
             jasmineBrowser: {},
             jasmineCore: {},
             console: this.console,
-            readlineFactory: () => readline,
           });
-          readline.question
-            .withArgs(prompt, jasmine.any(Function))
-            .and.callFake((p, cb) => cb('y'));
-
-          await command.run(['init']);
+          await command.run(['init', '--esm']);
 
           const rawActualContents = fs.readFileSync(
             'spec/support/jasmine-browser.json',
@@ -226,18 +218,13 @@ describe('Command', function() {
         });
       });
 
-      describe('and the user says no to ES modules', function() {
+      describe('and --esm was not passed', function() {
         it('creates a config file that works for regular projects', async function() {
-          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
           const command = new Command({
             jasmineBrowser: {},
             jasmineCore: {},
             console: this.console,
-            readlineFactory: () => readline,
           });
-          readline.question
-            .withArgs(prompt, jasmine.any(Function))
-            .and.callFake((p, cb) => cb('n'));
 
           await command.run(['init']);
 
@@ -254,44 +241,20 @@ describe('Command', function() {
           expect(actualContents.helpers).toEqual(['helpers/**/*.js']);
         });
       });
-
-      describe('And the user gives an invalid response', function() {
-        it('prompts again', function() {
-          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
-          const command = new Command({
-            jasmineBrowser: {},
-            jasmineCore: {},
-            console: this.console,
-            readlineFactory: () => readline,
-          });
-
-          command.run(['init']);
-          expect(readline.question).toHaveBeenCalledWith(prompt, jasmine.any(Function));
-          let cb = readline.question.calls.argsFor(0)[1];
-          readline.question.calls.reset();
-          cb('maybe');
-          expect(readline.question).toHaveBeenCalledWith(prompt, jasmine.any(Function));
-        });
-      });
     });
 
     describe('When spec/support/jasmine-browser.json already exists', function() {
       it('does not create the file', async function() {
-        const readline = jasmine.createSpyObj('readline', ['question', 'close']);
         const command = new Command({
           jasmineBrowser: {},
           jasmineCore: {},
           console: this.console,
-          readlineFactory: () => readline,
         });
         fs.mkdirSync('spec/support', { recursive: true });
         fs.writeFileSync(
           'spec/support/jasmine-browser.json',
           'initial contents'
         );
-        readline.question
-          .withArgs(prompt, jasmine.any(Function))
-          .and.callFake((p, cb) => cb('n'));
 
         await command.run(['init']);
 
