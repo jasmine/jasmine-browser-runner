@@ -2,7 +2,7 @@ const util = require('util'),
   path = require('path'),
   Writable = require('stream').Writable,
   Command = require('../lib/command'),
-  { defaultConfig } = require('../lib/config'),
+  { defaultConfig, defaultEsmConfig } = require('../lib/config'),
   fs = require('fs'),
   os = require('os');
 
@@ -195,37 +195,103 @@ describe('Command', function() {
       process.chdir(this.prevDir);
     });
 
+    const prompt = 'Will you be using ES modules (<script type="module">)? (y/n) ';
+
     describe('When spec/support/jasmine-browser.json does not exist', function() {
-      it('creates the file', async function() {
-        const command = new Command({
-          jasmineBrowser: {},
-          jasmineCore: {},
-          console: this.console,
+      describe('and the user says yes to ES modules', function() {
+        it('creates a config file that works for ES modules', async function() {
+          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
+          const command = new Command({
+            jasmineBrowser: {},
+            jasmineCore: {},
+            console: this.console,
+            readlineFactory: () => readline,
+          });
+          readline.question
+            .withArgs(prompt, jasmine.any(Function))
+            .and.callFake((p, cb) => cb('y'));
+
+          await command.run(['init']);
+
+          const rawActualContents = fs.readFileSync(
+            'spec/support/jasmine-browser.json',
+            { encoding: 'utf8' }
+          );
+          expect(rawActualContents).toEqual(defaultEsmConfig());
+          const actualContents = JSON.parse(rawActualContents);
+          expect(actualContents.srcFiles).toEqual([]);
+          expect(actualContents.specDir).toEqual('.');
+          expect(actualContents.specFiles).toEqual(['spec/**/*[sS]pec.?(m)js']);
+          expect(actualContents.helpers).toEqual(['spec/helpers/**/*.?(m)js']);
         });
+      });
 
-        await command.run(['init']);
+      describe('and the user says no to ES modules', function() {
+        it('creates a config file that works for regular projects', async function() {
+          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
+          const command = new Command({
+            jasmineBrowser: {},
+            jasmineCore: {},
+            console: this.console,
+            readlineFactory: () => readline,
+          });
+          readline.question
+            .withArgs(prompt, jasmine.any(Function))
+            .and.callFake((p, cb) => cb('n'));
 
-        const actualContents = fs.readFileSync(
-          'spec/support/jasmine-browser.json',
-          { encoding: 'utf8' }
-        );
-        expect(actualContents).toEqual(defaultConfig());
-        expect(JSON.parse(actualContents).srcFiles).toEqual(['**/*.?(m)js']);
+          await command.run(['init']);
+
+          const rawActualContents = fs.readFileSync(
+            'spec/support/jasmine-browser.json',
+            { encoding: 'utf8' }
+          );
+          expect(rawActualContents).toEqual(defaultConfig());
+          const actualContents = JSON.parse(rawActualContents);
+          expect(actualContents.srcDir).toEqual('src');
+          expect(actualContents.srcFiles).toEqual(['**/*.js']);
+          expect(actualContents.specDir).toEqual('spec');
+          expect(actualContents.specFiles).toEqual(['**/*[sS]pec.js']);
+          expect(actualContents.helpers).toEqual(['helpers/**/*.js']);
+        });
+      });
+
+      describe('And the user gives an invalid response', function() {
+        it('prompts again', function() {
+          const readline = jasmine.createSpyObj('readline', ['question', 'close']);
+          const command = new Command({
+            jasmineBrowser: {},
+            jasmineCore: {},
+            console: this.console,
+            readlineFactory: () => readline,
+          });
+
+          command.run(['init']);
+          expect(readline.question).toHaveBeenCalledWith(prompt, jasmine.any(Function));
+          let cb = readline.question.calls.argsFor(0)[1];
+          readline.question.calls.reset();
+          cb('maybe');
+          expect(readline.question).toHaveBeenCalledWith(prompt, jasmine.any(Function));
+        });
       });
     });
 
     describe('When spec/support/jasmine-browser.json already exists', function() {
       it('does not create the file', async function() {
+        const readline = jasmine.createSpyObj('readline', ['question', 'close']);
         const command = new Command({
           jasmineBrowser: {},
           jasmineCore: {},
           console: this.console,
+          readlineFactory: () => readline,
         });
         fs.mkdirSync('spec/support', { recursive: true });
         fs.writeFileSync(
           'spec/support/jasmine-browser.json',
           'initial contents'
         );
+        readline.question
+          .withArgs(prompt, jasmine.any(Function))
+          .and.callFake((p, cb) => cb('n'));
 
         await command.run(['init']);
 
