@@ -8,13 +8,13 @@ using either headless Chrome or Saucelabs.
 # Getting started
 
 ```bash
-npm install --save-dev jasmine-browser-runner
+npm install --save-dev jasmine-browser-runner jasmine-core
 ```
 
 or
 
 ```bash
-yarn add -D jasmine-browser-runner
+yarn add -D jasmine-browser-runner jasmine-core
 ```
 
 Add a `spec/support/jasmine-browser.json`. For example:
@@ -67,6 +67,11 @@ Its value can be `"firefox"`, `"safari"`,
 
 If a source, spec, or helper file's name ends in `.mjs`, it will be loaded as
 an ES module rather than a regular script.
+
+To allow spec files to import source files via relative paths, set the `specDir`
+config field to something that's high enough up to include both spec and source
+files, and set `srcFiles` to `[]`. You can autogenerate such a configuration by
+running `npx jasmine-browser-runner init --esm`.
 
 ## Use with Rails
 

@@ -2,7 +2,7 @@ const util = require('util'),
   path = require('path'),
   Writable = require('stream').Writable,
   Command = require('../lib/command'),
-  { defaultConfig } = require('../lib/config'),
+  { defaultConfig, defaultEsmConfig } = require('../lib/config'),
   fs = require('fs'),
   os = require('os');
 
@@ -196,21 +196,50 @@ describe('Command', function() {
     });
 
     describe('When spec/support/jasmine-browser.json does not exist', function() {
-      it('creates the file', async function() {
-        const command = new Command({
-          jasmineBrowser: {},
-          jasmineCore: {},
-          console: this.console,
+      describe('and --esm was passed', function() {
+        it('creates a config file that works for ES modules', async function() {
+          const command = new Command({
+            jasmineBrowser: {},
+            jasmineCore: {},
+            console: this.console,
+          });
+          await command.run(['init', '--esm']);
+
+          const rawActualContents = fs.readFileSync(
+            'spec/support/jasmine-browser.json',
+            { encoding: 'utf8' }
+          );
+          expect(rawActualContents).toEqual(defaultEsmConfig());
+          const actualContents = JSON.parse(rawActualContents);
+          expect(actualContents.srcFiles).toEqual([]);
+          expect(actualContents.specDir).toEqual('.');
+          expect(actualContents.specFiles).toEqual(['spec/**/*[sS]pec.?(m)js']);
+          expect(actualContents.helpers).toEqual(['spec/helpers/**/*.?(m)js']);
         });
+      });
 
-        await command.run(['init']);
+      describe('and --esm was not passed', function() {
+        it('creates a config file that works for regular projects', async function() {
+          const command = new Command({
+            jasmineBrowser: {},
+            jasmineCore: {},
+            console: this.console,
+          });
 
-        const actualContents = fs.readFileSync(
-          'spec/support/jasmine-browser.json',
-          { encoding: 'utf8' }
-        );
-        expect(actualContents).toEqual(defaultConfig());
-        expect(JSON.parse(actualContents).srcFiles).toEqual(['**/*.?(m)js']);
+          await command.run(['init']);
+
+          const rawActualContents = fs.readFileSync(
+            'spec/support/jasmine-browser.json',
+            { encoding: 'utf8' }
+          );
+          expect(rawActualContents).toEqual(defaultConfig());
+          const actualContents = JSON.parse(rawActualContents);
+          expect(actualContents.srcDir).toEqual('src');
+          expect(actualContents.srcFiles).toEqual(['**/*.js']);
+          expect(actualContents.specDir).toEqual('spec');
+          expect(actualContents.specFiles).toEqual(['**/*[sS]pec.js']);
+          expect(actualContents.helpers).toEqual(['helpers/**/*.js']);
+        });
       });
     });
 

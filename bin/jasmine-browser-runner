@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var path = require('path'),
-  jasmineCore = require('jasmine-core'),
+  jasmineCore = require('../lib/jasmineCore'),
   Command = require('../lib/command'),
   jasmineBrowser = require('../index.js');
 
