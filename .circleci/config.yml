@@ -21,8 +21,6 @@ jobs:
     parameters:
       executor:
         type: executor
-      coreVersion:
-        type: string
     executor: << parameters.executor >>
     steps:
       - checkout
@@ -34,13 +32,6 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn install
-      - when:
-          condition:
-            equal: [ "oldest", << parameters.coreVersion >> ]
-          steps:
-            - run:
-                name: Install oldest supported core version
-                command: yarn add jasmine-core@$(jq --raw-output '.peerDependencies."jasmine-core"' < package.json | sed 's/\^//')
       - run:
           name: Report core version
           command: echo 'console.log(require("jasmine-core").version())' | node
@@ -88,10 +79,9 @@ workflows:
           matrix:
             parameters:
                 executor: ["node16", "node14"]
-                coreVersion: ["oldest", "newest"]
       - saucelabs_integration_test:
           requires:
-            - "test-newest-node14"
+            - "test-node14"
           filters:
             branches:
               ignore: /pull\/.*/ # Don't run on pull requests.
