@@ -106,3 +106,4 @@ workflows:
             branches:
                only:
                  - main
+                 - "1.0"
