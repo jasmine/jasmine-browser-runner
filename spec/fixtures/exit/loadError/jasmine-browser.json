@@ -1,0 +1,9 @@
+{
+  "srcDir": ".",
+  "srcFiles": [],
+  "specDir": ".",
+  "specFiles": [
+    "syntaxError.js"
+  ],
+  "helpers": []
+}

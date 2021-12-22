@@ -225,11 +225,42 @@ describe('index', function() {
         expect(setExitCode).toHaveBeenCalledWith(0);
       });
 
-      it('sets the exit code to 1 when the run fails', async function() {
+      it('sets the exit code to 3 when the run fails', async function() {
         const server = buildSpyServer();
         const runner = jasmine.createSpyObj('Runner', ['run']);
         runner.run.and.returnValue(
           Promise.resolve({ overallStatus: 'failed' })
+        );
+        const setExitCode = jasmine.createSpy('setExitCode');
+
+        await runSpecs(
+          {},
+          {
+            Server: function() {
+              return server;
+            },
+            Runner: function() {
+              return runner;
+            },
+            buildWebdriver: buildStubWebdriver,
+            setExitCode,
+          }
+        );
+
+        expect(setExitCode).toHaveBeenCalledWith(3);
+      });
+
+      it('sets the exit code to 1 when there are load errors', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(
+          Promise.resolve({
+            overallStatus: 'incomplete',
+            failedExpectations: [
+              { passed: false, globalErrorType: 'something else' },
+              { passed: false, globalErrorType: 'load' },
+            ],
+          })
         );
         const setExitCode = jasmine.createSpy('setExitCode');
 
