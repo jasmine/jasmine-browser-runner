@@ -52,12 +52,9 @@ function run(cwd, extraArgs = '') {
           }
 
           clearTimeout(timerId);
-
-          if (err) {
-            resolve(err.code);
-          } else {
-            resolve(0);
-          }
+          jasmine.debugLog('stdout: ' + stdout);
+          jasmine.debugLog('stderr: ' + stdout);
+          resolve(err ? err.code : 0);
         } catch (e) {
           reject(e);
         }

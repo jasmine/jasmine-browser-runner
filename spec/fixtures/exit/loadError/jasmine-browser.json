@@ -5,5 +5,8 @@
   "specFiles": [
     "syntaxError.js"
   ],
-  "helpers": []
+  "helpers": [],
+  "browser": {
+    "name": "headlessChrome"
+  }
 }
