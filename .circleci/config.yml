@@ -15,6 +15,10 @@ executors:
     docker:
       - image: circleci/node:14-browsers
     working_directory: ~/workspace
+  node12:
+    docker:
+      - image: circleci/node:12.17
+    working_directory: ~/workspace
 
 jobs:
   test:
@@ -78,7 +82,7 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node16", "node14"]
+                executor: ["node16", "node14", "node12"]
       - saucelabs_integration_test:
           requires:
             - "test-node14"
