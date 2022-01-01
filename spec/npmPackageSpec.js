@@ -82,7 +82,7 @@ describe('npm package', function() {
     getFiles(path.resolve(this.tmpDir, 'package/lib'));
 
     for (const file of files) {
-      expect(file).toMatch(/(\.(js|css)|\/default.*_config.json)$/);
+      expect(file).toMatch(/(\.(js|css)|[/\\]default.*_config.json)$/);
     }
   });
 });

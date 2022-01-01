@@ -7,107 +7,6 @@ describe('index', function() {
   });
 
   describe('runSpecs', function() {
-    describe('Choosing the reporter that reports from -core to -browser-runner', function() {
-      it('uses the jsonDomReporter for Internet Explorer', async function() {
-        const server = buildSpyServer();
-        const runner = jasmine.createSpyObj('Runner', ['run']);
-        runner.run.and.returnValue(pendingPromise());
-        const options = { browser: { name: 'internet explorer' } };
-
-        runSpecs(options, {
-          Server: function() {
-            return server;
-          },
-          Runner: function() {
-            return runner;
-          },
-          buildWebdriver: buildStubWebdriver,
-          setExitCode: () => {},
-        });
-        await Promise.resolve();
-        await server.start.calls.mostRecent().returnValue;
-
-        expect(runner.run).toHaveBeenCalledWith({
-          ...options,
-          jsonDomReporter: true,
-        });
-      });
-
-      it('uses the batchReporter for non-IE browsers', async function() {
-        const server = buildSpyServer();
-        const runner = jasmine.createSpyObj('Runner', ['run']);
-        runner.run.and.returnValue(pendingPromise());
-        const options = { browser: { name: 'Classilla' } };
-
-        runSpecs(options, {
-          Server: function() {
-            return server;
-          },
-          Runner: function() {
-            return runner;
-          },
-          buildWebdriver: buildStubWebdriver,
-          setExitCode: () => {},
-        });
-        await Promise.resolve();
-        expect(server.start).toHaveBeenCalled();
-        await server.start.calls.mostRecent().returnValue;
-
-        expect(runner.run).toHaveBeenCalledWith({
-          ...options,
-          batchReporter: true,
-        });
-      });
-
-      it('uses the batchReporter when the browser is not specified', async function() {
-        const server = buildSpyServer();
-        const runner = jasmine.createSpyObj('Runner', ['run']);
-        runner.run.and.returnValue(pendingPromise());
-        const options = {};
-
-        runSpecs(options, {
-          Server: function() {
-            return server;
-          },
-          Runner: function() {
-            return runner;
-          },
-          buildWebdriver: buildStubWebdriver,
-          setExitCode: () => {},
-        });
-        await Promise.resolve();
-        await server.start.calls.mostRecent().returnValue;
-
-        expect(runner.run).toHaveBeenCalledWith({
-          ...options,
-          batchReporter: true,
-        });
-      });
-
-      it('sets reporter options when no options are provided', async function() {
-        const server = buildSpyServer();
-        const runner = jasmine.createSpyObj('Runner', ['run']);
-        runner.run.and.returnValue(pendingPromise());
-
-        runSpecs(undefined, {
-          Server: function() {
-            return server;
-          },
-          Runner: function() {
-            return runner;
-          },
-          buildWebdriver: buildStubWebdriver,
-          setExitCode: () => {},
-        });
-        await Promise.resolve();
-        await server.start.calls.mostRecent().returnValue;
-
-        expect(runner.run).toHaveBeenCalledWith({
-          batchReporter: true,
-        });
-      });
-    });
-
     describe('Specifying the reporter that reports to the user', function() {
       it('uses the ConsoleReporter by default', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
@@ -326,11 +225,42 @@ describe('index', function() {
         expect(setExitCode).toHaveBeenCalledWith(0);
       });
 
-      it('sets the exit code to 1 when the run fails', async function() {
+      it('sets the exit code to 3 when the run fails', async function() {
         const server = buildSpyServer();
         const runner = jasmine.createSpyObj('Runner', ['run']);
         runner.run.and.returnValue(
           Promise.resolve({ overallStatus: 'failed' })
+        );
+        const setExitCode = jasmine.createSpy('setExitCode');
+
+        await runSpecs(
+          {},
+          {
+            Server: function() {
+              return server;
+            },
+            Runner: function() {
+              return runner;
+            },
+            buildWebdriver: buildStubWebdriver,
+            setExitCode,
+          }
+        );
+
+        expect(setExitCode).toHaveBeenCalledWith(3);
+      });
+
+      it('sets the exit code to 1 when there are load errors', async function() {
+        const server = buildSpyServer();
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        runner.run.and.returnValue(
+          Promise.resolve({
+            overallStatus: 'incomplete',
+            failedExpectations: [
+              { passed: false, globalErrorType: 'something else' },
+              { passed: false, globalErrorType: 'load' },
+            ],
+          })
         );
         const setExitCode = jasmine.createSpy('setExitCode');
 
@@ -519,8 +449,4 @@ function buildSpyServer() {
   server.stop.and.returnValue(Promise.resolve());
   server.port.and.returnValue(0);
   return server;
-}
-
-function pendingPromise() {
-  return new Promise(function() {});
 }

@@ -26,30 +26,12 @@ describe('Sauce parameter handling', function() {
   // defaults to the newest OS that has the requested browser version if the OS
   // is not specified.)
 
-  createSpec(
-    'internet explorer',
-    '11',
-    'Windows 8.1',
-    /Windows NT 6.3;.*Trident\/7\.0.*rv:11\.0/
-  );
-  createSpec(
-    'internet explorer',
-    '10',
-    'Windows 8',
-    /MSIE 10\.0;.*Windows NT 6\.2;.*Trident\/6\.0/
-  );
   createSpec('firefox', '', '', /Gecko\/[0-9]+ Firefox\/[0-9.]+$/);
   createSpec(
     'firefox',
-    '78',
+    '91',
     'Windows 10',
-    /Windows NT 10.0;.* Firefox\/78\.0$/
-  );
-  createSpec(
-    'firefox',
-    '68',
-    'Windows 10',
-    /Windows NT 10.0;.*Firefox\/68\.0$/
+    /Windows NT 10.0;.* Firefox\/91\.0$/
   );
   createSpec('chrome', '', '', /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/);
   createSpec(
@@ -61,39 +43,10 @@ describe('Sauce parameter handling', function() {
   );
   createSpec(
     'safari',
-    '13',
-    'OS X 10.15',
-    /Mac OS X 10_15.*Version\/13[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '12',
-    'OS X 10.13',
-    /Mac OS X 10_13.*Version\/12[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '11',
-    'OS X 10.12',
-    /Mac OS X 10_12.*Version\/11[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '10',
-    'OS X 10.11',
-    /Mac OS X 10_11.*Version\/10[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '9',
-    'OS X 10.11',
-    /Mac OS X 10_11.*Version\/9[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '8',
-    'OS X 10.10',
-    /Mac OS X 10_10.*Version\/8\.0[0-9.]+ Safari/
+    '15',
+    'macOS 12',
+    // Safari on 12.x reports the OS as 10_15_7
+    /Mac OS X 10_15.*Version\/15[0-9.]+ Safari/
   );
   createSpec(
     'MicrosoftEdge',

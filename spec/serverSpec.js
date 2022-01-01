@@ -118,7 +118,6 @@ describe('server', function() {
       });
 
       const files = server.jasmineJs();
-      expect(files.length).toEqual(6);
       expect(files).toEqual([
         '/__jasmine__/jazz.js',
         '/__jasmine__/min.js',
@@ -126,6 +125,7 @@ describe('server', function() {
         '/__config__/config.js',
         '/__boot__/boot2.js',
         '/__support__/loadEsModule.js',
+        '/__support__/batchReporter.js',
       ]);
     });
   });
@@ -437,22 +437,13 @@ describe('server', function() {
       });
     });
 
-    it('can add the batch reporter', async function() {
-      await this.startServer({ batchReporter: true });
+    it('adds the batch reporter', async function() {
+      await this.startServer({ });
 
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
-    });
-
-    it('can add the json dom reporter', async function() {
-      await this.startServer({ jsonDomReporter: true });
-
-      const baseUrl = `http://localhost:${this.server.port()}`;
-
-      var html = await getFile(baseUrl);
-      expect(html).toContain('/__support__/jsonDomReporter.js');
     });
   });
 });

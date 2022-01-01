@@ -4,6 +4,7 @@ var path = require('path'),
   jasmineCore = require('../lib/jasmineCore'),
   Command = require('../lib/command'),
   jasmineBrowser = require('../index.js');
+const UsageError = require('../lib/usage_error');
 
 var command = new Command({
   baseDir: path.resolve(),
@@ -13,6 +14,9 @@ var command = new Command({
 });
 
 command.run(process.argv.slice(2)).catch(function(error) {
-  console.error(error);
+  if (!(error instanceof UsageError)) {
+    console.error(error);
+  }
+
   process.exitCode = 1;
 });

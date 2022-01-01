@@ -1,9 +1,10 @@
 To make a release:
 
 1. Make sure that all specs are green on CI.
-2. Make sure the `jasmine-core` dependency is correct (pointing to a release
-   rather than github, and the version number is right)
-	 * If you change it, push the change and wait for CI to go green.
+2. Make sure the `jasmine-core` peer dependency and the `jasmine-core` and
+   `jasmine` dev dependencies are correct (pointing to a release rather than
+	github, and the version number is right)
+	 * If you change any, push the changes and wait for CI to go green.
 3. Generate release notes in `release_notes` using the Anchorman gem and edit
 them.
     * Include a table of supported Node versions and browsers. Check Saucelabs
