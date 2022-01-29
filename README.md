@@ -32,7 +32,9 @@ Add a `spec/support/jasmine-browser.json`. For example:
   "helpers": [
     "helpers/asyncAwait.js"
   ],
-  "random": true
+  "env": {
+    "random": true
+  }
 }
 ```
 
