@@ -456,7 +456,7 @@ describe('server', function() {
       });
     });
 
-    describe('The useHtmlReporter option', function() {
+    describe('The useHtmlReporter option', function () {
       it('does not remove the HTML reporter when undefined', async function() {
         await this.startServer({});
 
@@ -486,7 +486,7 @@ describe('server', function() {
     });
 
     it('adds the batch reporter', async function() {
-      await this.startServer({});
+      await this.startServer({ });
 
       const baseUrl = `http://localhost:${this.server.port()}`;
 
