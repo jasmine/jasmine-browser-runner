@@ -41,7 +41,8 @@
     "ejs": "^3.1.6",
     "express": "^4.16.4",
     "glob": "^7.1.7",
-    "selenium-webdriver": "^4.1.0"
+    "selenium-webdriver": "^4.1.0",
+    "http-proxy-middleware": "^2.0.3"
   },
   "peerDependencies": {
     "jasmine-core": "^4.0.0"

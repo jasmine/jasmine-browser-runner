@@ -3,9 +3,9 @@ const path = require('path'),
   Server = require('../lib/server');
 
 function getFile(url) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     http
-      .get(url, function(response) {
+      .get(url, function (response) {
         if (response.statusCode !== 200) {
           reject(
             new Error(`${url} failed with status code ${response.statusCode}`)
@@ -13,10 +13,10 @@ function getFile(url) {
         }
 
         var rawData = '';
-        response.on('data', function(chunk) {
+        response.on('data', function (chunk) {
           rawData += chunk;
         });
-        response.on('end', function() {
+        response.on('end', function () {
           resolve(rawData);
         });
       })
@@ -28,8 +28,8 @@ function getFile(url) {
 // because the payloads sometimes contains \r\n and sometimes \n on Windows.
 // (TODO why?)
 
-describe('server', function() {
-  beforeEach(function() {
+describe('server', function () {
+  beforeEach(function () {
     this.fakeJasmine = {
       files: {
         path: path.resolve(__dirname, 'fixtures/fakeJasmine'),
@@ -42,13 +42,13 @@ describe('server', function() {
     };
   });
 
-  it('looks in the current path by default', function() {
+  it('looks in the current path by default', function () {
     const server = new Server({ jasmineCore: this.fakeJasmine });
 
     expect(server.projectBaseDir).toEqual(path.resolve());
   });
 
-  it('appends specified css files after Jasmines own', function() {
+  it('appends specified css files after Jasmines own', function () {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
@@ -71,7 +71,7 @@ describe('server', function() {
     );
   });
 
-  it('allows css files to be excluded', function() {
+  it('allows css files to be excluded', function () {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
@@ -93,7 +93,7 @@ describe('server', function() {
     );
   });
 
-  it('handles css files not being specified', function() {
+  it('handles css files not being specified', function () {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
       jasmineCore: this.fakeJasmine,
@@ -105,8 +105,8 @@ describe('server', function() {
     expect(files).toEqual(['/__jasmine__/css.css', '/__jasmine__/two.css']);
   });
 
-  describe('#jasmineJs', function() {
-    it('includes both core files and -browser-runner additions', function() {
+  describe('#jasmineJs', function () {
+    it('includes both core files and -browser-runner additions', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -130,8 +130,8 @@ describe('server', function() {
     });
   });
 
-  describe('#userJs', function() {
-    it('includes source files followed by helpers, in glob order', function() {
+  describe('#userJs', function () {
+    it('includes source files followed by helpers, in glob order', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -166,7 +166,7 @@ describe('server', function() {
       );
     });
 
-    it('allows js files to be excluded', function() {
+    it('allows js files to be excluded', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -196,7 +196,7 @@ describe('server', function() {
       );
     });
 
-    it('allows js files to be excluded via pattern and later included', function() {
+    it('allows js files to be excluded via pattern and later included', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/excludeInclude'),
         jasmineCore: this.fakeJasmine,
@@ -210,7 +210,7 @@ describe('server', function() {
       expect(files).toEqual(['/__src__/b.js', '/__src__/a.js']);
     });
 
-    it('handles js files not being specified', function() {
+    it('handles js files not being specified', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -222,7 +222,7 @@ describe('server', function() {
       expect(files).toEqual([]);
     });
 
-    it('supports http and https URLs', function() {
+    it('supports http and https URLs', function () {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
         jasmineCore: this.fakeJasmine,
@@ -237,10 +237,10 @@ describe('server', function() {
     });
   });
 
-  describe('starting the server', function() {
-    beforeEach(function() {
+  describe('starting the server', function () {
+    beforeEach(function () {
       spyOn(console, 'log');
-      this.startServer = async function(extraOptions) {
+      this.startServer = async function (extraOptions) {
         const options = Object.assign(
           {
             projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
@@ -259,16 +259,64 @@ describe('server', function() {
       };
     });
 
-    afterEach(async function() {
+    afterEach(async function () {
       await this.server.stop();
     });
 
-    it('finds a random open port when a `0` is specified', async function() {
+    it('finds a random open port when a `0` is specified', async function () {
       await this.startServer();
       expect(this.server.port()).not.toEqual(0);
     });
 
-    it('starts a server and serves the Jasmine files', async function() {
+    describe('with a proxy configuration', () => {
+      let requestListener;
+      let testServer;
+
+      beforeEach(async function () {
+        requestListener = jasmine.createSpy('requestListener');
+        testServer = http.createServer(requestListener);
+
+        await new Promise(resolve => testServer.listen(0, resolve));
+
+        await this.startServer({
+          proxy: {
+            '/cdn': {
+              target: `http://localhost:${testServer.address().port}/test`,
+            },
+          },
+        });
+
+        requestListener.and.callFake((req, res) => {
+          res.end('hello');
+        });
+      });
+
+      afterEach(() => {
+        testServer.close();
+      });
+
+      describe('when getting a file', () => {
+        let file;
+
+        beforeEach(async function () {
+          const baseUrl = `http://localhost:${this.server.port()}`;
+
+          file = await getFile(baseUrl + '/cdn/some.txt');
+        });
+
+        it('should proxies the query', async function () {
+          expect(file).toBe('hello');
+        });
+
+        it('should resolve the correct request url', function () {
+          expect(requestListener).toHaveBeenCalledWith(jasmine.objectContaining({
+            url: '/test/cdn/some.txt',
+          }), jasmine.anything());
+        });
+      });
+    });
+
+    it('starts a server and serves the Jasmine files', async function () {
       await this.startServer({
         env: {
           someProp: 'someVal',
@@ -303,7 +351,7 @@ describe('server', function() {
       expect(image).toMatch(/^pretend I'm an image\r?\n$/);
     });
 
-    it('uses an empty config when none is specified', async function() {
+    it('uses an empty config when none is specified', async function () {
       await this.startServer({
         env: undefined,
       });
@@ -314,7 +362,7 @@ describe('server', function() {
       expect(config).toContain('jasmine.getEnv().configure({})');
     });
 
-    it('starts a server and serves the project files', async function() {
+    it('starts a server and serves the project files', async function () {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
@@ -325,7 +373,7 @@ describe('server', function() {
       expect(spec).toMatch(/^I like specs\r?\n$/);
     });
 
-    it('serves an html file to run the specs', async function() {
+    it('serves an html file to run the specs', async function () {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
@@ -342,7 +390,7 @@ describe('server', function() {
       expect(html).toContain('/__spec__/iLikeSpec.js');
     });
 
-    it('includes the ES module loader', async function() {
+    it('includes the ES module loader', async function () {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
@@ -350,8 +398,8 @@ describe('server', function() {
       expect(html).toContain('/__support__/loadEsModule.js');
     });
 
-    describe('loading specs and helpers', function() {
-      it('loads .js files as regular scripts', async function() {
+    describe('loading specs and helpers', function () {
+      it('loads .js files as regular scripts', async function () {
         await this.startServer();
         const baseUrl = `http://localhost:${this.server.port()}`;
 
@@ -364,7 +412,7 @@ describe('server', function() {
         );
       });
 
-      it('loads .mjs files as ES modules', async function() {
+      it('loads .mjs files as ES modules', async function () {
         await this.startServer({
           srcFiles: ['**/*.mjs'],
           helpers: ['helpers/**/*.mjs'],
@@ -382,8 +430,8 @@ describe('server', function() {
       });
     });
 
-    describe('loading sources', function() {
-      it('loads .js files as regular scripts', async function() {
+    describe('loading sources', function () {
+      it('loads .js files as regular scripts', async function () {
         await this.startServer();
         const baseUrl = `http://localhost:${this.server.port()}`;
 
@@ -393,7 +441,7 @@ describe('server', function() {
         );
       });
 
-      it('does not load .mjs files', async function() {
+      it('does not load .mjs files', async function () {
         // ES modules in sources will normally be imported by the specs
         // or by each other, so we don't load them automatically.
         await this.startServer({
@@ -409,7 +457,7 @@ describe('server', function() {
     });
 
     describe('The useHtmlReporter option', function () {
-      it('does not remove the HTML reporter when undefined', async function() {
+      it('does not remove the HTML reporter when undefined', async function () {
         await this.startServer({});
 
         const baseUrl = `http://localhost:${this.server.port()}`;
@@ -418,7 +466,7 @@ describe('server', function() {
         expect(html).not.toContain('/__support__/clearReporters.js');
       });
 
-      it('does not remove the HTML reporter when true', async function() {
+      it('does not remove the HTML reporter when true', async function () {
         await this.startServer({ useHtmlReporter: true });
 
         const baseUrl = `http://localhost:${this.server.port()}`;
@@ -427,7 +475,7 @@ describe('server', function() {
         expect(html).not.toContain('/__support__/clearReporters.js');
       });
 
-      it('removes the HTML reporter when false', async function() {
+      it('removes the HTML reporter when false', async function () {
         await this.startServer({ useHtmlReporter: false });
 
         const baseUrl = `http://localhost:${this.server.port()}`;
@@ -437,8 +485,8 @@ describe('server', function() {
       });
     });
 
-    it('adds the batch reporter', async function() {
-      await this.startServer({ });
+    it('adds the batch reporter', async function () {
+      await this.startServer({});
 
       const baseUrl = `http://localhost:${this.server.port()}`;
 

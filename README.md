@@ -65,6 +65,20 @@ To use a browser other than Firefox, add a `browser` field to
 Its value can be `"firefox"`, `"safari"`, 
 `"MicrosoftEdge"`, `"chrome"`, or `"headlessChrome"`.
 
+## Proxy
+
+Sometimes, it is useful to configure a proxy to stub resources. To know more about the proxy configuration, please refer to [http-proxy-middleware](https://www.npmjs.com/package/http-proxy-middleware) documentation.
+
+```json
+{
+  "proxy": {
+    "/cdn": {
+      "target": "http://localhost:8889"
+    }
+  }
+}
+```
+
 ## ES module support
 
 If a source, spec, or helper file's name ends in `.mjs`, it will be loaded as
