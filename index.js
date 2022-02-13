@@ -82,6 +82,16 @@ module.exports = {
     try {
       const webdriver = buildWebdriver(options.browser);
 
+      process.once("beforeExit", async () => {
+        if (useSauce) {
+          await webdriver.executeScript(
+            `sauce:job-result=${process.exitCode === 0}`
+            );
+        }
+
+        await webdriver.quit();
+      });
+
       try {
         const host = `http://localhost:${server.port()}`;
         const runner = new RunnerClass({ webdriver, reporters, host });
@@ -106,15 +116,7 @@ module.exports = {
         }
 
         return details;
-      } finally {
-        if (useSauce) {
-          await webdriver.executeScript(
-            `sauce:job-result=${process.exitCode === 0}`
-          );
-        }
-
-        await webdriver.close();
-      }
+      } finally {}
     } finally {
       await server.stop();
     }
