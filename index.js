@@ -118,7 +118,9 @@ module.exports = {
         return details;
       } finally {}
     } finally {
-      await server.stop();
+      if (!options.browser || !options.browser.manualClose) {
+        await server.stop();
+      }
     }
   },
   Server,

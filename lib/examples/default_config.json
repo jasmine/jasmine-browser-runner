@@ -16,6 +16,7 @@
     "random": true
   },
   "browser": {
-    "name": "firefox"
+    "name": "firefox",
+    "manualClose": false
   }
 }
