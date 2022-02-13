@@ -402,16 +402,11 @@ describe('index', function() {
       expect(buildWebdriver).not.toHaveBeenCalled();
     });
 
-    it('stops the browser and server if the runner fails to start', async function() {
+    it('stops the server if the runner fails to start', async function() {
       const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
       server.start.and.returnValue(Promise.resolve(server));
       server.stop.and.returnValue(Promise.resolve());
       server.port.and.returnValue(0);
-      const webdriver = jasmine.createSpyObj('webdriver', [
-        'close',
-        'executeScript',
-      ]);
-      webdriver.close.and.returnValue(Promise.resolve());
 
       const promise = runSpecs(
         {},
@@ -430,7 +425,6 @@ describe('index', function() {
       );
 
       await expectAsync(promise).toBeRejected();
-      expect(webdriver.close).toHaveBeenCalled();
       expect(server.stop).toHaveBeenCalled();
     });
   });
