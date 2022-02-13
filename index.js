@@ -82,11 +82,11 @@ module.exports = {
     try {
       const webdriver = buildWebdriver(options.browser);
 
-      process.once("beforeExit", async () => {
+      process.once('beforeExit', async () => {
         if (useSauce) {
           await webdriver.executeScript(
             `sauce:job-result=${process.exitCode === 0}`
-            );
+          );
         }
 
         await webdriver.quit();
@@ -116,7 +116,8 @@ module.exports = {
         }
 
         return details;
-      } finally {}
+      } finally {
+      }
     } finally {
       if (!options.browser || !options.browser.manualClose) {
         await server.stop();
