@@ -3,7 +3,9 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.1.3
+  win: circleci/windows@4.1.1
+  node: circleci/node@5.0.2
+  browser-tools: circleci/browser-tools@1.3.0
 
 executors:
   node16:
@@ -46,6 +48,25 @@ jobs:
           paths:
             - .
 
+  test_win:
+    executor:
+      name: win/default
+      shell: bash.exe
+    steps:
+      - checkout
+      - run:
+          name: Report Node and Yarn versions
+          command: echo "Using Node $(node --version) and Yarn $(yarn --version)"
+      - run:
+          name: Install dependencies
+          command: yarn install
+      - run:
+          name: Report core version
+          command: echo 'console.log(require("jasmine-core").version())' | node
+      - run:
+          name: Run tests
+          command: JASMINE_NO_BROWSER_TESTS=y yarn test
+
   saucelabs_integration_test:
     executor: node14
     steps:
@@ -84,6 +105,7 @@ workflows:
           matrix:
             parameters:
                 executor: ["node16", "node14", "node12"]
+      - test_win
       - saucelabs_integration_test:
           requires:
             - "test-node14"

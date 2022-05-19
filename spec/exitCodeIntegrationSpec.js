@@ -1,6 +1,12 @@
 const { exec } = require('child_process');
 
 describe('Exit code integration', function() {
+  beforeEach(function() {
+    if (process.env.JASMINE_NO_BROWSER_TESTS) {
+      pending('skipping because the JASMINE_NO_BROWSER_TESTS env var is set');
+    }
+  });
+
   it(
     'exits 0 on success',
     async function() {
