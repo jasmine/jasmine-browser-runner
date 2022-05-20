@@ -32,7 +32,11 @@ describe('index', function() {
 
           await runSpecs(
             { reporters: ['./spec/fixtures/custom_reporter.js'] },
-            { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+            {
+              Runner,
+              Server: buildSpyServer,
+              buildWebdriver: buildStubWebdriver,
+            }
           );
 
           expect(Runner).toHaveBeenCalled();
@@ -52,7 +56,11 @@ describe('index', function() {
               reporters: ['./spec/fixtures/custom_reporter.js'],
               useConsoleReporter: false,
             },
-            { Runner, Server: buildSpyServer, buildWebdriver: buildStubWebdriver }
+            {
+              Runner,
+              Server: buildSpyServer,
+              buildWebdriver: buildStubWebdriver,
+            }
           );
 
           expect(Runner).toHaveBeenCalled();

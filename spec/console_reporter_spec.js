@@ -2,10 +2,12 @@ const ConsoleReporter = require('../lib/console_reporter');
 const jasmineCorePath = 'path/to/jasmine/core/jasmine.js';
 
 describe('ConsoleReporter', function() {
-  const fakeStack = ['foo' + jasmineCorePath,
+  const fakeStack = [
+    'foo' + jasmineCorePath,
     'bar ' + jasmineCorePath,
     'line of useful stack trace',
-    'baz ' + jasmineCorePath].join('\n');
+    'baz ' + jasmineCorePath,
+  ].join('\n');
 
   beforeEach(function() {
     this.out = (function() {
@@ -21,7 +23,7 @@ describe('ConsoleReporter', function() {
           output = '';
         },
       };
-    }());
+    })();
   });
 
   it('reports that the suite has started to the console', function() {
@@ -100,7 +102,7 @@ describe('ConsoleReporter', function() {
       color: false,
     });
 
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
 
     expect(this.out.getOutput()).toEqual('.');
   });
@@ -111,7 +113,7 @@ describe('ConsoleReporter', function() {
       print: this.out.print,
     });
 
-    reporter.specDone({status: 'disabled'});
+    reporter.specDone({ status: 'disabled' });
 
     expect(this.out.getOutput()).toEqual('');
   });
@@ -123,7 +125,7 @@ describe('ConsoleReporter', function() {
       color: false,
     });
 
-    reporter.specDone({status: 'failed'});
+    reporter.specDone({ status: 'failed' });
 
     expect(this.out.getOutput()).toEqual('F');
   });
@@ -135,7 +137,7 @@ describe('ConsoleReporter', function() {
       color: false,
     });
 
-    reporter.specDone({status: 'pending'});
+    reporter.specDone({ status: 'pending' });
 
     expect(this.out.getOutput()).toEqual('*');
   });
@@ -146,11 +148,13 @@ describe('ConsoleReporter', function() {
       print: this.out.print,
     });
 
-    reporter.specDone({status: 'passed'});
-    reporter.specDone({status: 'failed'});
-    reporter.specDone({status: 'pending'});
+    reporter.specDone({ status: 'passed' });
+    reporter.specDone({ status: 'failed' });
+    reporter.specDone({ status: 'pending' });
 
-    expect(this.out.getOutput()).toEqual('\x1B[32m.\x1B[0m\x1B[31mF\x1B[0m\x1B[33m*\x1B[0m');
+    expect(this.out.getOutput()).toEqual(
+      '\x1B[32m.\x1B[0m\x1B[31mF\x1B[0m\x1B[33m*\x1B[0m'
+    );
   });
 
   it('alerts user if there are no specs', function() {
@@ -179,7 +183,9 @@ describe('ConsoleReporter', function() {
       },
     });
 
-    expect(this.out.getOutput()).toMatch(/Randomized with seed 12345 \(jasmine-browser-runner runSpecs --seed=12345\)/);
+    expect(this.out.getOutput()).toMatch(
+      /Randomized with seed 12345 \(jasmine-browser-runner runSpecs --seed=12345\)/
+    );
   });
 
   it('reports a summary when done (singular spec and time)', function() {
@@ -189,7 +195,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
 
     this.out.clear();
     reporter.jasmineDone({ totalTime: 1000 });
@@ -207,8 +213,8 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
-    reporter.specDone({status: 'pending'});
+    reporter.specDone({ status: 'passed' });
+    reporter.specDone({ status: 'pending' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -276,8 +282,8 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
-    reporter.specDone({status: 'disabled'});
+    reporter.specDone({ status: 'passed' });
+    reporter.specDone({ status: 'disabled' });
 
     this.out.clear();
     reporter.jasmineDone({ totalTime: 1000 });
@@ -294,7 +300,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -326,7 +332,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -360,7 +366,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -396,7 +402,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -461,7 +467,9 @@ describe('ConsoleReporter', function() {
       incompleteReason: 'not all bars were frobnicated',
     });
 
-    expect(this.out.getOutput()).toContain('Incomplete: not all bars were frobnicated');
+    expect(this.out.getOutput()).toContain(
+      'Incomplete: not all bars were frobnicated'
+    );
   });
 
   it('reports a summary when done that shows info for a failed spec with no expectations', function() {
@@ -472,7 +480,7 @@ describe('ConsoleReporter', function() {
     });
 
     reporter.jasmineStarted();
-    reporter.specDone({status: 'passed'});
+    reporter.specDone({ status: 'passed' });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
@@ -488,7 +496,7 @@ describe('ConsoleReporter', function() {
     expect(this.out.getOutput()).toContain('Spec has no expectations');
   });
 
-  it('reports a summary without "no expectations" message for a spec having failed expectations', function () {
+  it('reports a summary without "no expectations" message for a spec having failed expectations', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
@@ -500,13 +508,15 @@ describe('ConsoleReporter', function() {
       status: 'failed',
       description: 'with a failing spec',
       fullName: 'A suite with a failing spec that has a failing expectation',
-      failedExpectations: [{
-        passed: false,
-        message: 'Expected true to be false.',
-        expected: false,
-        actual: true,
-        stack: undefined,
-      }],
+      failedExpectations: [
+        {
+          passed: false,
+          message: 'Expected true to be false.',
+          expected: false,
+          actual: true,
+          stack: undefined,
+        },
+      ],
       passedExpectations: [],
     });
 
@@ -532,16 +542,18 @@ describe('ConsoleReporter', function() {
       failedExpectations: [],
       passedExpectations: [],
       debugLogs: [
-        {timestamp: 1, message: 'msg 1'},
-        {timestamp: 100, message: 'msg 2'},
+        { timestamp: 1, message: 'msg 1' },
+        { timestamp: 100, message: 'msg 2' },
       ],
     });
     reporter.jasmineDone({});
 
-    expect(this.out.getOutput()).toContain('  Debug logs:\n    1ms: msg 1\n    100ms: msg 2');
+    expect(this.out.getOutput()).toContain(
+      '  Debug logs:\n    1ms: msg 1\n    100ms: msg 2'
+    );
   });
 
-  it('reports a summary without a "no expectations" message for a spec having passed expectations', function () {
+  it('reports a summary without a "no expectations" message for a spec having passed expectations', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
@@ -553,24 +565,29 @@ describe('ConsoleReporter', function() {
       status: 'passed',
       description: 'with a passed spec',
       fullName: 'A suite with a passed spec',
-      passedExpectations: [{
-        passed: true,
-        message: 'Expected true to be true.',
-        expected: true,
-        actual: true,
-      }],
+      passedExpectations: [
+        {
+          passed: true,
+          message: 'Expected true to be true.',
+          expected: true,
+          actual: true,
+        },
+      ],
     });
     reporter.specDone({
       status: 'failed',
       description: 'with a failing spec',
-      fullName: 'A suite with a failing spec that has both passed and failing expectations',
+      fullName:
+        'A suite with a failing spec that has both passed and failing expectations',
       failedExpectations: [],
-      passedExpectations: [{
-        passed: true,
-        message: 'Expected true to be true.',
-        expected: true,
-        actual: true,
-      }],
+      passedExpectations: [
+        {
+          passed: true,
+          message: 'Expected true to be true.',
+          expected: true,
+          actual: true,
+        },
+      ],
     });
 
     this.out.clear();
@@ -587,9 +604,15 @@ describe('ConsoleReporter', function() {
       showColors: true,
     });
 
-    reporter.suiteDone({ failedExpectations: [{ message: 'After All Exception' }] });
-    reporter.suiteDone({ failedExpectations: [{ message: 'Some Other Exception' }] });
-    reporter.jasmineDone({ failedExpectations: [{ message: 'Global Exception' }] });
+    reporter.suiteDone({
+      failedExpectations: [{ message: 'After All Exception' }],
+    });
+    reporter.suiteDone({
+      failedExpectations: [{ message: 'Some Other Exception' }],
+    });
+    reporter.jasmineDone({
+      failedExpectations: [{ message: 'Global Exception' }],
+    });
 
     expect(this.out.getOutput()).toMatch(/After All Exception/);
     expect(this.out.getOutput()).toMatch(/Some Other Exception/);
@@ -616,7 +639,7 @@ describe('ConsoleReporter', function() {
         color: true,
       });
 
-      reporter.specDone({status: 'passed'});
+      reporter.specDone({ status: 'passed' });
 
       expect(this.out.getOutput()).toEqual('\x1B[32m.\x1B[0m');
     });
@@ -628,7 +651,7 @@ describe('ConsoleReporter', function() {
         color: true,
       });
 
-      reporter.specDone({status: 'disabled'});
+      reporter.specDone({ status: 'disabled' });
 
       expect(this.out.getOutput()).toEqual('');
     });
@@ -640,7 +663,7 @@ describe('ConsoleReporter', function() {
         color: true,
       });
 
-      reporter.specDone({status: 'failed'});
+      reporter.specDone({ status: 'failed' });
 
       expect(this.out.getOutput()).toEqual('\x1B[31mF\x1B[0m');
     });

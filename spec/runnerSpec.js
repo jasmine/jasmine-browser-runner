@@ -229,32 +229,32 @@ describe('Runner', function() {
   });
 
   it('does not fetch another batch while fetching', async function() {
-      let resolve;
-      const executePromise = new Promise(res => (resolve = res)),
-        driver = jasmine.createSpyObj('webdriver', {
-          get: Promise.resolve(),
-          executeScript: executePromise,
-          close: Promise.resolve(),
-        }),
-        reporter = fakeReporter(),
-        runner = new Runner({
-          webdriver: driver,
-          reporters: [reporter],
-          host: 'things',
-        });
+    let resolve;
+    const executePromise = new Promise(res => (resolve = res)),
+      driver = jasmine.createSpyObj('webdriver', {
+        get: Promise.resolve(),
+        executeScript: executePromise,
+        close: Promise.resolve(),
+      }),
+      reporter = fakeReporter(),
+      runner = new Runner({
+        webdriver: driver,
+        reporters: [reporter],
+        host: 'things',
+      });
 
-      const resultPromise = runner.run({ batchReporter: true });
+    const resultPromise = runner.run({ batchReporter: true });
 
-      expect(driver.get).toHaveBeenCalled();
-      await Promise.resolve();
-      expect(driver.executeScript).toHaveBeenCalledTimes(1);
-      jasmine.clock().tick(250);
-      // Should not have polled again while waiting
-      expect(driver.executeScript).toHaveBeenCalledTimes(1);
+    expect(driver.get).toHaveBeenCalled();
+    await Promise.resolve();
+    expect(driver.executeScript).toHaveBeenCalledTimes(1);
+    jasmine.clock().tick(250);
+    // Should not have polled again while waiting
+    expect(driver.executeScript).toHaveBeenCalledTimes(1);
 
-      resolve([['jasmineDone', { overallStatus: 'complete' }]]);
-      await resultPromise;
-    });
+    resolve([['jasmineDone', { overallStatus: 'complete' }]]);
+    await resultPromise;
+  });
 
   it('passes runtime options through to the browser', async function() {
     const getPromise = new Promise(function() {}),

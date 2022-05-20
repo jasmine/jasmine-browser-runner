@@ -17,9 +17,9 @@
     "lib/examples/default_esm_config.json"
   ],
   "scripts": {
-    "posttest": "eslint bin/* lib spec scripts index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
+    "posttest": "eslint bin/* lib spec scripts index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" \"scripts/*.js\" index.js",
     "test": "jasmine",
-    "cleanup": "prettier --write --ignore-path=.styleIgnore lib/*.js lib/**/*.js spec/**/*.js scripts/*.js index.js",
+    "cleanup": "prettier --write --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" \"scripts/*.js\" index.js",
     "release": "node scripts/release.js"
   },
   "repository": {
