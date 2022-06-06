@@ -27,6 +27,17 @@ describe('webdriver', function() {
         });
       });
 
+      it('handles headlessFirefox as a special case', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver('headlessFirefox', builder);
+
+        expect(builder.browserName).toEqual('firefox');
+        expect(builder.capabilities.get('moz:firefoxOptions')).toEqual({
+          args: ['--headless', '--width=1024', '--height=768'],
+        });
+      });
+
       it('does not use Sauce', function() {
         const builder = new MockWebdriverBuilder();
 
