@@ -62,7 +62,7 @@ To use a browser other than Firefox, add a `browser` field to
 }
 ```
 
-Its value can be `"firefox"`, `"safari"`, 
+Its value can be `"firefox"`, `"headlessFirefox"`, `"safari"`, 
 `"MicrosoftEdge"`, `"chrome"`, or `"headlessChrome"`.
 
 ## ES module support
