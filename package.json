@@ -1,6 +1,6 @@
 {
   "name": "jasmine-browser-runner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Serve and run your Jasmine specs in a browser",
   "bin": "bin/jasmine-browser-runner",
   "exports": "./index.js",
