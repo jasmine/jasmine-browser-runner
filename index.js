@@ -77,7 +77,7 @@ module.exports = {
     const reporters = await createReporters(options);
     const useSauce = options.browser && options.browser.useSauce;
     const portRequest = useSauce ? 5555 : 0;
-    await server.start({ port: portRequest });
+    await server.start({ port: options.port || portRequest });
 
     try {
       const webdriver = buildWebdriver(options.browser);
