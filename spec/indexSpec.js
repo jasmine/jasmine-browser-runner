@@ -7,6 +7,84 @@ describe('index', function() {
   });
 
   describe('runSpecs', function() {
+    describe('Specifying the port', function() {
+      beforeEach(function() {
+        const server = (this.server = jasmine.createSpyObj('Server', [
+          'start',
+          'stop',
+          'port',
+        ]));
+        server.start.and.callFake(() => Promise.reject(new Error('stop here')));
+        const runner = jasmine.createSpyObj('Runner', ['run']);
+        const buildWebdriver = jasmine
+          .createSpy('buildWebdriver')
+          .and.callFake(buildStubWebdriver);
+        this.deps = {
+          Server: function() {
+            return server;
+          },
+          Runner: function() {
+            return runner;
+          },
+          buildWebdriver,
+          setExitCode: () => {},
+        };
+
+        this.waitForServerStart = async function(promise) {
+          await expectAsync(promise).toBeRejectedWithError('stop here');
+        };
+      });
+
+      describe('When not using Sauce Connect', function() {
+        it('uses the specified port', async function() {
+          const promise = runSpecs({ port: 12345 }, this.deps);
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({ port: 12345 });
+        });
+
+        it('tells the server to pick a port if nothing is specified', async function() {
+          const promise = runSpecs({}, this.deps);
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({ port: 0 });
+        });
+      });
+
+      describe('When using Sauce Connect', function() {
+        it('uses port 5555', async function() {
+          const promise = runSpecs(
+            {
+              browser: {
+                useSauce: true,
+              },
+            },
+            this.deps
+          );
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({ port: 5555 });
+        });
+
+        it('throws if a port is specified', async function() {
+          const promise = runSpecs(
+            {
+              browser: {
+                useSauce: true,
+              },
+              port: 1234,
+            },
+            this.deps
+          );
+
+          await expectAsync(promise).toBeRejectedWithError(
+            "Can't specify a port when browser.useSauce is true"
+          );
+          expect(this.server.start).not.toHaveBeenCalled();
+        });
+      });
+    });
+
     describe('Specifying the reporter that reports to the user', function() {
       it('uses the ConsoleReporter by default', async function() {
         const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({

@@ -76,8 +76,21 @@ module.exports = {
 
     const reporters = await createReporters(options);
     const useSauce = options.browser && options.browser.useSauce;
-    const portRequest = useSauce ? 5555 : 0;
-    await server.start({ port: options.port || portRequest });
+    let portRequest;
+
+    if (useSauce) {
+      if (options.port) {
+        throw new Error("Can't specify a port when browser.useSauce is true");
+      }
+
+      portRequest = 5555;
+    } else if (options.port) {
+      portRequest = options.port;
+    } else {
+      portRequest = 0;
+    }
+
+    await server.start({ port: portRequest });
 
     try {
       const webdriver = buildWebdriver(options.browser);
