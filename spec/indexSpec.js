@@ -95,7 +95,7 @@ describe('index', function() {
           .and.returnValue(jasmine.createSpyObj('reporter', ['setOptions']));
 
         await runSpecs(
-          { color: false },
+          { color: false, alwaysListPendingSpecs: false },
           {
             Runner,
             ConsoleReporter: MockConsoleReporter,
@@ -108,7 +108,10 @@ describe('index', function() {
         expect(MockConsoleReporter).toHaveBeenCalled();
         const reporter = MockConsoleReporter.calls.first().returnValue;
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([reporter]);
-        expect(reporter.setOptions).toHaveBeenCalledWith({ color: false });
+        expect(reporter.setOptions).toHaveBeenCalledWith({
+          color: false,
+          alwaysListPendingSpecs: false,
+        });
       });
 
       describe('When custom reporters are specified', function() {

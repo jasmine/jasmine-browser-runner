@@ -11,7 +11,10 @@ async function createReporters(options, deps) {
     deps = deps || {};
     const ReporterCtor = deps.ConsoleReporter || ConsoleReporter;
     const consoleReporter = new ReporterCtor();
-    consoleReporter.setOptions({ color: options.color });
+    consoleReporter.setOptions({
+      color: options.color,
+      alwaysListPendingSpecs: options.alwaysListPendingSpecs,
+    });
     result.push(consoleReporter);
   }
 
