@@ -4,11 +4,13 @@ const ConsoleReporter = require('./lib/console_reporter'),
   Runner = require('./lib/runner'),
   ModuleLoader = require('./lib/moduleLoader');
 
-async function createReporters(options) {
+async function createReporters(options, deps) {
   const result = [];
 
   if (options.useConsoleReporter !== false) {
-    const consoleReporter = new ConsoleReporter();
+    deps = deps || {};
+    const ReporterCtor = deps.ConsoleReporter || ConsoleReporter;
+    const consoleReporter = new ReporterCtor();
     consoleReporter.setOptions({ color: options.color });
     result.push(consoleReporter);
   }
@@ -74,7 +76,7 @@ module.exports = {
     const setExitCode = deps.setExitCode || (code => (process.exitCode = code));
     const server = new ServerClass(options);
 
-    const reporters = await createReporters(options);
+    const reporters = await createReporters(options, deps);
     const useSauce = options.browser && options.browser.useSauce;
     let portRequest;
 
