@@ -449,4 +449,75 @@ describe('server', function() {
       expect(html).toContain('/__support__/batchReporter.js');
     });
   });
+
+  describe('Backslash handling', function() {
+    describe('When running on Windows', function() {
+      beforeEach(function() {
+        spyOn(console, 'warn');
+      });
+
+      function windows() {
+        return 'win32';
+      }
+
+      function testGlobWarning(fieldName) {
+        const options = { platform: windows };
+        options[fieldName] = ['foo\\*.js', 'foo\\bar\\exact.js'];
+        new Server(options);
+        expect(console.warn).toHaveBeenCalledWith(
+          'Backslashes in ' +
+            'file paths behave inconsistently between platforms and might not be ' +
+            'treated as directory separators in a future version. Consider ' +
+            'changing foo\\*.js to foo/*.js.'
+        );
+        expect(console.warn).toHaveBeenCalledWith(
+          'Backslashes in ' +
+            'file paths behave inconsistently between platforms and might not be ' +
+            'treated as directory separators in a future version. Consider ' +
+            'changing foo\\bar\\exact.js to foo/bar/exact.js.'
+        );
+      }
+
+      it('warns about backslashes in srcFiles', function() {
+        testGlobWarning('srcFiles');
+      });
+
+      it('warns about backslashes in specFiles', function() {
+        testGlobWarning('specFiles');
+      });
+
+      it('warns about backslashes in helpers', function() {
+        testGlobWarning('helpers');
+      });
+    });
+
+    describe('When not running on Windows', function() {
+      beforeEach(function() {
+        spyOn(console, 'warn');
+      });
+
+      function notWindows() {
+        return 'Ultrix 4.5';
+      }
+
+      function testGlobWarning(fieldName) {
+        const options = { platform: notWindows };
+        options[fieldName] = ['foo\\*.js', 'foo\\bar\\exact.js'];
+        new Server(options);
+        expect(console.warn).not.toHaveBeenCalled();
+      }
+
+      it('warns about backslashes in srcFiles', function() {
+        testGlobWarning('srcFiles');
+      });
+
+      it('warns about backslashes in specFiles', function() {
+        testGlobWarning('specFiles');
+      });
+
+      it('warns about backslashes in helpers', function() {
+        testGlobWarning('helpers');
+      });
+    });
+  });
 });
