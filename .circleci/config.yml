@@ -39,6 +39,16 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Clean up after Chromedriver installation
+          command: |
+            # browser-tools/install-chromedriver drops a LICENSE.chromedriver
+            # file in the project root dir. That causes the spec in
+            # spec/npmPackageSpec.js that checks which files we're packaging
+            # to fail, since `npm pack` includes LICENSE.* files even if they
+            # aren't allowlisted. We don't distribute ChromeDriver, so we don't
+            # need to package its license file.
+            rm LICENSE.chromedriver
+      - run:
           name: Install dependencies
           command: npm install
       - run:
@@ -78,6 +88,16 @@ jobs:
         at: .
     - browser-tools/install-chrome
     - browser-tools/install-chromedriver
+    - run:
+        name: Clean up after Chromedriver installation
+        command: |
+          # browser-tools/install-chromedriver drops a LICENSE.chromedriver
+          # file in the project root dir. That causes the spec in
+          # spec/npmPackageSpec.js that checks which files we're packaging
+          # to fail, since `npm pack` includes LICENSE.* files even if they
+          # aren't allowlisted. We don't distribute ChromeDriver, so we don't
+          # need to package its license file.
+          rm LICENSE.chromedriver
     - run:
         name: Install Sauce Connect
         command: |
