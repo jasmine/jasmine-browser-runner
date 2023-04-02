@@ -1,5 +1,21 @@
 const { loadConfig, validateConfig } = require('../lib/config');
 
+/**
+ * Helper testing function for use with `toThrowMatching`.
+ *
+ * Remember to properly escape strings for regexp consumption in RegExp ctor.
+ *
+ * @param {Error} e error object
+ * @param {Array} pieces strings in order that the error should include
+ * @returns true if error.message has pieces in order, else false
+ * @example `.toThrowMatching(e => errorMsgHas(['1st piece of e\\.message', '2nd piece'...])`
+ */
+function errorMsgHas(e, pieces) {
+  const includesRegExpString = pieces.join('.*');
+  const regExp = new RegExp(`^.*${includesRegExpString}.*$`);
+  return e.message.match(regExp)?.length > 0;
+}
+
 describe('config', function() {
   describe('loadConfig', function() {
     it('uses a specified config file', async function() {
@@ -117,6 +133,210 @@ describe('config', function() {
         config.helpers = 'just a string';
         validateConfig(config);
       }).toThrowError("Configuration's helpers property is not an array");
+    });
+
+    const kName = 'importMappings';
+    describe(`config.${kName}`, () => {
+      it(`throws if the ${kName} property is not an object`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = 'just a string';
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, ['Configuration', kName, 'is not an object'])
+        );
+      });
+
+      it(`throws if the ${kName} property is set but has no imports or scopes`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {};
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            kName,
+            'contains no imports or scopes',
+          ])
+        );
+      });
+
+      it(`throws if the ${kName}.imports property is not an object`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            imports: 'just a string',
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}\\.imports`,
+            'is not an object',
+          ])
+        );
+      });
+
+      it(`throws if the ${kName}.scopes property is not an object`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            scopes: 'just a string',
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}\\.scopes`,
+            'is not an object',
+          ])
+        );
+      });
+
+      it(`throws if the ${kName}.imports is truthy but empty`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            imports: {},
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, ['Configuration', 'imports', 'cannot be empty'])
+        );
+      });
+
+      it(`throws if any ${kName}.scopes values are truthy but empty`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            scopes: {
+              'some scope': {},
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.scopes`,
+            'map',
+            'cannot be empty',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.imports keys are empty strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            imports: {
+              '': 'valid mapping value',
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.imports`,
+            'empty string keys',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.scopes map keys are empty strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            scopes: {
+              'valid scope': {
+                '': 'valid mapping value',
+              },
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.scopes`,
+            'empty string keys',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.imports values are empty strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            imports: {
+              'valid mapping key': '',
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.imports`,
+            'empty string values',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.scopes map values are empty strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            scopes: {
+              'valid scope': {
+                'valid mapping key': '',
+              },
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.scopes`,
+            'empty string values',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.imports values are not strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            imports: {
+              'valid mapping key': ['invalid', 'array', 'value'],
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.imports`,
+            'value is not a string',
+          ])
+        );
+      });
+
+      it(`throws if any ${kName}.scopes map values are not strings`, function() {
+        expect(function() {
+          const config = validConfig();
+          config[kName] = {
+            scopes: {
+              'valid scope': {
+                'valid mapping key': ['invalid', 'array', 'value'],
+              },
+            },
+          };
+          validateConfig(config);
+        }).toThrowMatching(e =>
+          errorMsgHas(e, [
+            'Configuration',
+            `${kName}.scopes`,
+            'value is not a string',
+          ])
+        );
+      });
     });
   });
 });
