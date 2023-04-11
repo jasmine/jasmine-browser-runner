@@ -520,4 +520,93 @@ describe('server', function() {
       });
     });
   });
+
+  describe('importMap option', function() {
+    // config validation already in configSpec. At this point, we are testing only valid configs.
+    const importsOnly = {
+      importMap: {
+        imports: {
+          'some-lib': 'some-lib/path/to/index.mjs', // actual file
+          'some-lib/': 'some-lib/path/', // trailing slash
+        },
+      },
+    };
+    const scopesOnly = {
+      importMap: {
+        scopes: {
+          '/someScope/': {
+            'some-lib': 'some-lib/different/path/to/index.mjs',
+            'some-lib/': 'some-lib/different/path/',
+          },
+        },
+      },
+    };
+    const importsAndScopes = {
+      importMap: {
+        imports: {
+          'some-lib': 'some-lib/path/to/index.mjs',
+          'some-lib/': 'some-lib/path/',
+        },
+        scopes: {
+          '/someScope/': {
+            'some-lib': 'some-lib/different/path/to/index.mjs',
+            'some-lib/': 'some-lib/different/path/',
+          },
+        },
+      },
+    };
+
+    beforeEach(function() {
+      this.startServer = async function(extraOptions) {
+        const options = Object.assign(
+          {
+            projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+            jasmineCore: this.fakeJasmine,
+            srcDir: 'src',
+            srcFiles: ['**/*.mjs'],
+            specDir: 'spec',
+            specFiles: ['**/*[sS]pec.mjs'],
+          },
+          extraOptions
+        );
+        this.server = new Server(options);
+        await this.server.start({ port: 0 });
+      };
+    });
+
+    afterEach(async function() {
+      await this.server.stop();
+    });
+
+    it('should start server with inline import map in html', async function() {
+      const extraOptions = [importsOnly, scopesOnly, importsAndScopes];
+      for (let i = 0; i < extraOptions.length; i++) {
+        const extra = extraOptions[i];
+        await this.startServer(extra);
+
+        const baseUrl = `http://localhost:${this.server.port()}`;
+        var html = await getFile(baseUrl);
+        expect(html).toContain('<script type="importmap">');
+
+        // helper fn used in both imports and scopes sections
+        const checkImports = imports => {
+          for (const [k, v] of Object.entries(imports)) {
+            expect(html).toContain(`"${k}": "${v}"`);
+          }
+        };
+
+        const { imports, scopes } = extra.importMap;
+        if (imports) {
+          checkImports(imports);
+        }
+        if (scopes) {
+          for (const [scope, scopeImports] of Object.entries(scopes)) {
+            expect(html).toContain(`"${scope}": {`);
+            // } <- matching close curly bracket for the one above in comment (GUI)
+            checkImports(scopeImports);
+          }
+        }
+      }
+    });
+  });
 });
