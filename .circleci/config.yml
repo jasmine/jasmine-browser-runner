@@ -10,7 +10,7 @@ orbs:
 executors:
   node18:
     docker:
-      - image: cimg/node:16.3.0-browsers
+      - image: cimg/node:18.0.0-browsers
     working_directory: ~/workspace
   node16:
     docker:
