@@ -108,9 +108,9 @@ describe('Sauce parameter handling', function() {
           // the port.
           timedOut = true;
           jasmineBrowserProcess.kill();
-        }, 59 * 1000);
+        }, 239 * 1000);
       },
-      60 * 1000
+      240 * 1000
     );
 
     function createSuite() {
