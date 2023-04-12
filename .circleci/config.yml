@@ -16,14 +16,6 @@ executors:
     docker:
       - image: cimg/node:16.1.0-browsers
     working_directory: ~/workspace
-  node14:
-    docker:
-      - image: cimg/node:14.17.4-browsers # Latest 14.x
-    working_directory: ~/workspace
-  node12:
-    docker:
-      - image: cimg/node:12.17.0 # Oldest version supported by Jasmine
-    working_directory: ~/workspace
 
 jobs:
   test:
@@ -82,7 +74,7 @@ jobs:
           command: JASMINE_NO_BROWSER_TESTS=y npm test
 
   saucelabs_integration_test:
-    executor: node14
+    executor: node16
     steps:
     - attach_workspace:
         at: .
@@ -127,11 +119,11 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node18", "node16", "node14", "node12"]
+                executor: ["node18", "node16"]
       - test_win
       - saucelabs_integration_test:
           requires:
-            - "test-node14"
+            - "test-node16"
           filters:
             branches:
               ignore: /pull\/.*/ # Don't run on pull requests.
