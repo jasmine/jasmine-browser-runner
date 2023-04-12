@@ -29,24 +29,24 @@ describe('Sauce parameter handling', function() {
   createSpec('firefox', '', '', /Gecko\/[0-9]+ Firefox\/[0-9.]+$/);
   createSpec(
     'firefox',
-    '91',
+    '102',
     'Windows 10',
-    /Windows NT 10.0;.* Firefox\/91\.0$/
+    /Windows NT 10.0;.* Firefox\/102\.0$/
   );
   createSpec('chrome', '', '', /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/);
-  createSpec(
-    'safari',
-    '14',
-    'OS X 11.00',
-    // Safari on 11.0 reports the OS as 10.15
-    /Mac OS X 10_15.*Version\/14[0-9.]+ Safari/
-  );
   createSpec(
     'safari',
     '15',
     'macOS 12',
     // Safari on 12.x reports the OS as 10_15_7
     /Mac OS X 10_15.*Version\/15[0-9.]+ Safari/
+  );
+  createSpec(
+    'safari',
+    '16',
+    'macOS 12',
+    // Safari on 12.x reports the OS as 10_15_7
+    /Mac OS X 10_15.*Version\/16[0-9.]+ Safari/
   );
   createSpec(
     'MicrosoftEdge',
