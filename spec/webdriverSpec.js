@@ -116,57 +116,7 @@ describe('webdriver', function() {
       expect(builder.server).toMatch(/saucelabs/);
     });
 
-    it('uses JWP keys for old Safari versions, as required by Saucelabs', function() {
-      const builder = new MockWebdriverBuilder();
-      function makeSafari(version) {
-        buildWebdriver(
-          {
-            useSauce: true,
-            name: 'safari',
-            sauce: {
-              os: 'OS X someversion',
-              browserVersion: version,
-              tunnelIdentifier: 'a tunnel id',
-            },
-          },
-          builder
-        );
-      }
-
-      makeSafari('11');
-      expect(builder.capabilities.platform).toEqual('OS X someversion');
-      expect(builder.capabilities.version).toEqual('11');
-      expect(builder.capabilities.tunnelIdentifier).toEqual('a tunnel id');
-      expect(builder.capabilities.platformName).toBeUndefined();
-      expect(builder.capabilities.browserVersion).toBeUndefined();
-      expect(builder.capabilities['sauce:options']).toBeUndefined();
-
-      makeSafari('10');
-      expect(builder.capabilities.platform).toEqual('OS X someversion');
-      expect(builder.capabilities.version).toEqual('10');
-      expect(builder.capabilities.tunnelIdentifier).toEqual('a tunnel id');
-      expect(builder.capabilities.platformName).toBeUndefined();
-      expect(builder.capabilities.browserVersion).toBeUndefined();
-      expect(builder.capabilities['sauce:options']).toBeUndefined();
-
-      makeSafari('9');
-      expect(builder.capabilities.platform).toEqual('OS X someversion');
-      expect(builder.capabilities.version).toEqual('9');
-      expect(builder.capabilities.tunnelIdentifier).toEqual('a tunnel id');
-      expect(builder.capabilities.platformName).toBeUndefined();
-      expect(builder.capabilities.browserVersion).toBeUndefined();
-      expect(builder.capabilities['sauce:options']).toBeUndefined();
-
-      makeSafari('8');
-      expect(builder.capabilities.platform).toEqual('OS X someversion');
-      expect(builder.capabilities.version).toEqual('8');
-      expect(builder.capabilities.tunnelIdentifier).toEqual('a tunnel id');
-      expect(builder.capabilities.platformName).toBeUndefined();
-      expect(builder.capabilities.browserVersion).toBeUndefined();
-      expect(builder.capabilities['sauce:options']).toBeUndefined();
-    });
-
-    it('uses W3C keys for everything except old Safari versions', function() {
+    it('uses W3C keys', function() {
       const builder = new MockWebdriverBuilder();
       function makeBrowser(name, version) {
         buildWebdriver(
