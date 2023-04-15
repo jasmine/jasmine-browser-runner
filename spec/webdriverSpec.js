@@ -23,6 +23,7 @@ describe('webdriver', function() {
             '--no-sandbox',
             'window-size=1024,768',
             '--disable-gpu',
+            '--disable-dev-shm-usage',
           ],
         });
       });
