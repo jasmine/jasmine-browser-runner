@@ -1,14 +1,14 @@
 {
   "srcDir": "src",
   "srcFiles": [
-    "**/*.?(m)js"
+    "**/*.mjs"
   ],
   "specDir": "spec",
   "specFiles": [
-    "**/*[sS]pec.?(m)js"
+    "**/*Spec.mjs"
   ],
   "helpers": [
-    "helpers/**/*.?(m)js"
+    "helpers/**/*.mjs"
   ],
   "random": false,
   "browser": {
@@ -16,8 +16,9 @@
   },
   "importMap": {
     "imports": {
-      "some-lib": "./node_modules/some-lib/dist/index.mjs",
-      "some-lib/": "./node_modules/some-lib/dist/"
+      "some-lib": "./__src__/node_modules/some-lib/dist/index.mjs",
+      "some-lib/": "./__src__/node_modules/some-lib/dist/",
+      "helper-gib": "https://cdn.jsdelivr.net/npm/@ibgib/helper-gib@0.0.4/dist/index.mjs"
     }
   }
 }
