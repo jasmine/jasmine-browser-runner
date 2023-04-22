@@ -8,6 +8,10 @@ orbs:
   browser-tools: circleci/browser-tools@1.3.0
 
 executors:
+  node20:
+    docker:
+      - image: cimg/node:20.0.0-browsers
+    working_directory: ~/workspace
   node18:
     docker:
       - image: cimg/node:18.0.0-browsers
@@ -127,7 +131,7 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node18", "node16", "node14", "node12"]
+                executor: ["node20", "node18", "node16", "node14", "node12"]
       - test_win
       - saucelabs_integration_test:
           requires:
