@@ -99,7 +99,7 @@ jobs:
           cd /tmp
           curl https://saucelabs.com/downloads/sc-4.8.2-linux.tar.gz | tar zxf -
           chmod +x sc-4.8.2-linux/bin/sc
-          mkdir ~/bin
+          mkdir -p ~/bin
           cp sc-4.8.2-linux/bin/sc ~/bin
           ~/bin/sc --version
     - run:
