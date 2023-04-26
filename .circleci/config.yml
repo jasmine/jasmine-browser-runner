@@ -16,11 +16,6 @@ executors:
     docker:
       - image: cimg/node:18.0.0-browsers
     working_directory: ~/workspace
-  node16:
-    docker:
-      # Oldest version supported by the jasmine package
-      - image: cimg/node:16.14.0-browsers
-    working_directory: ~/workspace
 
 jobs:
   test:
@@ -67,7 +62,7 @@ jobs:
       - checkout
       - run:
           name: Install Node.js
-          command: nvm install 16.14.0 && nvm use 16.14.0
+          command: nvm install 18.0.0 && nvm use 18.0.0
       - run:
           name: Report Node and NPM versions
           command: echo "Using Node $(node --version) and NPM $(npm --version)"
@@ -82,7 +77,7 @@ jobs:
           command: JASMINE_NO_BROWSER_TESTS=y npm test
 
   saucelabs_integration_test:
-    executor: node16
+    executor: node18
     steps:
     - attach_workspace:
         at: .
@@ -127,11 +122,11 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node20", "node18", "node16"]
+                executor: ["node20", "node18"]
       - test_win
       - saucelabs_integration_test:
           requires:
-            - "test-node16"
+            - "test-node18"
           filters:
             branches:
               ignore: /pull\/.*/ # Don't run on pull requests.
