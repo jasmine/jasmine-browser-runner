@@ -194,5 +194,24 @@ config.projectBaseDir = path.resolve('some/path');
 jasmineBrowser.startServer(config, { port: 4321 });
 ```
 
+## Supported environments
 
+jasmine-browser-runner tests itself across popular browsers (Safari, Chrome, 
+Firefox, and Microsoft Edge) as well as Node.
+
+| Environment       | Supported versions     |
+|-------------------|------------------------|
+| Node              | 12.17+, 14, 16, 18, 20 |
+| Safari            | 14-16                  |
+| Chrome            | Evergreen              |
+| Firefox           | Evergreen, 91, 102     |
+| Edge              | Evergreen              |
+
+For evergreen browsers, each version of jasmine-browser-runner is tested against
+the version of the browser that is available to us at the time of release. Other 
+browsers, as well as older & newer versions of some supported browsers, are
+likely to work. However, jasmine-browser-runner isn't tested against them and 
+they aren't actively supported.
+
+To find out what environments work with a particular Jasmine release, see the [release notes](https://github.com/jasmine/jasmine/tree/main/release_notes).
 

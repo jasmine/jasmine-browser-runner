@@ -9,9 +9,11 @@
      * If you change any, push the changes and wait for CI to go green.
 3. Generate release notes in `release_notes` using the Anchorman gem and edit
 them.
-    * Include a table of supported Node versions and browsers. Check Saucelabs
-      for the current version of evergreen browsers (everything that doesn't
-      have a version specified in jasmine-core's scripts/run-all-browsers).
+    * Include a table of supported Node versions and browsers. To get the
+      currently tested versions of evergreen browsers (everything that doesn't
+      have a version specified in jasmine-core's scripts/run-all-browsers),
+      trigger a jasmine-core build on Circle CI and check 
+      <https://app.saucelabs.com/dashboard/tests/vdc> after it finishes.
 4. Update the version in `package.json`.
 5. Commit the release notes and `package.json` change.
 6. Push.
