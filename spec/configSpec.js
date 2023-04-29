@@ -267,6 +267,36 @@ describe('config', function() {
           /Configuration.+importMap\.scopes.+value is not a string/
         );
       });
+
+      it('throws if the importMap.moduleRootDir starts with ../', function() {
+        expect(function() {
+          const config = validConfig();
+          config['importMap'] = {
+            moduleRootDir: '../some/upwards/path/traversal',
+            imports: {
+              'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
+            },
+          };
+          validateConfig(config);
+        }).toThrowError(
+          /Configuration\.importMap\.moduleRootDir.+cannot start with \.\.\//
+        );
+      });
+
+      it('throws if the importMap.moduleRootDir is empty string', function() {
+        expect(function() {
+          const config = validConfig();
+          config['importMap'] = {
+            moduleRootDir: '',
+            imports: {
+              'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
+            },
+          };
+          validateConfig(config);
+        }).toThrowError(
+          /Configuration\.importMap\.moduleRootDir.+cannot be.+empty string/
+        );
+      });
     });
   });
 });

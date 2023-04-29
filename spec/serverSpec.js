@@ -526,8 +526,10 @@ describe('server', function() {
     const importsOnly = {
       importMap: {
         imports: {
-          'some-lib': 'some-lib/path/to/index.mjs', // actual file
-          'some-lib/': 'some-lib/path/', // trailing slash
+          'some-lib': 'some-lib/path/to/index.mjs', // relative path to actual file
+          'some-lib/': 'some-lib/path/', // relative path with trailing slash
+          'absolute-lib':
+            'https://fakecdn.whatever/absolute-lib/dist/index.mjs', // absolute (starts with http/s)
         },
       },
     };
@@ -537,6 +539,8 @@ describe('server', function() {
           '/someScope/': {
             'some-lib': 'some-lib/different/path/to/index.mjs',
             'some-lib/': 'some-lib/different/path/',
+            'absolute-lib':
+              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
           },
         },
       },
@@ -546,11 +550,15 @@ describe('server', function() {
         imports: {
           'some-lib': 'some-lib/path/to/index.mjs',
           'some-lib/': 'some-lib/path/',
+          'absolute-lib':
+            'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
         },
         scopes: {
           '/someScope/': {
             'some-lib': 'some-lib/different/path/to/index.mjs',
             'some-lib/': 'some-lib/different/path/',
+            'absolute-lib':
+              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
           },
         },
       },
@@ -591,7 +599,12 @@ describe('server', function() {
         // helper fn used in both imports and scopes sections
         const checkImports = imports => {
           for (const [k, v] of Object.entries(imports)) {
-            expect(html).toContain(`"${k}": "${v}"`);
+            const entryString = v.match(/^https?:\/\/.+$/)
+              ? // absolute specifier
+                `"${k}": "${v}"`
+              : // relative specifier
+                `"${k}": "./__moduleRoot__/${v}"`;
+            expect(html).toContain(entryString);
           }
         };
 
