@@ -202,9 +202,9 @@ Firefox, and Microsoft Edge) as well as Node.
 | Environment       | Supported versions     |
 |-------------------|------------------------|
 | Node              | 12.17+, 14, 16, 18, 20 |
-| Safari            | 14-16                  |
+| Safari            | 15-16                  |
 | Chrome            | Evergreen              |
-| Firefox           | Evergreen, 91, 102     |
+| Firefox           | Evergreen, 102         |
 | Edge              | Evergreen              |
 
 For evergreen browsers, each version of jasmine-browser-runner is tested against
