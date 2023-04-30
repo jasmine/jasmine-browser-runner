@@ -124,7 +124,7 @@ describe('server', function() {
         '/__boot__/bootboot.js',
         '/__config__/config.js',
         '/__boot__/boot2.js',
-        '/__support__/loadEsModule.js',
+        '/__support__/loaders.js',
         '/__support__/batchReporter.js',
       ]);
     });
@@ -350,38 +350,90 @@ describe('server', function() {
       const baseUrl = `http://localhost:${this.server.port()}`;
 
       var html = await getFile(baseUrl);
-      expect(html).toContain('/__support__/loadEsModule.js');
+      expect(html).toContain('/__support__/loaders.js');
     });
 
     describe('loading specs and helpers', function() {
-      it('loads .js files as regular scripts', async function() {
-        await this.startServer();
-        const baseUrl = `http://localhost:${this.server.port()}`;
+      function behavesLikeTopLevelAwaitDisabled() {
+        it('loads .js files as regular scripts', async function() {
+          await this.startServer(this.extraOptions);
+          const baseUrl = `http://localhost:${this.server.port()}`;
 
-        var html = await getFile(baseUrl);
-        expect(html).toContain(
-          '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
-        );
-        expect(html).toContain(
-          '<script src="/__spec__/imAspec.js" type="text/javascript">'
-        );
+          var html = await getFile(baseUrl);
+          expect(html).toContain(
+            '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
+          );
+          expect(html).toContain(
+            '<script src="/__spec__/imAspec.js" type="text/javascript">'
+          );
+        });
+
+        it('loads .mjs files as ES modules', async function() {
+          await this.startServer({
+            ...this.extraOptions,
+            srcFiles: ['**/*.mjs'],
+            helpers: ['helpers/**/*.mjs'],
+            specFiles: ['**/*[sS]pec.mjs'],
+          });
+          const baseUrl = `http://localhost:${this.server.port()}`;
+
+          var html = await getFile(baseUrl);
+          expect(html).toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
+          );
+          expect(html).toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
+          );
+        });
+      }
+
+      describe('When enableTopLevelAwait is undefined', function() {
+        beforeEach(function() {
+          this.extraOptions = {};
+        });
+
+        behavesLikeTopLevelAwaitDisabled();
       });
 
-      it('loads .mjs files as ES modules', async function() {
-        await this.startServer({
-          srcFiles: ['**/*.mjs'],
-          helpers: ['helpers/**/*.mjs'],
-          specFiles: ['**/*[sS]pec.mjs'],
+      describe('When enableTopLevelAwait is false', function() {
+        beforeEach(function() {
+          this.extraOptions = { enableTopLevelAwait: false };
         });
-        const baseUrl = `http://localhost:${this.server.port()}`;
 
-        var html = await getFile(baseUrl);
-        expect(html).toContain(
-          '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
-        );
-        expect(html).toContain(
-          '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
-        );
+        behavesLikeTopLevelAwaitDisabled();
+      });
+
+      describe('When enableTopLevelAwait is true', function() {
+        it('uses _jasmine_loadWithTopLevelAwaitSupport', async function() {
+          await this.startServer({
+            enableTopLevelAwait: true,
+            srcFiles: ['**/*.mjs'],
+            helpers: ['helpers/**/*.?(m)js'],
+            specFiles: ['**/*[sS]pec.?(m)js'],
+          });
+          const baseUrl = `http://localhost:${this.server.port()}`;
+
+          const html = await getFile(baseUrl);
+
+          expect(html).toContain('_jasmine_loadWithTopLevelAwaitSupport');
+
+          expect(html).toContain('/__spec__/helpers/esm.mjs');
+          expect(html).not.toContain(
+            '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
+          );
+          expect(html).toContain('/__spec__/imAspec.js');
+          expect(html).not.toContain(
+            '<script src="/__spec__/imAspec.js" type="text/javascript">'
+          );
+          expect(html).toContain('/__spec__/helpers/esm.mjs');
+          expect(html).not.toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
+          );
+          expect(html).toContain('/__spec__/esmSpec.mjs');
+          expect(html).not.toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
+          );
+        });
       });
     });
 

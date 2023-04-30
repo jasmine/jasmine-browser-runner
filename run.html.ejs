@@ -13,13 +13,23 @@
   <% jasmineJsFiles.forEach(function(jsFile) { %>
     <script src="<%= jsFile %>" type="text/javascript"></script>
   <% }) %>
-  <% userJsFiles.forEach(function(jsFile) { %>
-    <% if (jsFile.endsWith('.mjs')) { %>
-      <script type="module">_jasmine_loadEsModule('<%= jsFile %>')</script>
-    <% } else { %>
-      <script src="<%= jsFile %>" type="text/javascript"></script>
-    <% } %>
-  <% }) %>
+  <% if (enableTopLevelAwait) { %>
+    <script type="module">
+      await _jasmine_loadWithTopLevelAwaitSupport([
+        <% userJsFiles.forEach(function(jsFile) { %>
+          '<%= jsFile %>',
+        <% }) %>
+      ]);
+    </script>
+  <% } else { %>
+    <% userJsFiles.forEach(function(jsFile) { %>
+      <% if (jsFile.endsWith('.mjs')) { %>
+        <script type="module">_jasmine_loadEsModule('<%= jsFile %>')</script>
+      <% } else { %>
+        <script src="<%= jsFile %>" type="text/javascript"></script>
+      <% } %>
+    <% }) %>
+  <% } %>
 
 <div id="jasmine_content"></div>
 </body>
