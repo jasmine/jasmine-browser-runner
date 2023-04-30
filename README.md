@@ -75,6 +75,9 @@ config field to something that's high enough up to include both spec and source
 files, and set `srcFiles` to `[]`. You can autogenerate such a configuration by
 running `npx jasmine-browser-runner init --esm`.
 
+If you have specs or helper files that use top-level await, set the
+`enableTopLevelAwait` config property is set to `true`.
+
 ## Use with Rails
 
 You can use jasmine-browser-runner to test your Rails application's JavaScript,
