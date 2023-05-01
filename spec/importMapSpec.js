@@ -27,7 +27,7 @@ describe('Import Map Sample Project', function() {
             clearTimeout(timerId);
 
             if (!err) {
-              expect(stdout).toContain('4 specs, 0 failures');
+              expect(stdout).toContain('3 specs, 0 failures');
               done();
             } else {
               if (err.code !== 1 || stdout === '' || stderr !== '') {
@@ -77,7 +77,7 @@ describe('Import Map Sample Project', function() {
             clearTimeout(timerId);
 
             if (!err) {
-              expect(stdout).toContain('4 specs, 0 failures');
+              expect(stdout).toContain('3 specs, 0 failures');
               done();
             } else {
               if (err.code !== 1 || stdout === '' || stderr !== '') {

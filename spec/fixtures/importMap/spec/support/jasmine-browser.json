@@ -17,8 +17,7 @@
   "importMap": {
     "imports": {
       "some-lib": "node_modules/some-lib/dist/index.mjs",
-      "some-lib/": "node_modules/some-lib/dist/",
-      "helper-gib": "https://cdn.jsdelivr.net/npm/@ibgib/helper-gib@0.0.4/dist/index.mjs"
+      "some-lib/": "node_modules/some-lib/dist/"
     }
   }
 }
