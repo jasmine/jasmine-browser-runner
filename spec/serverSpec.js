@@ -522,102 +522,145 @@ describe('server', function() {
   });
 
   describe('importMap option', function() {
-    // config validation already in configSpec. At this point, we are testing only valid configs.
-    const importsOnly = {
-      importMap: {
-        imports: {
-          'some-lib': 'some-lib/path/to/index.mjs', // relative path to actual file
-          'some-lib/': 'some-lib/path/', // relative path with trailing slash
-          'absolute-lib':
-            'https://fakecdn.whatever/absolute-lib/dist/index.mjs', // absolute (starts with http/s)
-        },
-      },
-    };
-    const scopesOnly = {
-      importMap: {
-        scopes: {
-          '/someScope/': {
-            'some-lib': 'some-lib/different/path/to/index.mjs',
-            'some-lib/': 'some-lib/different/path/',
+    it('should start server with inline import map in html with both imports and scopes', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          imports: {
+            'some-lib': 'some-lib/path/to/index.mjs',
+            'some-lib/': 'some-lib/path/',
             'absolute-lib':
               'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
           },
-        },
-      },
-    };
-    const importsAndScopes = {
-      importMap: {
-        imports: {
-          'some-lib': 'some-lib/path/to/index.mjs',
-          'some-lib/': 'some-lib/path/',
-          'absolute-lib':
-            'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
-        },
-        scopes: {
-          '/someScope/': {
-            'some-lib': 'some-lib/different/path/to/index.mjs',
-            'some-lib/': 'some-lib/different/path/',
-            'absolute-lib':
-              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+          scopes: {
+            '/someScope/': {
+              'some-lib': 'some-lib/different/path/to/index.mjs',
+              'some-lib/': 'some-lib/different/path/',
+              'absolute-lib':
+                'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+            },
           },
         },
-      },
-    };
-
-    beforeEach(function() {
-      this.startServer = async function(extraOptions) {
-        const options = Object.assign(
-          {
-            projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
-            jasmineCore: this.fakeJasmine,
-            srcDir: 'src',
-            srcFiles: ['**/*.mjs'],
-            specDir: 'spec',
-            specFiles: ['**/*[sS]pec.mjs'],
-          },
-          extraOptions
-        );
-        this.server = new Server(options);
-        await this.server.start({ port: 0 });
-      };
-    });
-
-    afterEach(async function() {
-      await this.server.stop();
-    });
-
-    it('should start server with inline import map in html', async function() {
-      const extraOptions = [importsOnly, scopesOnly, importsAndScopes];
-      for (let i = 0; i < extraOptions.length; i++) {
-        const extra = extraOptions[i];
-        await this.startServer(extra);
-
-        const baseUrl = `http://localhost:${this.server.port()}`;
+      });
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toContain('<script type="importmap">');
+        expect(html).toMatch(
+          [
+            /<script type="importmap">\n/,
+            /\s*\{/,
+            /\s*"imports": \{/,
+            /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+            /\s*"some-lib\/": ".*some-lib\/path\/",/,
+            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+            /\s*\},/,
+            /\s*"scopes": \{/,
+            /\s*"\/someScope\/": \{/,
+            /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+            /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+            /\s*\}/,
+            /\s*\}/,
+            /\s*\}/,
+            /\s*<\/script>/,
+          ]
+            .map(x => x.source)
+            .join('')
+        );
+      } finally {
+        await server.stop();
+      }
+    });
 
-        // helper fn used in both imports and scopes sections
-        const checkImports = imports => {
-          for (const [k, v] of Object.entries(imports)) {
-            const entryString = v.match(/^https?:\/\/.+$/)
-              ? // absolute specifier
-                `"${k}": "${v}"`
-              : // relative specifier
-                `"${k}": "./__moduleRoot__/${v}"`;
-            expect(html).toContain(entryString);
-          }
-        };
+    it('should start server with inline import map in html with imports only', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          imports: {
+            'some-lib': 'some-lib/path/to/index.mjs',
+            'some-lib/': 'some-lib/path/',
+            'absolute-lib':
+              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+          },
+        },
+      });
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
+        var html = await getFile(baseUrl);
+        expect(html).toMatch(
+          [
+            /<script type="importmap">\n/,
+            /\s*\{/,
+            /\s*"imports": \{/,
+            /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+            /\s*"some-lib\/": ".*some-lib\/path\/",/,
+            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+            /\s*\}/,
+            /\s*\}/,
+            /\s*<\/script>/,
+          ]
+            .map(x => x.source)
+            .join('')
+        );
+      } finally {
+        await server.stop();
+      }
+    });
 
-        const { imports, scopes } = extra.importMap;
-        if (imports) {
-          checkImports(imports);
-        }
-        if (scopes) {
-          for (const [scope, scopeImports] of Object.entries(scopes)) {
-            expect(html).toContain(`"${scope}": `);
-            checkImports(scopeImports);
-          }
-        }
+    it('should start server with inline import map in html with scopes only', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          scopes: {
+            '/someScope/': {
+              'some-lib': 'some-lib/different/path/to/index.mjs',
+              'some-lib/': 'some-lib/different/path/',
+              'absolute-lib':
+                'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+            },
+          },
+        },
+      });
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
+        var html = await getFile(baseUrl);
+        expect(html).toMatch(
+          [
+            /<script type="importmap">\n/,
+            /\s*\{/,
+            /\s*"scopes": \{/,
+            /\s*"\/someScope\/": \{/,
+            /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+            /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+            /\s*\}/,
+            /\s*\}/,
+            /\s*\}/,
+            /\s*<\/script>/,
+          ]
+            .map(x => x.source)
+            .join('')
+        );
+      } finally {
+        await server.stop();
       }
     });
   });
