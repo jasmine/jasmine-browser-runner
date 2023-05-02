@@ -119,13 +119,12 @@ describe('config', function() {
       }).toThrowError("Configuration's helpers property is not an array");
     });
 
-    fdescribe('config.importMap', () => {
+    describe('config.importMap', () => {
       it('throws if the importMap property is not an object', function() {
         expect(function() {
           const config = validConfig();
           config['importMap'] = 'just a string';
           validateConfig(config);
-        // }).toThrowError(/Configuration.+importMap.+is not an object/);
         }).toThrowError("Configuration's importMap property is not an object");
       });
 
@@ -134,7 +133,9 @@ describe('config', function() {
           const config = validConfig();
           config['importMap'] = {};
           validateConfig(config);
-        }).toThrowError("Configuration's importMap contains no imports or scopes");
+        }).toThrowError(
+          "Configuration's importMap contains no imports or scopes"
+        );
       });
 
       it('throws if the importMap.imports property is not an object', function() {
@@ -144,7 +145,9 @@ describe('config', function() {
             imports: 'just a string',
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.imports property is not an object");
+        }).toThrowError(
+          "Configuration's importMap.imports property is not an object"
+        );
       });
 
       it('throws if the importMap.scopes property is not an object', function() {
@@ -154,7 +157,9 @@ describe('config', function() {
             scopes: 'just a string',
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.scopes property is not an object");
+        }).toThrowError(
+          "Configuration's importMap.scopes property is not an object"
+        );
       });
 
       it('throws if the importMap.imports is truthy but empty', function() {
@@ -164,7 +169,9 @@ describe('config', function() {
             imports: {},
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.imports map cannot be empty");
+        }).toThrowError(
+          "Configuration's importMap.imports map cannot be empty"
+        );
       });
 
       it('throws if any importMap.scopes values are truthy but empty', function() {
@@ -188,7 +195,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.imports map cannot contain empty string keys");
+        }).toThrowError(
+          "Configuration's importMap.imports map cannot contain empty string keys"
+        );
       });
 
       it('throws if any importMap.scopes map keys are empty strings', function() {
@@ -202,7 +211,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.scopes map cannot contain empty string keys");
+        }).toThrowError(
+          "Configuration's importMap.scopes map cannot contain empty string keys"
+        );
       });
 
       it('throws if any importMap.imports values are empty strings', function() {
@@ -214,7 +225,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.imports map cannot contain empty string values");
+        }).toThrowError(
+          "Configuration's importMap.imports map cannot contain empty string values"
+        );
       });
 
       it('throws if any importMap.scopes map values are empty strings', function() {
@@ -228,7 +241,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.scopes map cannot contain empty string values");
+        }).toThrowError(
+          "Configuration's importMap.scopes map cannot contain empty string values"
+        );
       });
 
       it('throws if any importMap.imports values are not strings', function() {
@@ -240,7 +255,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.imports map value is not a string");
+        }).toThrowError(
+          "Configuration's importMap.imports map value is not a string"
+        );
       });
 
       it('throws if any importMap.scopes map values are not strings', function() {
@@ -254,7 +271,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration's importMap.scopes map value is not a string");
+        }).toThrowError(
+          "Configuration's importMap.scopes map value is not a string"
+        );
       });
 
       it('throws if the importMap.moduleRootDir starts with ../', function() {
@@ -267,7 +286,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration.importMap.moduleRootDir cannot start with ../");
+        }).toThrowError(
+          'Configuration.importMap.moduleRootDir cannot start with ../'
+        );
       });
 
       it('throws if the importMap.moduleRootDir is empty string', function() {
@@ -280,7 +301,9 @@ describe('config', function() {
             },
           };
           validateConfig(config);
-        }).toThrowError("Configuration.importMap.moduleRootDir cannot be an empty string");
+        }).toThrowError(
+          'Configuration.importMap.moduleRootDir cannot be an empty string'
+        );
       });
     });
   });
