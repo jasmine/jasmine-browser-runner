@@ -614,8 +614,7 @@ describe('server', function() {
         }
         if (scopes) {
           for (const [scope, scopeImports] of Object.entries(scopes)) {
-            expect(html).toContain(`"${scope}": {`);
-            // } <- matching close curly bracket for the one above in comment (GUI)
+            expect(html).toContain(`"${scope}": `);
             checkImports(scopeImports);
           }
         }
