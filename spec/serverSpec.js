@@ -551,7 +551,7 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(
+        expect(html).toMatch(new RegExp(
           [
             /<script type="importmap">\n/,
             /\s*\{/,
@@ -572,7 +572,7 @@ describe('server', function() {
           ]
             .map(x => x.source)
             .join('')
-        );
+        ));
       } finally {
         await server.stop();
       }
@@ -599,7 +599,7 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(
+        expect(html).toMatch(new RegExp(
           [
             /<script type="importmap">\n/,
             /\s*\{/,
@@ -613,7 +613,7 @@ describe('server', function() {
           ]
             .map(x => x.source)
             .join('')
-        );
+        ));
       } finally {
         await server.stop();
       }
@@ -642,7 +642,7 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(
+        expect(html).toMatch(new RegExp(
           [
             /<script type="importmap">\n/,
             /\s*\{/,
@@ -658,7 +658,7 @@ describe('server', function() {
           ]
             .map(x => x.source)
             .join('')
-        );
+        ));
       } finally {
         await server.stop();
       }
