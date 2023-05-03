@@ -554,7 +554,7 @@ describe('server', function() {
         expect(html).toMatch(
           new RegExp(
             [
-              /<script type="importmap">\n/,
+              /<script type="importmap">/,
               /\s*\{/,
               /\s*"imports": \{/,
               /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
@@ -604,7 +604,7 @@ describe('server', function() {
         expect(html).toMatch(
           new RegExp(
             [
-              /<script type="importmap">\n/,
+              /<script type="importmap">/,
               /\s*\{/,
               /\s*"imports": \{/,
               /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
@@ -649,7 +649,7 @@ describe('server', function() {
         expect(html).toMatch(
           new RegExp(
             [
-              /<script type="importmap">\n/,
+              /<script type="importmap">/,
               /\s*\{/,
               /\s*"scopes": \{/,
               /\s*"\/someScope\/": \{/,
