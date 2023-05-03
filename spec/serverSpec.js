@@ -551,28 +551,30 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(new RegExp(
-          [
-            /<script type="importmap">\n/,
-            /\s*\{/,
-            /\s*"imports": \{/,
-            /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
-            /\s*"some-lib\/": ".*some-lib\/path\/",/,
-            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
-            /\s*\},/,
-            /\s*"scopes": \{/,
-            /\s*"\/someScope\/": \{/,
-            /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
-            /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
-            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
-            /\s*\}/,
-            /\s*\}/,
-            /\s*\}/,
-            /\s*<\/script>/,
-          ]
-            .map(x => x.source)
-            .join('')
-        ));
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">\n/,
+              /\s*\{/,
+              /\s*"imports": \{/,
+              /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+              /\s*\},/,
+              /\s*"scopes": \{/,
+              /\s*"\/someScope\/": \{/,
+              /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+              /\s*\}/,
+              /\s*\}/,
+              /\s*\}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
       } finally {
         await server.stop();
       }
@@ -599,21 +601,23 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(new RegExp(
-          [
-            /<script type="importmap">\n/,
-            /\s*\{/,
-            /\s*"imports": \{/,
-            /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
-            /\s*"some-lib\/": ".*some-lib\/path\/",/,
-            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
-            /\s*\}/,
-            /\s*\}/,
-            /\s*<\/script>/,
-          ]
-            .map(x => x.source)
-            .join('')
-        ));
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">\n/,
+              /\s*\{/,
+              /\s*"imports": \{/,
+              /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+              /\s*\}/,
+              /\s*\}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
       } finally {
         await server.stop();
       }
@@ -642,23 +646,25 @@ describe('server', function() {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
         var html = await getFile(baseUrl);
-        expect(html).toMatch(new RegExp(
-          [
-            /<script type="importmap">\n/,
-            /\s*\{/,
-            /\s*"scopes": \{/,
-            /\s*"\/someScope\/": \{/,
-            /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
-            /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
-            /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
-            /\s*\}/,
-            /\s*\}/,
-            /\s*\}/,
-            /\s*<\/script>/,
-          ]
-            .map(x => x.source)
-            .join('')
-        ));
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">\n/,
+              /\s*\{/,
+              /\s*"scopes": \{/,
+              /\s*"\/someScope\/": \{/,
+              /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+              /\s*\}/,
+              /\s*\}/,
+              /\s*\}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
       } finally {
         await server.stop();
       }
