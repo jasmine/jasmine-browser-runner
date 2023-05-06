@@ -521,8 +521,12 @@ describe('server', function() {
     });
   });
 
-  describe('importMap option', function() {
-    it('should start server with inline import map in html with both imports and scopes', async function() {
+  describe('When an importMap is provided', function() {
+    beforeEach(function() {
+      spyOn(console, 'log');
+    });
+
+    it('includes an import map with both imports and scopes', async function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
         jasmineCore: this.fakeJasmine,
@@ -547,28 +551,30 @@ describe('server', function() {
           },
         },
       });
+
       try {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
-        var html = await getFile(baseUrl);
+        const html = await getFile(baseUrl);
+
         expect(html).toMatch(
           new RegExp(
             [
               /<script type="importmap">/,
-              /\s*\{/,
-              /\s*"imports": \{/,
+              /\s*{/,
+              /\s*"imports": {/,
               /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
               /\s*"some-lib\/": ".*some-lib\/path\/",/,
               /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
-              /\s*\},/,
-              /\s*"scopes": \{/,
-              /\s*"\/someScope\/": \{/,
+              /\s*},/,
+              /\s*"scopes": {/,
+              /\s*"\/someScope\/": {/,
               /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
               /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
               /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
-              /\s*\}/,
-              /\s*\}/,
-              /\s*\}/,
+              /\s*}/,
+              /\s*}/,
+              /\s*}/,
               /\s*<\/script>/,
             ]
               .map(x => x.source)
@@ -580,7 +586,7 @@ describe('server', function() {
       }
     });
 
-    it('should start server with inline import map in html with imports only', async function() {
+    it('includes an import map with imports only', async function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
         jasmineCore: this.fakeJasmine,
@@ -597,21 +603,23 @@ describe('server', function() {
           },
         },
       });
+
       try {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
-        var html = await getFile(baseUrl);
+        const html = await getFile(baseUrl);
+
         expect(html).toMatch(
           new RegExp(
             [
               /<script type="importmap">/,
-              /\s*\{/,
-              /\s*"imports": \{/,
+              /\s*{/,
+              /\s*"imports": {/,
               /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
               /\s*"some-lib\/": ".*some-lib\/path\/",/,
               /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
-              /\s*\}/,
-              /\s*\}/,
+              /\s*}/,
+              /\s*}/,
               /\s*<\/script>/,
             ]
               .map(x => x.source)
@@ -623,7 +631,7 @@ describe('server', function() {
       }
     });
 
-    it('should start server with inline import map in html with scopes only', async function() {
+    it('includes an import map with scopes only', async function() {
       const server = new Server({
         projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
         jasmineCore: this.fakeJasmine,
@@ -642,23 +650,25 @@ describe('server', function() {
           },
         },
       });
+
       try {
         await server.start({ port: 0 });
         const baseUrl = `http://localhost:${server.port()}`;
-        var html = await getFile(baseUrl);
+        const html = await getFile(baseUrl);
+
         expect(html).toMatch(
           new RegExp(
             [
               /<script type="importmap">/,
-              /\s*\{/,
-              /\s*"scopes": \{/,
-              /\s*"\/someScope\/": \{/,
+              /\s*{/,
+              /\s*"scopes": {/,
+              /\s*"\/someScope\/": {/,
               /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
               /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
               /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
-              /\s*\}/,
-              /\s*\}/,
-              /\s*\}/,
+              /\s*}/,
+              /\s*}/,
+              /\s*}/,
               /\s*<\/script>/,
             ]
               .map(x => x.source)

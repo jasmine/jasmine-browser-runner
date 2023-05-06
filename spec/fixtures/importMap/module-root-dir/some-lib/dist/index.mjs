@@ -1,4 +1,4 @@
-/**
+/*
  * This is an example exported member of a library that the import map will
  * point to via a root export (importmap key points to specific file, usually
  * the "root" index file).
@@ -13,12 +13,7 @@
  *
  * consumed import in file:
  *   import { libMultiply } from 'some-lib';
- *
- *
- * @param {number} a
- * @param {number} b
- * @returns a * b
  */
 export function libMultiply(a, b) {
-    return a * b;
+  return a * b;
 }

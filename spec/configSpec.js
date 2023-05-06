@@ -119,7 +119,7 @@ describe('config', function() {
       }).toThrowError("Configuration's helpers property is not an array");
     });
 
-    describe('config.importMap', () => {
+    describe('config.importMap', function() {
       it('throws if the importMap property is not an object', function() {
         expect(function() {
           const config = validConfig();

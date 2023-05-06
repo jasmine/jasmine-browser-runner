@@ -4,6 +4,6 @@
 import { libPathedPlusOne } from 'some-lib/some-path/index.mjs';
 
 export function usePathedImport() {
-    const a = 41;
-    return libPathedPlusOne(a);
+  const a = 41;
+  return libPathedPlusOne(a);
 }
