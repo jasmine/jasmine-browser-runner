@@ -80,58 +80,65 @@ describe('config', function() {
     });
 
     it('throws if the specDir property is missing', function() {
+      const config = validConfig();
+      delete config.specDir;
+
       expect(function() {
-        const config = validConfig();
-        delete config.specDir;
         validateConfig(config);
       }).toThrowError('Configuration is missing specDir');
     });
 
     it('throws if the specFiles property is not an array', function() {
+      const config = validConfig();
+      config.specFiles = 'just a string';
+
       expect(function() {
-        const config = validConfig();
-        config.specFiles = 'just a string';
         validateConfig(config);
       }).toThrowError("Configuration's specFiles property is not an array");
     });
 
     it('throws if the srcDir property is missing', function() {
+      const config = validConfig();
+      delete config.srcDir;
+
       expect(function() {
-        const config = validConfig();
-        delete config.srcDir;
         validateConfig(config);
       }).toThrowError('Configuration is missing srcDir');
     });
 
     it('throws if the srcFiles property is not an array', function() {
+      const config = validConfig();
+      config.srcFiles = 'just a string';
+
       expect(function() {
-        const config = validConfig();
-        config.srcFiles = 'just a string';
         validateConfig(config);
       }).toThrowError("Configuration's srcFiles property is not an array");
     });
 
     it('throws if the helpers property is not an array', function() {
+      const config = validConfig();
+      config.helpers = 'just a string';
+
       expect(function() {
-        const config = validConfig();
-        config.helpers = 'just a string';
         validateConfig(config);
       }).toThrowError("Configuration's helpers property is not an array");
     });
 
     describe('config.importMap', function() {
       it('throws if the importMap property is not an object', function() {
+        const config = validConfig();
+        config['importMap'] = 'just a string';
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = 'just a string';
           validateConfig(config);
         }).toThrowError("Configuration's importMap property is not an object");
       });
 
       it('throws if the importMap property is set but has no imports or scopes', function() {
+        const config = validConfig();
+        config['importMap'] = {};
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {};
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap contains no imports or scopes"
@@ -139,11 +146,12 @@ describe('config', function() {
       });
 
       it('throws if the importMap.imports property is not an object', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          imports: 'just a string',
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            imports: 'just a string',
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.imports property is not an object"
@@ -151,11 +159,12 @@ describe('config', function() {
       });
 
       it('throws if the importMap.scopes property is not an object', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          scopes: 'just a string',
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            scopes: 'just a string',
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.scopes property is not an object"
@@ -163,11 +172,12 @@ describe('config', function() {
       });
 
       it('throws if the importMap.imports is truthy but empty', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          imports: {},
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            imports: {},
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.imports map cannot be empty"
@@ -175,25 +185,27 @@ describe('config', function() {
       });
 
       it('throws if any importMap.scopes values are truthy but empty', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          scopes: {
+            'some scope': {},
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            scopes: {
-              'some scope': {},
-            },
-          };
           validateConfig(config);
         }).toThrowError("Configuration's importMap.scopes map cannot be empty");
       });
 
       it('throws if any importMap.imports keys are empty strings', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          imports: {
+            '': 'valid mapping value',
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            imports: {
-              '': 'valid mapping value',
-            },
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.imports map cannot contain empty string keys"
@@ -201,15 +213,16 @@ describe('config', function() {
       });
 
       it('throws if any importMap.scopes map keys are empty strings', function() {
-        expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            scopes: {
-              'valid scope': {
-                '': 'valid mapping value',
-              },
+        const config = validConfig();
+        config['importMap'] = {
+          scopes: {
+            'valid scope': {
+              '': 'valid mapping value',
             },
-          };
+          },
+        };
+
+        expect(function() {
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.scopes map cannot contain empty string keys"
@@ -217,13 +230,14 @@ describe('config', function() {
       });
 
       it('throws if any importMap.imports values are empty strings', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          imports: {
+            'valid mapping key': '',
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            imports: {
-              'valid mapping key': '',
-            },
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.imports map cannot contain empty string values"
@@ -231,15 +245,16 @@ describe('config', function() {
       });
 
       it('throws if any importMap.scopes map values are empty strings', function() {
-        expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            scopes: {
-              'valid scope': {
-                'valid mapping key': '',
-              },
+        const config = validConfig();
+        config['importMap'] = {
+          scopes: {
+            'valid scope': {
+              'valid mapping key': '',
             },
-          };
+          },
+        };
+
+        expect(function() {
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.scopes map cannot contain empty string values"
@@ -247,13 +262,14 @@ describe('config', function() {
       });
 
       it('throws if any importMap.imports values are not strings', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          imports: {
+            'valid mapping key': ['invalid', 'array', 'value'],
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            imports: {
-              'valid mapping key': ['invalid', 'array', 'value'],
-            },
-          };
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.imports map value is not a string"
@@ -261,15 +277,16 @@ describe('config', function() {
       });
 
       it('throws if any importMap.scopes map values are not strings', function() {
-        expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            scopes: {
-              'valid scope': {
-                'valid mapping key': ['invalid', 'array', 'value'],
-              },
+        const config = validConfig();
+        config['importMap'] = {
+          scopes: {
+            'valid scope': {
+              'valid mapping key': ['invalid', 'array', 'value'],
             },
-          };
+          },
+        };
+
+        expect(function() {
           validateConfig(config);
         }).toThrowError(
           "Configuration's importMap.scopes map value is not a string"
@@ -277,14 +294,15 @@ describe('config', function() {
       });
 
       it('throws if the importMap.moduleRootDir starts with ../', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          moduleRootDir: '../some/upwards/path/traversal',
+          imports: {
+            'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            moduleRootDir: '../some/upwards/path/traversal',
-            imports: {
-              'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
-            },
-          };
           validateConfig(config);
         }).toThrowError(
           'Configuration.importMap.moduleRootDir cannot start with ../'
@@ -292,14 +310,15 @@ describe('config', function() {
       });
 
       it('throws if the importMap.moduleRootDir is empty string', function() {
+        const config = validConfig();
+        config['importMap'] = {
+          moduleRootDir: '',
+          imports: {
+            'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
+          },
+        };
+
         expect(function() {
-          const config = validConfig();
-          config['importMap'] = {
-            moduleRootDir: '',
-            imports: {
-              'my-pkg': 'https://coolcdn/my-pkg/index.mjs',
-            },
-          };
           validateConfig(config);
         }).toThrowError(
           'Configuration.importMap.moduleRootDir cannot be an empty string'
