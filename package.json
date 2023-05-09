@@ -115,7 +115,8 @@
         "always"
       ],
       "space-before-blocks": "error",
-      "no-console": "off"
+      "no-console": "off",
+      "no-var": "error"
     },
     "overrides": [
       {

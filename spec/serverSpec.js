@@ -12,7 +12,7 @@ function getFile(url) {
           );
         }
 
-        var rawData = '';
+        let rawData = '';
         response.on('data', function(chunk) {
           rawData += chunk;
         });
@@ -279,30 +279,30 @@ describe('server', function() {
       });
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
+      const jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
       expect(jazz).toMatch(/^Jazzy\r?\n$/);
 
-      var min = await getFile(baseUrl + '/__jasmine__/min.js');
+      const min = await getFile(baseUrl + '/__jasmine__/min.js');
       expect(min).toMatch(/^minified\r?\n$/);
 
-      var bootboot = await getFile(baseUrl + '/__boot__/bootboot.js');
+      const bootboot = await getFile(baseUrl + '/__boot__/bootboot.js');
       expect(bootboot).toMatch(/^booot\r?\n$/);
 
-      var config = await getFile(baseUrl + '/__config__/config.js');
+      const config = await getFile(baseUrl + '/__config__/config.js');
       expect(config).toContain(
         'jasmine.getEnv().configure({"someProp":"someVal"})'
       );
 
-      var boot2 = await getFile(baseUrl + '/__boot__/boot2.js');
+      const boot2 = await getFile(baseUrl + '/__boot__/boot2.js');
       expect(boot2).toMatch(/^Boot the second\r?\n$/);
 
-      var css = await getFile(baseUrl + '/__jasmine__/css.css');
+      const css = await getFile(baseUrl + '/__jasmine__/css.css');
       expect(css).toMatch(/^CSS\r?\n$/);
 
-      var two = await getFile(baseUrl + '/__jasmine__/two.css');
+      const two = await getFile(baseUrl + '/__jasmine__/two.css');
       expect(two).toMatch(/^two csses\r?\n$/);
 
-      var image = await getFile(baseUrl + '/__images__/things.txt');
+      const image = await getFile(baseUrl + '/__images__/things.txt');
       expect(image).toMatch(/^pretend I'm an image\r?\n$/);
     });
 
@@ -313,7 +313,7 @@ describe('server', function() {
 
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var config = await getFile(baseUrl + '/__config__/config.js');
+      const config = await getFile(baseUrl + '/__config__/config.js');
       expect(config).toContain('jasmine.getEnv().configure({})');
     });
 
@@ -321,10 +321,10 @@ describe('server', function() {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var thing1 = await getFile(baseUrl + '/__src__/thing1.js');
+      const thing1 = await getFile(baseUrl + '/__src__/thing1.js');
       expect(thing1).toMatch(/^thing the first\r?\n$/);
 
-      var spec = await getFile(baseUrl + '/__spec__/iLikeSpec.js');
+      const spec = await getFile(baseUrl + '/__spec__/iLikeSpec.js');
       expect(spec).toMatch(/^I like specs\r?\n$/);
     });
 
@@ -332,7 +332,7 @@ describe('server', function() {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var html = await getFile(baseUrl);
+      const html = await getFile(baseUrl);
       expect(html).toContain('/__jasmine__/jazz.js');
       expect(html).toContain('/__jasmine__/min.js');
       expect(html).toContain('/__boot__/bootboot.js');
@@ -349,7 +349,7 @@ describe('server', function() {
       await this.startServer();
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var html = await getFile(baseUrl);
+      const html = await getFile(baseUrl);
       expect(html).toContain('/__support__/loaders.js');
     });
 
@@ -359,7 +359,7 @@ describe('server', function() {
           await this.startServer(this.extraOptions);
           const baseUrl = `http://localhost:${this.server.port()}`;
 
-          var html = await getFile(baseUrl);
+          const html = await getFile(baseUrl);
           expect(html).toContain(
             '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
           );
@@ -377,7 +377,7 @@ describe('server', function() {
           });
           const baseUrl = `http://localhost:${this.server.port()}`;
 
-          var html = await getFile(baseUrl);
+          const html = await getFile(baseUrl);
           expect(html).toContain(
             '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
           );
@@ -442,7 +442,7 @@ describe('server', function() {
         await this.startServer();
         const baseUrl = `http://localhost:${this.server.port()}`;
 
-        var html = await getFile(baseUrl);
+        const html = await getFile(baseUrl);
         expect(html).toContain(
           '<script src="/__src__/thing1.js" type="text/javascript">'
         );
@@ -458,7 +458,7 @@ describe('server', function() {
         });
         const baseUrl = `http://localhost:${this.server.port()}`;
 
-        var html = await getFile(baseUrl);
+        const html = await getFile(baseUrl);
         expect(html).not.toContain('/__src__/esm.mjs');
       });
     });
@@ -497,8 +497,168 @@ describe('server', function() {
 
       const baseUrl = `http://localhost:${this.server.port()}`;
 
-      var html = await getFile(baseUrl);
+      const html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
+    });
+  });
+
+  describe('When an importMap is provided', function() {
+    beforeEach(function() {
+      spyOn(console, 'log');
+    });
+
+    it('includes an import map with both imports and scopes', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          imports: {
+            'some-lib': 'some-lib/path/to/index.mjs',
+            'some-lib/': 'some-lib/path/',
+            'absolute-lib':
+              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+          },
+          scopes: {
+            '/someScope/': {
+              'some-lib': 'some-lib/different/path/to/index.mjs',
+              'some-lib/': 'some-lib/different/path/',
+              'absolute-lib':
+                'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+            },
+          },
+        },
+      });
+
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
+        const html = await getFile(baseUrl);
+
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">/,
+              /\s*{/,
+              /\s*"imports": {/,
+              /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+              /\s*},/,
+              /\s*"scopes": {/,
+              /\s*"\/someScope\/": {/,
+              /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+              /\s*}/,
+              /\s*}/,
+              /\s*}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
+      } finally {
+        await server.stop();
+      }
+    });
+
+    it('includes an import map with imports only', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          imports: {
+            'some-lib': 'some-lib/path/to/index.mjs',
+            'some-lib/': 'some-lib/path/',
+            'absolute-lib':
+              'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+          },
+        },
+      });
+
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
+        const html = await getFile(baseUrl);
+
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">/,
+              /\s*{/,
+              /\s*"imports": {/,
+              /\s*"some-lib": ".*some-lib\/path\/to\/index\.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index.mjs"/,
+              /\s*}/,
+              /\s*}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
+      } finally {
+        await server.stop();
+      }
+    });
+
+    it('includes an import map with scopes only', async function() {
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        srcFiles: ['**/*.mjs'],
+        specDir: 'spec',
+        specFiles: ['**/*[sS]pec.mjs'],
+        importMap: {
+          scopes: {
+            '/someScope/': {
+              'some-lib': 'some-lib/different/path/to/index.mjs',
+              'some-lib/': 'some-lib/different/path/',
+              'absolute-lib':
+                'https://fakecdn.whatever/absolute-lib/dist/index.mjs',
+            },
+          },
+        },
+      });
+
+      try {
+        await server.start({ port: 0 });
+        const baseUrl = `http://localhost:${server.port()}`;
+        const html = await getFile(baseUrl);
+
+        expect(html).toMatch(
+          new RegExp(
+            [
+              /<script type="importmap">/,
+              /\s*{/,
+              /\s*"scopes": {/,
+              /\s*"\/someScope\/": {/,
+              /\s*"some-lib": ".*some-lib\/different\/path\/to\/index.mjs",/,
+              /\s*"some-lib\/": ".*some-lib\/different\/path\/",/,
+              /\s*"absolute-lib": "https:\/\/fakecdn\.whatever\/absolute-lib\/dist\/index\.mjs"/,
+              /\s*}/,
+              /\s*}/,
+              /\s*}/,
+              /\s*<\/script>/,
+            ]
+              .map(x => x.source)
+              .join('')
+          )
+        );
+      } finally {
+        await server.stop();
+      }
     });
   });
 });
