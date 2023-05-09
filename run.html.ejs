@@ -8,6 +8,11 @@
   <% cssFiles.forEach(function(cssFile) { %>
     <link rel="stylesheet" href="<%= cssFile %>" type="text/css" media="screen"/>
   <% }) %>
+  <% if (importMap) { %>
+    <script type="importmap">
+    <%- JSON.stringify(importMap, null, 2) %>
+    </script>
+  <% } %>
 </head>
 <body>
   <% jasmineJsFiles.forEach(function(jsFile) { %>

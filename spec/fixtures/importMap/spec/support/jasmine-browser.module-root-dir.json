@@ -1,0 +1,24 @@
+{
+  "srcDir": "src",
+  "srcFiles": [
+    "**/*.mjs"
+  ],
+  "specDir": "spec",
+  "specFiles": [
+    "**/*Spec.mjs"
+  ],
+  "helpers": [
+    "helpers/**/*.mjs"
+  ],
+  "random": false,
+  "browser": {
+    "name": "headlessChrome"
+  },
+  "importMap": {
+    "moduleRootDir": "node_modules",
+    "imports": {
+      "some-lib": "some-lib/dist/index.mjs",
+      "some-lib/": "some-lib/dist/"
+    }
+  }
+}
