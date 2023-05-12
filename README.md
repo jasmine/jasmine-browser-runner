@@ -70,7 +70,9 @@ Its value can be `"firefox"`, `"headlessFirefox"`, `"safari"`,
 If a source, spec, or helper file's name ends in `.mjs`, it will be loaded as
 an ES module rather than a regular script. Note that ES modules can only be
 loaded from other ES modules. So if your source files are ES modules, your
-spec files need to be ES modules too.
+spec files need to be ES modules too. Want to use a different extension than
+`.esm`? Just set the `esmFilenameExtension` config property, e.g.
+`"esmFilenameExtension": ".js"`.
 
 To allow spec files to import source files via relative paths, set the `specDir`
 config field to something that's high enough up to include both spec and source

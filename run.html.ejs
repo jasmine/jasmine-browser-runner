@@ -24,11 +24,11 @@
         <% userJsFiles.forEach(function(jsFile) { %>
           '<%= jsFile %>',
         <% }) %>
-      ]);
+      ], '<%=esmFilenameExtension%>');
     </script>
   <% } else { %>
     <% userJsFiles.forEach(function(jsFile) { %>
-      <% if (jsFile.endsWith('.mjs')) { %>
+      <% if (jsFile.endsWith(esmFilenameExtension)) { %>
         <script type="module">_jasmine_loadEsModule('<%= jsFile %>')</script>
       <% } else { %>
         <script src="<%= jsFile %>" type="text/javascript"></script>

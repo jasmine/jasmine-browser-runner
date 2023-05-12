@@ -368,7 +368,7 @@ describe('server', function() {
           );
         });
 
-        it('loads .mjs files as ES modules', async function() {
+        it('loads .mjs spec and helper files as ES modules', async function() {
           await this.startServer({
             ...this.extraOptions,
             srcFiles: ['**/*.mjs'],
@@ -383,6 +383,47 @@ describe('server', function() {
           );
           expect(html).toContain(
             '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
+          );
+        });
+
+        describe('And a nonstandard ES module estension is specified', function() {
+          beforeEach(function() {
+            this.extraOptions.esmFilenameExtension = '.mod';
+          });
+
+          behavesLikeTopLevelAwaitDisabledWithNonstandardEsmExtension();
+        });
+      }
+
+      function behavesLikeTopLevelAwaitDisabledWithNonstandardEsmExtension() {
+        it('loads .js files as regular scripts', async function() {
+          await this.startServer(this.extraOptions);
+          const baseUrl = `http://localhost:${this.server.port()}`;
+
+          const html = await getFile(baseUrl);
+          expect(html).toContain(
+            '<script src="/__spec__/helpers/halp.js" type="text/javascript">'
+          );
+          expect(html).toContain(
+            '<script src="/__spec__/imAspec.js" type="text/javascript">'
+          );
+        });
+
+        it('loads spec and helper files with the ESM estension as ES modules', async function() {
+          await this.startServer({
+            ...this.extraOptions,
+            srcFiles: ['**/*.mod'],
+            helpers: ['helpers/**/*.mod'],
+            specFiles: ['**/*[sS]pec.mod'],
+          });
+          const baseUrl = `http://localhost:${this.server.port()}`;
+
+          const html = await getFile(baseUrl);
+          expect(html).toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mod\')</script>'
+          );
+          expect(html).toContain(
+            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mod\')</script>'
           );
         });
       }
