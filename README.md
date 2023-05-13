@@ -1,6 +1,3 @@
-[![Build Status](https://circleci.com/gh/jasmine/jasmine-browser.svg?style=shield)](https://circleci.com/gh/jasmine/jasmine-browser)
-
-
 jasmine-browser-runner runs your Jasmine specs in a browser. It's suitable for
 interactive use with normal browsers as well as running specs in CI builds
 using either headless Chrome or Saucelabs.
@@ -9,44 +6,34 @@ using either headless Chrome or Saucelabs.
 
 ```bash
 npm install --save-dev jasmine-browser-runner jasmine-core
+npx jasmine-browser-runner init
 ```
 
 or
 
 ```bash
 yarn add -D jasmine-browser-runner jasmine-core
+npx jasmine-browser-runner init
 ```
 
-Add a `spec/support/jasmine-browser.json`. For example:
+If you intend to use ES modules, add `--esm` to the `jasmine-browser-runner init`
+command.
 
-```json
-{
-  "srcDir": "src",
-  "srcFiles": [
-    "**/*.?(m)js"
-  ],
-  "specDir": "spec",
-  "specFiles": [
-    "**/*[Ss]pec.?(m)js"
-  ],
-  "helpers": [
-    "helpers/asyncAwait.js"
-  ],
-  "env": {
-    "random": true
-  }
-}
-```
+Then, customize `spec/support/jasmine-browser.json` to suit your needs. You can
+change the spec files, helpers, and source files that are loaded, specify the
+[Jasmine env's configuration](https://jasmine.github.io/api/edge/Configuration.html),
+and more.
 
 You can also use the `--config` option to specify a different file. This file can be a JSON file or a javascript file that exports a object that looks like the JSON above.
 
-Start the server:
+To start the server so that you can run the specs interactively (particularly
+useful for debugging):
 
 ```
 npx jasmine-browser-runner serve
 ```
 
-Run the tests in a browser (defaults to Firefox)
+To run the specs in a browser (defaults to Firefox):
 
 ```
 npx jasmine-browser-runner runSpecs
@@ -225,7 +212,7 @@ Firefox, and Microsoft Edge) as well as Node.
 
 | Environment       | Supported versions     |
 |-------------------|------------------------|
-| Node              | 12.17+, 14, 16, 18, 20 |
+| Node              | 18, 20                 |
 | Safari            | 15-16                  |
 | Chrome            | Evergreen              |
 | Firefox           | Evergreen, 102         |
