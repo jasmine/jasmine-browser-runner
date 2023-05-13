@@ -8,7 +8,8 @@
   "helpers": [
     "spec/helpers/**/*.?(m)js"
   ],
-  "esmFilenameExtension": ".esm",
+  "esmFilenameExtension": ".mjs",
+  "enableTopLevelAwait": false,
   "env": {
     "stopSpecOnExpectationFailure": false,
     "stopOnSpecFailure": false,
