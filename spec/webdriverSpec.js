@@ -58,16 +58,16 @@ describe('webdriver', function() {
       });
     });
 
-    describe('When browserInfo is an object without useSauce=true', function() {
-      it('uses browserInfo.name as the browser name', function() {
+    describe('When browserInfo is an object without url', function() {
+      it('uses browserInfo.browserName as the browser name', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ name: 'IE' }, builder);
+        buildWebdriver({ browserName: 'IE' }, builder);
 
         expect(builder.browserName).toEqual('IE');
       });
 
-      describe('When browserInfo.name is undefined', function() {
+      describe('When browserInfo.browserName is undefined', function() {
         it('defaults to firefox', function() {
           const builder = new MockWebdriverBuilder();
 
@@ -80,27 +80,32 @@ describe('webdriver', function() {
       it('does not use Sauce', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ name: 'a browser name' }, builder);
+        buildWebdriver({ browserName: 'a browser name' }, builder);
 
         expect(builder.server).not.toMatch(/saucelabs/);
       });
     });
   });
 
-  describe('When browserInfo is an object with useSauce=true', function() {
-    it('uses browserInfo.name as the browser name', function() {
+  describe('When browserInfo is an object with url set to some value', function() {
+    it('uses browserInfo.browserName as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver({ useSauce: true, sauce: {}, name: 'IE' }, builder);
+      buildWebdriver({ 
+        url: 'https://ondemand.saucelabs.com/wd/hub', 
+        browserName: 'IE' 
+      }, builder);
 
       expect(builder.capabilities.browserName).toEqual('IE');
     });
 
-    describe('When browserInfo.name is undefined', function() {
+    describe('When browserInfo.browserName is undefined', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ useSauce: true, sauce: {} }, builder);
+        buildWebdriver({ 
+          url: 'https://ondemand.saucelabs.com/wd/hub'
+        }, builder);
 
         expect(builder.capabilities.browserName).toEqual('firefox');
       });
@@ -110,7 +115,10 @@ describe('webdriver', function() {
       const builder = new MockWebdriverBuilder();
 
       buildWebdriver(
-        { useSauce: true, sauce: {}, name: 'a browser name' },
+        { 
+          url: 'https://ondemand.saucelabs.com/wd/hub',
+          browserName: 'a browser name'
+        },
         builder
       );
 
@@ -122,12 +130,12 @@ describe('webdriver', function() {
       function makeBrowser(name, version) {
         buildWebdriver(
           {
-            useSauce: true,
-            name: name,
-            sauce: {
-              os: 'MULTICS',
-              browserVersion: version,
-              tunnelIdentifier: 'a tunnel id',
+            url: 'https://ondemand.saucelabs.com/wd/hub',
+            browserName: name,
+            platformName: 'MULTICS',
+            browserVersion: version,
+            "sauce:options": {
+              "tunnel-identifier": 'a tunnel id',
             },
           },
           builder
