@@ -91,9 +91,9 @@ describe('webdriver', function() {
     it('uses browserInfo.browserName as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver({ 
-        url: 'https://ondemand.saucelabs.com/wd/hub', 
-        browserName: 'IE' 
+      buildWebdriver({
+        url: 'https://ondemand.saucelabs.com/wd/hub',
+        browserName: 'IE',
       }, builder);
 
       expect(builder.capabilities.browserName).toEqual('IE');
@@ -103,8 +103,8 @@ describe('webdriver', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ 
-          url: 'https://ondemand.saucelabs.com/wd/hub'
+        buildWebdriver({
+          url: 'https://ondemand.saucelabs.com/wd/hub',
         }, builder);
 
         expect(builder.capabilities.browserName).toEqual('firefox');
@@ -115,9 +115,9 @@ describe('webdriver', function() {
       const builder = new MockWebdriverBuilder();
 
       buildWebdriver(
-        { 
+        {
           url: 'https://ondemand.saucelabs.com/wd/hub',
-          browserName: 'a browser name'
+          browserName: 'a browser name',
         },
         builder
       );
@@ -134,8 +134,8 @@ describe('webdriver', function() {
             browserName: name,
             platformName: 'MULTICS',
             browserVersion: version,
-            "sauce:options": {
-              "tunnel-identifier": 'a tunnel id',
+            'sauce:options': {
+              'tunnel-identifier': 'a tunnel id',
             },
           },
           builder
