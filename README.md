@@ -163,7 +163,7 @@ To run the specs:
 2. Run `npx jasmine-browser-runner`.
 3. Visit <http://localhost:8888>.
 
-## Saucelabs support
+## Remote Grid support (Saucelabs, BrowserStack, etc.)
 
 jasmine-browser-runner can run your Jasmine specs on a remote grid
 provider like [Saucelabs](https://saucelabs.com/), 
