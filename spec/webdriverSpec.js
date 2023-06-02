@@ -91,10 +91,13 @@ describe('webdriver', function() {
     it('uses browserInfo.browserName as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver({
-        url: 'https://ondemand.saucelabs.com/wd/hub',
-        browserName: 'IE',
-      }, builder);
+      buildWebdriver(
+        {
+          url: 'https://ondemand.saucelabs.com/wd/hub',
+          browserName: 'IE',
+        },
+        builder
+      );
 
       expect(builder.capabilities.browserName).toEqual('IE');
     });
@@ -103,9 +106,12 @@ describe('webdriver', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({
-          url: 'https://ondemand.saucelabs.com/wd/hub',
-        }, builder);
+        buildWebdriver(
+          {
+            url: 'https://ondemand.saucelabs.com/wd/hub',
+          },
+          builder
+        );
 
         expect(builder.capabilities.browserName).toEqual('firefox');
       });
