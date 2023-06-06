@@ -8,13 +8,13 @@
   "helpers": [],
   "random": true,
   "browser": {
-    "name": "<< JASMINE_BROWSER >>",
-    "useSauce": true,
-    "sauce": {
-      "browserVersion": "<< SAUCE_BROWSER_VERSION >>",
-      "os": "<< SAUCE_OS >>",
+    "url": "https://ondemand.saucelabs.com/wd/hub",
+    "browserName": "<< JASMINE_BROWSER >>",
+    "browserVersion": "<< SAUCE_BROWSER_VERSION >>",
+    "platformName": "<< SAUCE_OS >>",
+    "sauce:options": {
       "tags": ["jasmine-browser"],
-      "tunnelIdentifier": "<< SAUCE_TUNNEL_IDENTIFIER >>",
+      "tunnel-identifier": "<< SAUCE_TUNNEL_IDENTIFIER >>",
       "username": "<< SAUCE_USERNAME >>",
       "accessKey": "<< SAUCE_ACCESS_KEY >>"
     }
