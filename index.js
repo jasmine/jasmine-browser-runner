@@ -81,11 +81,14 @@ module.exports = {
 
     const reporters = await createReporters(options, deps);
     const useSauce = options.browser && options.browser.useSauce;
+    const remote = options.browser && options.browser.url;
     let portRequest;
 
-    if (useSauce) {
+    if (useSauce || remote) {
       if (options.port) {
-        throw new Error("Can't specify a port when browser.useSauce is true");
+        throw new Error(
+          "Can't specify a port when browser.useSauce is true or browser.url is set"
+        );
       }
 
       portRequest = 5555;

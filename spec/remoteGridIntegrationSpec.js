@@ -67,7 +67,7 @@ describe('remote grid parameter handling', function() {
         const jasmineBrowserDir = process.cwd();
         let timedOut = false;
         let timerId;
-        console.log('Sauce test may take a minute or two');
+        console.log('remote grid test may take a minute or two');
 
         const jasmineBrowserProcess = exec(
           `"${jasmineBrowserDir}/bin/jasmine-browser-runner" runSpecs --config=jasmine-browser.json`,
@@ -114,7 +114,7 @@ describe('remote grid parameter handling', function() {
     );
 
     function createSuite() {
-      const dir = fs.mkdtempSync(`${os.tmpdir()}/jasmine-browser-sauce-`);
+      const dir = fs.mkdtempSync(`${os.tmpdir()}/jasmine-browser-remote-grid-`);
       processTemplate(
         'spec/fixtures/remoteGridIntegration/jasmine-browser.json',
         `${dir}/jasmine-browser.json`,

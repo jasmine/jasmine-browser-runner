@@ -3,7 +3,7 @@
   "srcFiles": [],
   "specDir": ".",
   "specFiles": [
-    "sauceParamsSpec.js"
+    "remoteGridParamsSpec.js"
   ],
   "helpers": [],
   "random": true,

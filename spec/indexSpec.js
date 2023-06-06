@@ -78,7 +78,7 @@ describe('index', function() {
           );
 
           await expectAsync(promise).toBeRejectedWithError(
-            "Can't specify a port when browser.useSauce is true"
+            "Can't specify a port when browser.useSauce is true or browser.url is set"
           );
           expect(this.server.start).not.toHaveBeenCalled();
         });
