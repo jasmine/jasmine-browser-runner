@@ -131,73 +131,98 @@ describe('webdriver', function() {
       expect(builder.server).toMatch(/saucelabs/);
     });
 
-    it('uses W3C keys', function() {
-      const builder = new MockWebdriverBuilder();
-      function makeBrowser(name, version) {
-        buildWebdriver(
-          {
-            url: 'https://ondemand.saucelabs.com/wd/hub',
-            browserName: name,
-            platformName: 'MULTICS',
-            browserVersion: version,
-            'sauce:options': {
-              'tunnel-identifier': 'a tunnel id',
-            },
-          },
-          builder
-        );
-      }
+    const configMode = [
+      { mode: makeBrowser, description: 'config format containing url' },
+      {
+        mode: makeLegacyModeBrowser,
+        description: 'config format containing sauce object',
+      },
+    ];
+    configMode.forEach(modeObj => {
+      it(`uses W3C keys when using ${modeObj.description}`, function() {
+        const builder = new MockWebdriverBuilder();
 
-      makeBrowser('safari', '12');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('12');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
-      });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
+        modeObj.mode('safari', '12', builder);
+        expect(builder.capabilities.platformName).toEqual('MULTICS');
+        expect(builder.capabilities.browserVersion).toEqual('12');
+        expect(builder.capabilities['sauce:options']).toEqual({
+          'tunnel-identifier': 'a tunnel id',
+        });
+        expect(builder.capabilities.platform).toBeUndefined();
+        expect(builder.capabilities.version).toBeUndefined();
+        expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
 
-      makeBrowser('firefox', '68');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('68');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
-      });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
+        modeObj.mode('firefox', '68', builder);
+        expect(builder.capabilities.platformName).toEqual('MULTICS');
+        expect(builder.capabilities.browserVersion).toEqual('68');
+        expect(builder.capabilities['sauce:options']).toEqual({
+          'tunnel-identifier': 'a tunnel id',
+        });
+        expect(builder.capabilities.platform).toBeUndefined();
+        expect(builder.capabilities.version).toBeUndefined();
+        expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
 
-      makeBrowser('firefox', '');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
-      });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
+        modeObj.mode('firefox', '', builder);
+        expect(builder.capabilities.platformName).toEqual('MULTICS');
+        expect(builder.capabilities.browserVersion).toEqual('');
+        expect(builder.capabilities['sauce:options']).toEqual({
+          'tunnel-identifier': 'a tunnel id',
+        });
+        expect(builder.capabilities.platform).toBeUndefined();
+        expect(builder.capabilities.version).toBeUndefined();
+        expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
 
-      makeBrowser('chrome', '');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
-      });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
+        modeObj.mode('chrome', '', builder);
+        expect(builder.capabilities.platformName).toEqual('MULTICS');
+        expect(builder.capabilities.browserVersion).toEqual('');
+        expect(builder.capabilities['sauce:options']).toEqual({
+          'tunnel-identifier': 'a tunnel id',
+        });
+        expect(builder.capabilities.platform).toBeUndefined();
+        expect(builder.capabilities.version).toBeUndefined();
+        expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
 
-      makeBrowser('microsoftEdge', '');
-      expect(builder.capabilities.platformName).toEqual('MULTICS');
-      expect(builder.capabilities.browserVersion).toEqual('');
-      expect(builder.capabilities['sauce:options']).toEqual({
-        'tunnel-identifier': 'a tunnel id',
+        modeObj.mode('microsoftEdge', '', builder);
+        expect(builder.capabilities.platformName).toEqual('MULTICS');
+        expect(builder.capabilities.browserVersion).toEqual('');
+        expect(builder.capabilities['sauce:options']).toEqual({
+          'tunnel-identifier': 'a tunnel id',
+        });
+        expect(builder.capabilities.platform).toBeUndefined();
+        expect(builder.capabilities.version).toBeUndefined();
+        expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
       });
-      expect(builder.capabilities.platform).toBeUndefined();
-      expect(builder.capabilities.version).toBeUndefined();
-      expect(builder.capabilities.tunnelIdentifier).toBeUndefined();
     });
+
+    function makeBrowser(name, version, builder) {
+      buildWebdriver(
+        {
+          url: 'https://ondemand.saucelabs.com/wd/hub',
+          browserName: name,
+          platformName: 'MULTICS',
+          browserVersion: version,
+          'sauce:options': {
+            'tunnel-identifier': 'a tunnel id',
+          },
+        },
+        builder
+      );
+    }
+
+    function makeLegacyModeBrowser(name, version, builder) {
+      buildWebdriver(
+        {
+          useSauce: true,
+          name: name,
+          sauce: {
+            os: 'MULTICS',
+            browserVersion: version,
+            tunnelIdentifier: 'a tunnel id',
+          },
+        },
+        builder
+      );
+    }
   });
 });
 
