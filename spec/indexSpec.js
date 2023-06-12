@@ -78,7 +78,7 @@ describe('index', function() {
           );
 
           await expectAsync(promise).toBeRejectedWithError(
-            "Can't specify a port when browser.useSauce is true or browser.url is set"
+            "Can't specify a port when browser.useSauce or browser.useRemoteSeleniumGrid is true"
           );
           expect(this.server.start).not.toHaveBeenCalled();
         });

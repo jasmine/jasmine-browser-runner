@@ -113,6 +113,23 @@ describe('webdriver', function() {
 
         expect(builder.server).toEqual('http://localhost:4445/wd/hub');
       });
+
+      it('can also use Saucelabs', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver(
+          {
+            name: 'a browser name',
+            useRemoteSeleniumGrid: true,
+            remoteSeleniumGrid: {
+              url: 'https://ondemand.saucelabs.com/wd/hub',
+            },
+          },
+          builder
+        );
+
+        expect(builder.server).toMatch(/saucelabs/);
+      });
     });
   });
 
@@ -147,7 +164,7 @@ describe('webdriver', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({}, builder);
+        buildWebdriver({ useSauce: true }, builder);
 
         expect(builder.capabilities.browserName).toEqual('firefox');
       });
@@ -158,23 +175,6 @@ describe('webdriver', function() {
 
       buildWebdriver(
         { useSauce: true, sauce: {}, name: 'a browser name' },
-        builder
-      );
-
-      expect(builder.server).toMatch(/saucelabs/);
-    });
-
-    it('can also use Sauce via remoteSeleniumGrid object', function() {
-      const builder = new MockWebdriverBuilder();
-
-      buildWebdriver(
-        {
-          name: 'a browser name',
-          useRemoteSeleniumGrid: true,
-          remoteSeleniumGrid: {
-            url: 'https://ondemand.saucelabs.com/wd/hub',
-          },
-        },
         builder
       );
 
