@@ -58,36 +58,65 @@ describe('webdriver', function() {
       });
     });
 
-    describe('When browserInfo is an object without url', function() {
-      it('uses browserInfo.browserName as the browser name', function() {
+    describe('When browserInfo is an object with useRemoteSeleniumGrid set to true', function() {
+      it('uses browserInfo.name as the browser name', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ browserName: 'IE' }, builder);
+        buildWebdriver({ name: 'IE', useRemoteSeleniumGrid: true }, builder);
 
-        expect(builder.browserName).toEqual('IE');
+        expect(builder.capabilities.browserName).toEqual('IE');
       });
 
-      describe('When browserInfo.browserName is undefined', function() {
+      describe('When browserInfo.name is undefined', function() {
         it('defaults to firefox', function() {
           const builder = new MockWebdriverBuilder();
 
-          buildWebdriver({}, builder);
+          buildWebdriver({ useRemoteSeleniumGrid: true }, builder);
 
-          expect(builder.browserName).toEqual('firefox');
+          expect(builder.capabilities.browserName).toEqual('firefox');
         });
       });
 
       it('does not use Sauce', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver({ browserName: 'a browser name' }, builder);
+        buildWebdriver(
+          {
+            name: 'a browser name',
+            useRemoteSeleniumGrid: true,
+            remoteSeleniumGrid: {
+              url: 'a url to use',
+            },
+          },
+          builder
+        );
 
-        expect(builder.server).not.toMatch(/saucelabs/);
+        expect(builder.server).toMatch(/(a url to use)/);
+      });
+
+      it('will use localhost grid hub url if no url specified', function() {
+        const builder = new MockWebdriverBuilder();
+
+        buildWebdriver(
+          {
+            name: 'a browser name',
+            useRemoteSeleniumGrid: true,
+            remoteSeleniumGrid: {
+              'sauce:options': {
+                username: 'a user',
+                accessKey: 'a key',
+              },
+            },
+          },
+          builder
+        );
+
+        expect(builder.server).toEqual('http://localhost:4445/wd/hub');
       });
     });
   });
 
-  describe('When browserInfo is an object', function() {
+  describe('When browserInfo is an object with useSauce set to true', function() {
     it('uses browserInfo.name as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
@@ -96,16 +125,10 @@ describe('webdriver', function() {
       expect(builder.capabilities.browserName).toEqual('IE');
     });
 
-    it('uses browserInfo.browserName as the browser name', function() {
+    it('uses browserInfo.name as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
-      buildWebdriver(
-        {
-          url: 'https://ondemand.saucelabs.com/wd/hub',
-          browserName: 'IE',
-        },
-        builder
-      );
+      buildWebdriver({ useSauce: true, name: 'IE' }, builder);
 
       expect(builder.capabilities.browserName).toEqual('IE');
     });
@@ -120,16 +143,11 @@ describe('webdriver', function() {
       });
     });
 
-    describe('When browserInfo.browserName is undefined', function() {
+    describe('When browserInfo.name is undefined', function() {
       it('defaults to firefox', function() {
         const builder = new MockWebdriverBuilder();
 
-        buildWebdriver(
-          {
-            url: 'https://ondemand.saucelabs.com/wd/hub',
-          },
-          builder
-        );
+        buildWebdriver({}, builder);
 
         expect(builder.capabilities.browserName).toEqual('firefox');
       });
@@ -146,13 +164,16 @@ describe('webdriver', function() {
       expect(builder.server).toMatch(/saucelabs/);
     });
 
-    it('can also use Sauce via url', function() {
+    it('can also use Sauce via remoteSeleniumGrid object', function() {
       const builder = new MockWebdriverBuilder();
 
       buildWebdriver(
         {
-          url: 'https://ondemand.saucelabs.com/wd/hub',
-          browserName: 'a browser name',
+          name: 'a browser name',
+          useRemoteSeleniumGrid: true,
+          remoteSeleniumGrid: {
+            url: 'https://ondemand.saucelabs.com/wd/hub',
+          },
         },
         builder
       );
@@ -161,7 +182,10 @@ describe('webdriver', function() {
     });
 
     const configMode = [
-      { mode: makeBrowser, description: 'config format containing url' },
+      {
+        mode: makeBrowser,
+        description: 'config format containing remoteSeleniumGrid object',
+      },
       {
         mode: makeLegacyModeBrowser,
         description: 'config format containing sauce object',
@@ -226,12 +250,15 @@ describe('webdriver', function() {
     function makeBrowser(name, version, builder) {
       buildWebdriver(
         {
-          url: 'https://ondemand.saucelabs.com/wd/hub',
-          browserName: name,
-          platformName: 'MULTICS',
-          browserVersion: version,
-          'sauce:options': {
-            'tunnel-identifier': 'a tunnel id',
+          name: name,
+          useRemoteSeleniumGrid: true,
+          remoteSeleniumGrid: {
+            url: 'https://ondemand.saucelabs.com/wd/hub',
+            platformName: 'MULTICS',
+            browserVersion: version,
+            'sauce:options': {
+              'tunnel-identifier': 'a tunnel id',
+            },
           },
         },
         builder

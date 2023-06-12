@@ -8,15 +8,18 @@
   "helpers": [],
   "random": true,
   "browser": {
-    "url": "https://ondemand.saucelabs.com/wd/hub",
-    "browserName": "<< JASMINE_BROWSER >>",
-    "browserVersion": "<< SAUCE_BROWSER_VERSION >>",
-    "platformName": "<< SAUCE_OS >>",
-    "sauce:options": {
-      "tags": ["jasmine-browser"],
-      "tunnel-identifier": "<< SAUCE_TUNNEL_IDENTIFIER >>",
-      "username": "<< SAUCE_USERNAME >>",
-      "accessKey": "<< SAUCE_ACCESS_KEY >>"
+    "name": "<< JASMINE_BROWSER >>",
+    "useRemoteSeleniumGrid": true,
+    "remoteSeleniumGrid": {
+      "url": "https://ondemand.saucelabs.com/wd/hub",
+      "browserVersion": "<< SAUCE_BROWSER_VERSION >>",
+      "platformName": "<< SAUCE_OS >>",
+      "sauce:options": {
+        "tags": ["jasmine-browser"],
+        "tunnel-identifier": "<< SAUCE_TUNNEL_IDENTIFIER >>",
+        "username": "<< SAUCE_USERNAME >>",
+        "accessKey": "<< SAUCE_ACCESS_KEY >>"
+      }
     }
   }
 }

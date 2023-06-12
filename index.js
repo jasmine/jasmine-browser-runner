@@ -81,13 +81,13 @@ module.exports = {
 
     const reporters = await createReporters(options, deps);
     const useSauce = options.browser && options.browser.useSauce;
-    const remote = options.browser && options.browser.url;
+    const useRemote = options.browser && options.browser.useRemoteSeleniumGrid;
     let portRequest;
 
-    if (useSauce || remote) {
+    if (useSauce || useRemote) {
       if (options.port) {
         throw new Error(
-          "Can't specify a port when browser.useSauce is true or browser.url is set"
+          "Can't specify a port when browser.useSauce is true or browser.useRemoteSeleniumGrid is set"
         );
       }
 

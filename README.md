@@ -177,17 +177,20 @@ in your config file as follows:
   // ...
   // BrowserStack
   "browser": {
-    "url": "https://hub-cloud.browserstack.com/wd/hub",
-    "browserName": "safari",
-    "bstack:options": {
-      "browserVersion": "13",
-      "os": "OS X",
-      "osVersion": "Snow Leopard",
-      "local": "true",
-      "localIdentifier": "tunnel ID",
-      "debug": "true",
-      "userName": "your BrowserStack username",
-      "accessKey": "your BrowserStack access key"
+    "name": "safari",
+    "useRemoteSeleniumGrid": true,
+    "remoteSeleniumGrid": {
+      "url": "https://hub-cloud.browserstack.com/wd/hub",
+      "bstack:options": {
+        "browserVersion": "13",
+        "os": "OS X",
+        "osVersion": "Snow Leopard",
+        "local": "true",
+        "localIdentifier": "tunnel ID",
+        "debug": "true",
+        "userName": "your BrowserStack username",
+        "accessKey": "your BrowserStack access key"
+      }
     }
   }
 }
@@ -198,23 +201,28 @@ in your config file as follows:
   // ...
   // Saucelabs
   "browser": {
-    "url": "https://ondemand.saucelabs.com/wd/hub",
-    "browserName": "safari",
-    "platformName": "macOS 12",
-    "sauce:options": {
-      "tunnel-identifier": "tunnel ID",
-      "userName": "your Saucelabs username",
-      "accessKey": "your Saucelabs access key"
+    "name": "safari",
+    "useRemoteSeleniumGrid": true,
+    "remoteSeleniumGrid": {
+      "url": "https://ondemand.saucelabs.com/wd/hub",
+      "platformName": "macOS 12",
+      "sauce:options": {
+        "tunnel-identifier": "tunnel ID",
+        "userName": "your Saucelabs username",
+        "accessKey": "your Saucelabs access key"
+      }
     }
   }
 }
 ```
 
-When using a remote grid provider, all properties of the `browser` object are 
-optional except for `url` which indicates the remote grid hub URL to connect
-over and `browserName` which is required by selenium. All of the values in the 
-`browser` object are passed as capabilities to the grid hub url to instantiate 
-a new browser session minus the `url`.
+When using a remote grid provider, all properties of the `browser` object are
+optional except for `name` which will be passed as the `browserName` capability,
+and `useRemoteSeleniumGrid` which must be set to a value of `true`. if a
+`remoteSeleniumGrid` object is included, any values it contains, with the
+exception of the `url` will be used as `capabilties` sent to the grid hub url.
+if no value is specified for the `url` then a default of
+`http://localhost:4445/wd/hub` is used. 
 
 ## Saucelabs support (legacy)
 > NOTE: the below configuration format only supports using Saucelabs in the US. if connecting from the EU, please use the above specifying a `url` value specific to your region (e.g. `https://ondemand.eu-central-1.saucelabs.com:443/wd/hub`) to avoid a connection error of `WebDriverError: This user is unauthorized to the region. Please try another region, or contact customer support.`
