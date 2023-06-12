@@ -71,7 +71,10 @@ describe('webdriver', function() {
         it('defaults to firefox', function() {
           const builder = new MockWebdriverBuilder();
 
-          buildWebdriver({ useRemoteSeleniumGrid: true }, builder);
+          buildWebdriver(
+            { useRemoteSeleniumGrid: true, remoteSeleniumGrid: {} },
+            builder
+          );
 
           expect(builder.capabilities.browserName).toEqual('firefox');
         });
