@@ -163,7 +163,71 @@ To run the specs:
 2. Run `npx jasmine-browser-runner`.
 3. Visit <http://localhost:8888>.
 
-## Saucelabs support
+## Remote Grid support (Saucelabs, BrowserStack, etc.)
+
+jasmine-browser-runner can run your Jasmine specs on a remote grid
+provider like [Saucelabs](https://saucelabs.com/), 
+[BrowserStack](https://browserstack.com) or your own Selenium Grid.
+To use a remote grid hub, set the `browser` object
+in your config file as follows:
+
+```json
+// jasmine-browser.json
+{
+  // ...
+  // BrowserStack
+  "browser": {
+    "name": "safari",
+    "useRemoteSeleniumGrid": true,
+    "remoteSeleniumGrid": {
+      "url": "https://hub-cloud.browserstack.com/wd/hub",
+      "bstack:options": {
+        "browserVersion": "13",
+        "os": "OS X",
+        "osVersion": "Snow Leopard",
+        "local": "true",
+        "localIdentifier": "tunnel ID",
+        "debug": "true",
+        "userName": "your BrowserStack username",
+        "accessKey": "your BrowserStack access key"
+      }
+    }
+  }
+}
+```
+```json
+// jasmine-browser.json
+{
+  // ...
+  // Saucelabs
+  "browser": {
+    "name": "safari",
+    "useRemoteSeleniumGrid": true,
+    "remoteSeleniumGrid": {
+      "url": "https://ondemand.saucelabs.com/wd/hub",
+      "platformName": "macOS 12",
+      "sauce:options": {
+        "tunnel-identifier": "tunnel ID",
+        "userName": "your Saucelabs username",
+        "accessKey": "your Saucelabs access key"
+      }
+    }
+  }
+}
+```
+
+When using a remote grid provider, all properties of the `browser` object are
+optional except for `name` which will be passed as the `browserName` capability,
+and `useRemoteSeleniumGrid` which must be set to a value of `true`. if a
+`remoteSeleniumGrid` object is included, any values it contains, with the
+exception of the `url` will be used as `capabilties` sent to the grid hub url.
+if no value is specified for the `url` then a default of
+`http://localhost:4445/wd/hub` is used. 
+
+## Saucelabs support (legacy)
+> NOTE: the below configuration format only supports using Saucelabs in the US. if connecting from the EU, please use the above specifying a `url` value specific to your region (e.g. `https://ondemand.eu-central-1.saucelabs.com:443/wd/hub`) to avoid a connection error of `WebDriverError: This user is unauthorized to the region. Please try another region, or contact customer support.`
+
+> WARNING: the below configuration format may be removed in favour of using the above in the future so it is advised that you migrate to the above
 
 jasmine-browser-runner can run your Jasmine specs on [Saucelabs](https://saucelabs.com/).
 To use Saucelabs, set `browser.name`, `browser.useSauce`, and `browser.sauce`
