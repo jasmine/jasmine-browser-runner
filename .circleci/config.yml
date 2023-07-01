@@ -107,6 +107,7 @@ jobs:
         command: |
           export PATH=$PATH:$HOME/workspace/bin
           export USE_SAUCE=true
+          export SAUCE_TUNNEL_IDENTIFIER=$CIRCLE_WORKFLOW_JOB_ID
           scripts/start-sauce-connect sauce-pidfile
           set +o errexit
           npm test
