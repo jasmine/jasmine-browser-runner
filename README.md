@@ -182,9 +182,9 @@ in your config file as follows:
     "remoteSeleniumGrid": {
       "url": "https://hub-cloud.browserstack.com/wd/hub",
       "bstack:options": {
-        "browserVersion": "13",
+        "browserVersion": "16",
         "os": "OS X",
-        "osVersion": "Snow Leopard",
+        "osVersion": "Monterey",
         "local": "true",
         "localIdentifier": "tunnel ID",
         "debug": "true",
