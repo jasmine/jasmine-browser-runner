@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   win: circleci/windows@5.0.0
   node: circleci/node@5.0.2
-  browser-tools: circleci/browser-tools@1.3.0
+  browser-tools: circleci/browser-tools@1.4.3
 
 executors:
   node20:
@@ -30,16 +30,6 @@ jobs:
           command: echo "Using Node $(node --version) and NPM $(npm --version)"
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
-      - run:
-          name: Clean up after Chromedriver installation
-          command: |
-            # browser-tools/install-chromedriver drops a LICENSE.chromedriver
-            # file in the project root dir. That causes the spec in
-            # spec/npmPackageSpec.js that checks which files we're packaging
-            # to fail, since `npm pack` includes LICENSE.* files even if they
-            # aren't allowlisted. We don't distribute ChromeDriver, so we don't
-            # need to package its license file.
-            rm LICENSE.chromedriver
       - run:
           name: Install dependencies
           command: npm install
@@ -83,16 +73,6 @@ jobs:
         at: .
     - browser-tools/install-chrome
     - browser-tools/install-chromedriver
-    - run:
-        name: Clean up after Chromedriver installation
-        command: |
-          # browser-tools/install-chromedriver drops a LICENSE.chromedriver
-          # file in the project root dir. That causes the spec in
-          # spec/npmPackageSpec.js that checks which files we're packaging
-          # to fail, since `npm pack` includes LICENSE.* files even if they
-          # aren't allowlisted. We don't distribute ChromeDriver, so we don't
-          # need to package its license file.
-          rm LICENSE.chromedriver
     - run:
         name: Install Sauce Connect
         command: |
