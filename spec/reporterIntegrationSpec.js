@@ -1,12 +1,6 @@
 const { exec } = require('child_process');
 
 describe('Reporter integration', function() {
-  beforeEach(function() {
-    if (process.env.JASMINE_NO_BROWSER_TESTS) {
-      pending('skipping because the JASMINE_NO_BROWSER_TESTS env var is set');
-    }
-  });
-
   it(
     'evaluates relative reporter paths in config files relative to the CWD',
     function(done) {

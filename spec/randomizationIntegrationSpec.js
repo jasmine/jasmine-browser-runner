@@ -1,12 +1,6 @@
 const { exec } = require('child_process');
 
 describe('Randomization integration', function() {
-  beforeEach(function() {
-    if (process.env.JASMINE_NO_BROWSER_TESTS) {
-      pending('skipping because the JASMINE_NO_BROWSER_TESTS env var is set');
-    }
-  });
-
   it(
     'reports the command to reproduce the random seed',
     async function() {

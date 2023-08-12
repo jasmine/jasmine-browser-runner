@@ -64,7 +64,7 @@ jobs:
           command: echo 'console.log(require("jasmine-core").version())' | node
       - run:
           name: Run tests
-          command: JASMINE_NO_BROWSER_TESTS=y npm test
+          command: npm test
 
   saucelabs_integration_test:
     executor: node18

@@ -1,12 +1,6 @@
 const { exec } = require('child_process');
 
 describe('ESM integration', function() {
-  beforeEach(function() {
-    if (process.env.JASMINE_NO_BROWSER_TESTS) {
-      pending('skipping because the JASMINE_NO_BROWSER_TESTS env var is set');
-    }
-  });
-
   it(
     'supports ES modules as specs, helpers, and sources',
     function(done) {

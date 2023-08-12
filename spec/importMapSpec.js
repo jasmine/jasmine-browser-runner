@@ -3,12 +3,6 @@
 const { exec } = require('child_process');
 
 describe('Import Map Sample Project', function() {
-  beforeEach(function() {
-    if (process.env.JASMINE_NO_BROWSER_TESTS) {
-      pending('skipping because the JASMINE_NO_BROWSER_TESTS env var is set');
-    }
-  });
-
   it(
     'executes example specs',
     function(done) {
