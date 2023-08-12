@@ -543,6 +543,43 @@ describe('server', function() {
     });
   });
 
+  it('uses specified Express middleware', async function() {
+    spyOn(console, 'log');
+
+    const app = jasmine.createSpyObj('app', ['use', 'get', 'listen']);
+    app.listen.and.callFake(function(port, cb) {
+      setImmediate(cb);
+      return {
+        address() {
+          return {};
+        },
+      };
+    });
+    const fakeExpress = function() {
+      return app;
+    };
+    fakeExpress.static = function() {};
+    function middleware1() {}
+    function middleware2() {}
+
+    const server = new Server({
+      projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+      jasmineCore: this.fakeJasmine,
+      express: fakeExpress,
+      srcDir: 'src',
+      specDir: 'spec',
+      middleware: {
+        '/foo': middleware1,
+        '/bar': middleware2,
+      },
+    });
+
+    await server.start();
+
+    expect(app.use).toHaveBeenCalledWith('/foo', middleware1);
+    expect(app.use).toHaveBeenCalledWith('/bar', middleware2);
+  });
+
   describe('When an importMap is provided', function() {
     beforeEach(function() {
       spyOn(console, 'log');
