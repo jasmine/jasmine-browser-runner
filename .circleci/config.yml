@@ -29,7 +29,6 @@ jobs:
           name: Report Node and NPM versions
           command: echo "Using Node $(node --version) and NPM $(npm --version)"
       - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
       - run:
           name: Install dependencies
           command: npm install
@@ -72,7 +71,6 @@ jobs:
     - attach_workspace:
         at: .
     - browser-tools/install-chrome
-    - browser-tools/install-chromedriver
     - run:
         name: Install Sauce Connect
         command: |
