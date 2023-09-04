@@ -19,7 +19,7 @@ describe('webdriver', function() {
         expect(builder.browserName).toEqual('chrome');
         expect(builder.capabilities.get('goog:chromeOptions')).toEqual({
           args: [
-            '--headless',
+            '--headless=new',
             '--no-sandbox',
             'window-size=1024,768',
             '--disable-gpu',

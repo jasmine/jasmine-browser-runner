@@ -1,0 +1,12 @@
+{
+  "srcDir": ".",
+  "srcFiles": [],
+  "specDir": ".",
+  "specFiles": [
+    "**/*[sS]pec.js"
+  ],
+  "helpers": [],
+  "browser": {
+    "name": "oldHeadlessChrome"
+  }
+}
