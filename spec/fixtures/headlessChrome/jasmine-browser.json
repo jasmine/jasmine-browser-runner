@@ -7,6 +7,6 @@
   ],
   "helpers": [],
   "browser": {
-    "name": "oldHeadlessChrome"
+    "name": "headlessChrome"
   }
 }
