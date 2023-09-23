@@ -137,6 +137,23 @@ describe('webdriver', function() {
   });
 
   describe('When browserInfo is an object with useSauce set to true', function() {
+    beforeEach(function() {
+      spyOn(console, 'warn');
+    });
+
+    it('logs a deprecation warning', function() {
+      const builder = new MockWebdriverBuilder();
+
+      buildWebdriver({ useSauce: true }, builder);
+
+      expect(console.warn).toHaveBeenCalledWith(
+        'Deprecation warning: Direct support for Saucelabs is deprecated and ' +
+          'will be removed in a future release. Please use Saucelabs via the ' +
+          'remote Selenium grid feature. See the jasmine-browser-runner README ' +
+          'for details.'
+      );
+    });
+
     it('uses browserInfo.name as the browser name', function() {
       const builder = new MockWebdriverBuilder();
 
