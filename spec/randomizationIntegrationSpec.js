@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { runJasmine, timeoutMs } = require('./integrationSupport');
 
 describe('Randomization integration', function() {
   it(
@@ -24,47 +24,19 @@ describe('Randomization integration', function() {
           .replace(/Finished in .* seconds/, '');
       }
 
-      function run() {
-        return new Promise((resolve, reject) => {
-          let timedOut = false;
-          let timerId;
-          const jasmineBrowserProcess = exec(
-            'node ../../../bin/jasmine-browser-runner runSpecs --seed=1234',
-            { cwd: 'spec/fixtures/random' },
-            function(err, stdout, stderr) {
-              try {
-                if (timedOut) {
-                  return;
-                }
-
-                clearTimeout(timerId);
-
-                if (!err) {
-                  resolve(stdout);
-                } else {
-                  // Some kind of unexpected failure happened. Include all the info
-                  // that we have.
-                  reject(
-                    `Child suite failed with error:\n${err}\n\n` +
-                      `stdout:\n${stdout}\n\n` +
-                      `stderr:\n${stderr}`
-                  );
-                }
-              } catch (e) {
-                reject(e);
-              }
-            }
-          );
-
-          timerId = setTimeout(function() {
-            // Kill the child processs if we're about to time out, to free up
-            // the port.
-            timedOut = true;
-            jasmineBrowserProcess.kill();
-          }, 29 * 1000);
-        });
+      async function run() {
+        const { exitCode, stdout, stderr } = await runJasmine(
+          'spec/fixtures/random',
+          {
+            extraArgs: '--seed=1234',
+          }
+        );
+        expect(exitCode).toEqual(0);
+        jasmine.debugLog('stdout: ' + stdout);
+        jasmine.debugLog('stderr: ' + stderr);
+        return stdout;
       }
     },
-    30 * 1000
+    timeoutMs
   );
 });

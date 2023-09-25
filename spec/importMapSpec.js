@@ -1,103 +1,54 @@
 // there are also import map-related specs in configSpec and serverSpec.
 
-const { exec } = require('child_process');
+const { runJasmine } = require('./integrationSupport');
 
 describe('Import Map Sample Project', function() {
-  it(
-    'executes example specs',
-    function(done) {
-      let timedOut = false;
-      let timerId;
-      const jasmineBrowserProcess = exec(
-        'node ../../../bin/jasmine-browser-runner runSpecs',
-        // 'node ../../../bin/jasmine-browser-runner serve', // for debugging
-        { cwd: 'spec/fixtures/importMap' },
-        function(err, stdout, stderr) {
-          try {
-            if (timedOut) {
-              return;
-            }
+  it('executes example specs', async function() {
+    const { exitCode, stdout, stderr } = await runJasmine(
+      'spec/fixtures/importMap'
+    );
 
-            clearTimeout(timerId);
-
-            if (!err) {
-              expect(stdout).toContain('3 specs, 0 failures');
-              done();
-            } else {
-              if (err.code !== 1 || stdout === '' || stderr !== '') {
-                // Some kind of unexpected failure happened. Include all the info
-                // that we have.
-                done.fail(
-                  `Child suite failed with error:\n${err}\n\n` +
-                    `stdout:\n${stdout}\n\n` +
-                    `stderr:\n${stderr}`
-                );
-              } else {
-                // A normal suite failure. Just include the output.
-                done.fail(`Child suite failed with output:\n${stdout}`);
-              }
-            }
-          } catch (e) {
-            done.fail(e);
-          }
-        }
+    if (exitCode === 0) {
+      expect(stdout).toContain('3 specs, 0 failures');
+    } else if (exitCode === 3) {
+      // A normal suite failure. Just include the output.
+      fail(`Child suite failed with output:\n${stdout}`);
+    } else {
+      // Some kind of unexpected failure happened. Include all the info
+      // that we have.
+      fail(
+        `Child suite failed with exit code:\n${exitCode}\n\n` +
+          `stdout:\n${stdout}\n\n` +
+          `stderr:\n${stderr}`
       );
-
-      timerId = setTimeout(function() {
-        // Kill the child processs if we're about to time out, to free up
-        // the port.
-        timedOut = true;
-        jasmineBrowserProcess.kill();
-      }, 29 * 1000);
-    },
-    30 * 1000
-  );
+    }
+  });
 
   it(
     'executes example specs with moduleRootDir',
-    function(done) {
-      let timedOut = false;
-      let timerId;
-      const jasmineBrowserProcess = exec(
-        'node ../../../bin/jasmine-browser-runner runSpecs --config=spec/support/jasmine-browser.module-root-dir.json',
-        // 'node ../../../bin/jasmine-browser-runner serve --config=spec/support/jasmine-browser.module-root-dir.json', // for debugging
-        { cwd: 'spec/fixtures/importMap' },
-        function(err, stdout, stderr) {
-          try {
-            if (timedOut) {
-              return;
-            }
-
-            clearTimeout(timerId);
-
-            if (!err) {
-              expect(stdout).toContain('3 specs, 0 failures');
-              done();
-            } else {
-              if (err.code !== 1 || stdout === '' || stderr !== '') {
-                // Some kind of unexpected failure happened. Include all the info
-                // that we have.
-                done.fail(
-                  `Child suite failed with error:\n${err}\n\n` +
-                    `stdout:\n${stdout}\n\n` +
-                    `stderr:\n${stderr}`
-                );
-              } else {
-                // A normal suite failure. Just include the output.
-                done.fail(`Child suite failed with output:\n${stdout}`);
-              }
-            }
-          } catch (e) {
-            done.fail(e);
-          }
+    async function() {
+      const { exitCode, stdout, stderr } = await runJasmine(
+        'spec/fixtures/importMap',
+        {
+          extraArgs:
+            '--config=spec/support/jasmine-browser.module-root-dir.json',
         }
       );
-      timerId = setTimeout(function() {
-        // Kill the child processs if we're about to time out, to free up
-        // the port.
-        timedOut = true;
-        jasmineBrowserProcess.kill();
-      }, 29 * 1000);
+
+      if (exitCode === 0) {
+        expect(stdout).toContain('3 specs, 0 failures');
+      } else if (exitCode === 3) {
+        // A normal suite failure. Just include the output.
+        fail(`Child suite failed with output:\n${stdout}`);
+      } else {
+        // Some kind of unexpected failure happened. Include all the info
+        // that we have.
+        fail(
+          `Child suite failed with exit code:\n${exitCode}\n\n` +
+            `stdout:\n${stdout}\n\n` +
+            `stderr:\n${stderr}`
+        );
+      }
     },
     30 * 1000
   );

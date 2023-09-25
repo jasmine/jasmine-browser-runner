@@ -1,6 +1,8 @@
 const fs = require('fs');
 const os = require('os');
-const { exec } = require('child_process');
+const { runJasmine, expectSuccess } = require('./integrationSupport');
+
+const timeoutMs = 240 * 1000;
 
 describe('remote grid parameter handling', function() {
   // To reduce the amount of output that devs have to scroll past, pend a single
@@ -62,55 +64,18 @@ describe('remote grid parameter handling', function() {
     const displayOS = sauceOS ? `OS ${sauceOS}` : 'unspecified OS';
     it(
       `passes browser ${browser}, ${displayVersion}, and ${displayOS} correctly`,
-      function(done) {
+      async function() {
         const suiteDir = createSuite();
-        const jasmineBrowserDir = process.cwd();
-        let timedOut = false;
-        let timerId;
         console.log('remote grid test may take a minute or two');
 
-        const jasmineBrowserProcess = exec(
-          `"${jasmineBrowserDir}/bin/jasmine-browser-runner" runSpecs --config=jasmine-browser.json`,
-          { cwd: suiteDir },
-          function(err, stdout, stderr) {
-            try {
-              if (timedOut) {
-                return;
-              }
+        const result = await runJasmine(suiteDir, {
+          extraArgs: '--config=jasmine-browser.json',
+          timeoutMs,
+        });
 
-              clearTimeout(timerId);
-
-              if (!err) {
-                expect(stdout).toContain('1 spec, 0 failures');
-                done();
-              } else {
-                if (err.code !== 1 || stdout === '' || stderr !== '') {
-                  // Some kind of unexpected failure happened. Include all the info
-                  // that we have.
-                  done.fail(
-                    `Child suite failed with error:\n${err}\n\n` +
-                      `stdout:\n${stdout}\n\n` +
-                      `stderr:\n${stderr}`
-                  );
-                } else {
-                  // A normal suite failure. Just include the output.
-                  done.fail(`Child suite failed with output:\n${stdout}`);
-                }
-              }
-            } catch (e) {
-              done.fail(e);
-            }
-          }
-        );
-
-        timerId = setTimeout(function() {
-          // Kill the child processs if we're about to time out, to free up
-          // the port.
-          timedOut = true;
-          jasmineBrowserProcess.kill();
-        }, 239 * 1000);
+        expectSuccess(result, '1 spec, 0 failures');
       },
-      240 * 1000
+      timeoutMs
     );
 
     function createSuite() {

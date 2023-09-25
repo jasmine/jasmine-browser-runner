@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { runJasmine, timeoutMs } = require('./integrationSupport');
 
 describe('Exit code integration', function() {
   it(
@@ -7,7 +7,7 @@ describe('Exit code integration', function() {
       const exitCode = await run('spec/fixtures/exit/success');
       expect(exitCode).toEqual(0);
     },
-    30 * 1000
+    timeoutMs
   );
 
   it(
@@ -16,7 +16,7 @@ describe('Exit code integration', function() {
       const exitCode = await run('spec/fixtures/exit/loadError');
       expect(exitCode).toEqual(1);
     },
-    30 * 1000
+    timeoutMs
   );
 
   it(
@@ -25,7 +25,7 @@ describe('Exit code integration', function() {
       const exitCode = await run('spec/fixtures/exit/focused');
       expect(exitCode).toEqual(2);
     },
-    30 * 1000
+    timeoutMs
   );
 
   it(
@@ -34,38 +34,16 @@ describe('Exit code integration', function() {
       const exitCode = await run('spec/fixtures/exit/failure');
       expect(exitCode).toEqual(3);
     },
-    30 * 1000
+    timeoutMs
   );
 });
 
-function run(cwd, extraArgs = '') {
-  return new Promise((resolve, reject) => {
-    let timedOut = false;
-    let timerId;
-    const jasmineBrowserProcess = exec(
-      'node ../../../../bin/jasmine-browser-runner runSpecs --config=jasmine-browser.json',
-      { cwd },
-      function(err, stdout, stderr) {
-        try {
-          if (timedOut) {
-            return;
-          }
-
-          clearTimeout(timerId);
-          jasmine.debugLog('stdout: ' + stdout);
-          jasmine.debugLog('stderr: ' + stdout);
-          resolve(err ? err.code : 0);
-        } catch (e) {
-          reject(e);
-        }
-      }
-    );
-
-    timerId = setTimeout(function() {
-      // Kill the child processs if we're about to time out, to free up
-      // the port.
-      timedOut = true;
-      jasmineBrowserProcess.kill();
-    }, 29 * 1000);
+async function run(cwd = '') {
+  const { exitCode, stdout, stderr } = await runJasmine(cwd, {
+    extraArgs: '--config=jasmine-browser.json',
   });
+  jasmine.debugLog('stdout: ' + stdout);
+  jasmine.debugLog('stderr: ' + stderr);
+  jasmine.debugLog('exit code: ' + exitCode);
+  return exitCode;
 }
