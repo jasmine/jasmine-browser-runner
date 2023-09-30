@@ -35,7 +35,14 @@ describe('remote grid parameter handling', function() {
     'Windows 10',
     /Windows NT 10.0;.* Firefox\/102\.0$/
   );
-  createSpec('chrome', '', '', /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/);
+  // As of 2023-09-30, Chrome latest on the default Linux is broken on
+  // Saucelabs. Use Mac OS for now instead.
+  createSpec(
+    'chrome',
+    '',
+    'macOS 12',
+    /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/
+  );
   createSpec(
     'safari',
     '15',
