@@ -290,3 +290,6 @@ they aren't actively supported.
 
 To find out what environments work with a particular Jasmine release, see the [release notes](https://github.com/jasmine/jasmine/tree/main/release_notes).
 
+Copyright (c) 2019 Pivotal Labs
+Copyright (c) 2020-2023 The Jasmine developers
+This software is licensed under the MIT License.
