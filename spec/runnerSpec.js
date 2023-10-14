@@ -1,4 +1,3 @@
-/* globals throwUnless */
 const querystring = require('querystring'),
   Runner = require('../lib/runner.js');
 
@@ -14,56 +13,6 @@ function fakeReporter() {
 }
 
 describe('Runner', function() {
-  const realSetTimeout = setTimeout;
-  const realClearTimeout = clearTimeout;
-
-  function poll(predicate) {
-    return new Promise(function(resolve, reject) {
-      const timeoutId = realSetTimeout(function() {
-        reject(new Error('poll timed out'));
-      }, 1000);
-      thisPoll();
-
-      function thisPoll() {
-        if (predicate()) {
-          realClearTimeout(timeoutId);
-          resolve();
-        } else {
-          realSetTimeout(thisPoll);
-        }
-      }
-    });
-  }
-
-  function epoll(check) {
-    return new Promise(function(resolve, reject) {
-      let lastError = null;
-      const timeoutId = realSetTimeout(function() {
-        reject(lastError);
-      }, 1000);
-      thisPoll();
-
-      function thisPoll() {
-        let passed;
-
-        try {
-          check();
-          passed = true;
-        } catch (e) {
-          lastError = e;
-          passed = false;
-        }
-
-        if (passed) {
-          realClearTimeout(timeoutId);
-          resolve();
-        } else {
-          realSetTimeout(thisPoll);
-        }
-      }
-    });
-  }
-
   beforeEach(function() {
     jasmine.clock().install();
   });
@@ -101,12 +50,12 @@ describe('Runner', function() {
 
     runner.run({ batchReporter: true });
     expect(driver.get).toHaveBeenCalledWith('things?');
-    await poll(() => driver.executeScript.calls.count() > 1);
+    await getPromise;
 
     expect(driver.executeScript).toHaveBeenCalledWith(
       jasmine.stringMatching('batchReporter.getBatch()')
     );
-    await poll(() => reporter.jasmineStarted.calls.count() > 0);
+    await batchPromise;
 
     expect(reporter.jasmineStarted).toHaveBeenCalledWith({ things: 'stuff' });
     expect(reporter.suiteStarted).toHaveBeenCalledWith({ fullName: 'top' });
@@ -140,32 +89,6 @@ describe('Runner', function() {
     driver.executeScript.calls.reset();
     jasmine.clock().tick(1000);
     expect(driver.executeScript).not.toHaveBeenCalled();
-  });
-
-  it('fails if the page does not load', async function() {
-    const driver = jasmine.createSpyObj('webdriver', {
-      get: Promise.resolve(),
-      executeScript: null,
-      close: Promise.resolve(),
-    });
-    const runner = new Runner({
-      webdriver: driver,
-      reporters: [],
-      host: 'things',
-    });
-
-    driver.executeScript
-      .withArgs('return !!document.querySelector("#jasmine_content")')
-      .and.returnValue(Promise.resolve(false));
-
-    spyOn(console, 'error');
-    await expectAsync(
-      runner.run({ batchReporter: true })
-    ).toBeRejectedWithError('Jasmine web page did not load');
-
-    expect(driver.executeScript).not.toHaveBeenCalledWith(
-      jasmine.stringMatching('batchReporter.getBatch()')
-    );
   });
 
   it('polls until a batch includes jasmineDone', async function() {
@@ -201,39 +124,32 @@ describe('Runner', function() {
         host: 'things',
       });
 
-    driver.executeScript
-      .withArgs('return !!document.querySelector("#jasmine_content")')
-      .and.returnValue(Promise.resolve(true));
-
-    driver.executeScript
-      .withArgs(jasmine.stringMatching('batchReporter.getBatch()'))
-      .and.returnValues(
-        batch1Promise,
-        batch2Promise,
-        batch3Promise,
-        batch4Promise
-      );
+    driver.executeScript.and.returnValues(
+      batch1Promise,
+      batch2Promise,
+      batch3Promise,
+      batch4Promise
+    );
 
     runner.run({ batchReporter: true });
     expect(driver.get).toHaveBeenCalledWith('things?');
-    await epoll(() => {
-      throwUnless(driver.executeScript).toHaveBeenCalledWith(
-        jasmine.stringMatching('batchReporter.getBatch()')
-      );
-    });
+    await getPromise;
 
-    await poll(() => reporter.jasmineStarted.calls.any());
+    expect(driver.executeScript).toHaveBeenCalledWith(
+      jasmine.stringMatching('batchReporter.getBatch()')
+    );
+    await batch1Promise;
+
     expect(reporter.jasmineStarted).toHaveBeenCalledWith({ things: 'stuff' });
     expect(reporter.suiteStarted).toHaveBeenCalledWith({ fullName: 'top' });
 
     driver.executeScript.calls.reset();
-    reporter.suiteStarted.calls.reset();
     jasmine.clock().tick(250);
     expect(driver.executeScript).toHaveBeenCalledWith(
       jasmine.stringMatching('batchReporter.getBatch()')
     );
+    await batch2Promise;
 
-    await poll(() => reporter.suiteStarted.calls.any());
     expect(reporter.suiteStarted).toHaveBeenCalledWith({ fullName: 'inner' });
     expect(reporter.specStarted).toHaveBeenCalledWith({
       fullName: 'inner spec',
@@ -248,13 +164,12 @@ describe('Runner', function() {
     });
 
     driver.executeScript.calls.reset();
-    reporter.specStarted.calls.reset();
     jasmine.clock().tick(250);
     expect(driver.executeScript).toHaveBeenCalledWith(
       jasmine.stringMatching('batchReporter.getBatch()')
     );
+    await batch3Promise;
 
-    await poll(() => reporter.specStarted.calls.any());
     expect(reporter.specStarted).toHaveBeenCalledWith({
       fullName: 'top spec',
     });
@@ -272,8 +187,8 @@ describe('Runner', function() {
     expect(driver.executeScript).toHaveBeenCalledWith(
       jasmine.stringMatching('batchReporter.getBatch()')
     );
+    await batch4Promise;
 
-    await poll(() => reporter.jasmineDone.calls.any());
     expect(reporter.jasmineDone).toHaveBeenCalledWith({
       overallStatus: 'complete',
     });
@@ -283,7 +198,7 @@ describe('Runner', function() {
     expect(driver.executeScript).not.toHaveBeenCalled();
   });
 
-  it("handles errors from the webdriver's executeScript method in runUntilEnd", async function() {
+  it("handles errors from the webdriver's executeScript method in runTillEnd", async function() {
     const driver = jasmine.createSpyObj('webdriver', {
         get: Promise.resolve(),
         executeScript: null,
