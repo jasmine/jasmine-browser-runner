@@ -98,13 +98,20 @@ module.exports = {
       portRequest = 0;
     }
 
-    await server.start({ port: portRequest });
+    let hostnameRequest;
+    if (options.hostname) {
+      hostnameRequest = options.hostname;
+    } else {
+      hostnameRequest = 'localhost';
+    }
+
+    await server.start({ port: portRequest, hostname: hostnameRequest });
 
     try {
       const webdriver = buildWebdriver(options.browser);
 
       try {
-        const host = `http://localhost:${server.port()}`;
+        const host = `http://${server.hostname}:${server.port()}`;
         const runner = new RunnerClass({ webdriver, reporters, host });
 
         console.log('Running tests in the browser...');

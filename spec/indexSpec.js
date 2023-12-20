@@ -40,14 +40,33 @@ describe('index', function() {
           const promise = runSpecs({ port: 12345 }, this.deps);
           await this.waitForServerStart(promise);
 
-          expect(this.server.start).toHaveBeenCalledWith({ port: 12345 });
+          expect(this.server.start).toHaveBeenCalledWith({
+            port: 12345,
+            hostname: 'localhost',
+          });
+        });
+
+        it('uses the specified hostname name', async function() {
+          const promise = runSpecs(
+            { port: 12345, hostname: 'coolhostname' },
+            this.deps
+          );
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({
+            port: 12345,
+            hostname: 'coolhostname',
+          });
         });
 
         it('tells the server to pick a port if nothing is specified', async function() {
           const promise = runSpecs({}, this.deps);
           await this.waitForServerStart(promise);
 
-          expect(this.server.start).toHaveBeenCalledWith({ port: 0 });
+          expect(this.server.start).toHaveBeenCalledWith({
+            port: 0,
+            hostname: 'localhost',
+          });
         });
       });
 
@@ -63,7 +82,10 @@ describe('index', function() {
           );
           await this.waitForServerStart(promise);
 
-          expect(this.server.start).toHaveBeenCalledWith({ port: 5555 });
+          expect(this.server.start).toHaveBeenCalledWith({
+            port: 5555,
+            hostname: 'localhost',
+          });
         });
 
         it('throws if a port is specified', async function() {
