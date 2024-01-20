@@ -24,7 +24,9 @@ change the spec files, helpers, and source files that are loaded, specify the
 [Jasmine env's configuration](https://jasmine.github.io/api/edge/Configuration.html),
 and more.
 
-You can also use the `--config` option to specify a different file. This file can be a JSON file or a javascript file that exports a object that looks like the JSON above.
+You can also use the `--config` option to specify a different file. 
+This file can be a JSON file or a javascript file that exports a object that looks like the JSON above. 
+More information about the configuration can be found at the runner [documentation website](https://jasmine.github.io/api/browser-runner/edge/Configuration.html).
 
 To start the server so that you can run the specs interactively (particularly
 useful for debugging):
