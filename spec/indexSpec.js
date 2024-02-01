@@ -42,7 +42,7 @@ describe('index', function() {
 
           expect(this.server.start).toHaveBeenCalledWith({
             port: 12345,
-            hostname: 'localhost',
+            hostname: undefined,
           });
         });
 
@@ -52,7 +52,6 @@ describe('index', function() {
             this.deps
           );
           await this.waitForServerStart(promise);
-
           expect(this.server.start).toHaveBeenCalledWith({
             port: 12345,
             hostname: 'coolhostname',
@@ -65,7 +64,7 @@ describe('index', function() {
 
           expect(this.server.start).toHaveBeenCalledWith({
             port: 0,
-            hostname: 'localhost',
+            hostname: undefined,
           });
         });
       });
@@ -84,7 +83,7 @@ describe('index', function() {
 
           expect(this.server.start).toHaveBeenCalledWith({
             port: 5555,
-            hostname: 'localhost',
+            hostname: undefined,
           });
         });
 

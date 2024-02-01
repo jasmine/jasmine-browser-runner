@@ -97,15 +97,8 @@ module.exports = {
     } else {
       portRequest = 0;
     }
-
-    let hostnameRequest;
-    if (options.hostname) {
-      hostnameRequest = options.hostname;
-    } else {
-      hostnameRequest = 'localhost';
-    }
-
-    await server.start({ port: portRequest, hostname: hostnameRequest });
+  
+    await server.start({ port: portRequest, hostname: options.hostname });
 
     try {
       const webdriver = buildWebdriver(options.browser);
