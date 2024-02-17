@@ -35,6 +35,12 @@ describe('remote grid parameter handling', function() {
     'Windows 10',
     /Windows NT 10.0;.* Firefox\/102\.0$/
   );
+  createSpec(
+    'firefox',
+    '115',
+    'Windows 10',
+    /Windows NT 10.0;.* Firefox\/115\.0$/
+  );
   // As of 2023-09-30, Chrome latest on the default Linux is broken on
   // Saucelabs. Use Mac OS for now instead.
   createSpec(
@@ -56,6 +62,13 @@ describe('remote grid parameter handling', function() {
     'macOS 12',
     // Safari on 12.x reports the OS as 10_15_7
     /Mac OS X 10_15.*Version\/16[0-9.]+ Safari/
+  );
+  createSpec(
+    'safari',
+    '17',
+    'macOS 13',
+    // Safari on 13.x reports the OS as 10_15_7
+    /Mac OS X 10_15.*Version\/17[0-9.]+ Safari/
   );
   createSpec(
     'MicrosoftEdge',
