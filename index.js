@@ -84,16 +84,10 @@ module.exports = {
     const useRemote = options.browser && options.browser.useRemoteSeleniumGrid;
     let portRequest;
 
-    if (useSauce || useRemote) {
-      if (options.port) {
-        throw new Error(
-          "Can't specify a port when browser.useSauce or browser.useRemoteSeleniumGrid is true"
-        );
-      }
-
-      portRequest = 5555;
-    } else if (options.port) {
+    if (options.port) {
       portRequest = options.port;
+    } else if (useSauce || useRemote) {
+      portRequest = 5555;
     } else {
       portRequest = 0;
     }

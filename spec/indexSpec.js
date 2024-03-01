@@ -35,7 +35,7 @@ describe('index', function() {
         };
       });
 
-      describe('When not using Sauce Connect', function() {
+      describe('When not using Sauce Connect or remote grid', function() {
         it('uses the specified port', async function() {
           const promise = runSpecs({ port: 12345 }, this.deps);
           await this.waitForServerStart(promise);
@@ -48,6 +48,38 @@ describe('index', function() {
           await this.waitForServerStart(promise);
 
           expect(this.server.start).toHaveBeenCalledWith({ port: 0 });
+        });
+      });
+
+      describe('When using remote grid', function() {
+        it('uses port 5555', async function() {
+          const promise = runSpecs(
+            {
+              browser: {
+                useRemoteSeleniumGrid: true,
+              },
+            },
+            this.deps
+          );
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({ port: 5555 });
+        });
+
+        it('uses the specified port', async function() {
+          spyOn(console, 'warn');
+          const promise = runSpecs(
+            {
+              browser: {
+                useRemoteSeleniumGrid: true,
+              },
+              port: 1234,
+            },
+            this.deps
+          );
+          await this.waitForServerStart(promise);
+
+          expect(this.server.start).toHaveBeenCalledWith({ port: 1234 });
         });
       });
 
@@ -66,7 +98,8 @@ describe('index', function() {
           expect(this.server.start).toHaveBeenCalledWith({ port: 5555 });
         });
 
-        it('throws if a port is specified', async function() {
+        it('uses the specified port', async function() {
+          spyOn(console, 'warn');
           const promise = runSpecs(
             {
               browser: {
@@ -76,11 +109,9 @@ describe('index', function() {
             },
             this.deps
           );
+          await this.waitForServerStart(promise);
 
-          await expectAsync(promise).toBeRejectedWithError(
-            "Can't specify a port when browser.useSauce or browser.useRemoteSeleniumGrid is true"
-          );
-          expect(this.server.start).not.toHaveBeenCalled();
+          expect(this.server.start).toHaveBeenCalledWith({ port: 1234 });
         });
       });
     });

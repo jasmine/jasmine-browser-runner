@@ -226,6 +226,12 @@ exception of the `url` will be used as `capabilties` sent to the grid hub url.
 if no value is specified for the `url` then a default of
 `http://localhost:4445/wd/hub` is used. 
 
+It's common for remote grids to support only a limited set of ports. Check your
+remote grid's documentation to make sure that the port you're using is 
+supported. When using a remote grid, `jasmine-browser-runner` will run on port 
+5555 unless you use the `--port` command line option or specify a port in the
+second parameter to`startServer`.
+
 ## Want more control?
 
 ```javascript
