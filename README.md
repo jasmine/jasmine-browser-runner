@@ -54,6 +54,63 @@ To use a browser other than Firefox, add a `browser` field to
 Its value can be `"firefox"`, `"headlessFirefox"`, `"safari"`, 
 `"MicrosoftEdge"`, `"chrome"`, or `"headlessChrome"`.
 
+## TLS support
+
+To serve tests over HTTPS instead of HTTP, supply a path to a TLS cert and key
+in PEM format in `jasmine-browser.json`:
+
+```javascript
+{
+  // ...
+  "tlsKey": "/path/to/tlsKey.pem",
+  "tlsCert": "/path/to/tlsCert.pem",
+  // ...
+}
+```
+
+These can also be specified on the command line with `--tlsKey` and `--tlsCert`.
+
+Note that if you are using a self-signed or otherwise invalid certificate, the
+browser will not allow the connection by default.  Additional browser configs
+or command line options may be necessary to use an invalid TLS certificate.
+
+## Hostname support
+
+To serve tests on a specific interface or IP, you can specify a hostname in
+`jasmine-browser.json`:
+
+```javascript
+{
+  // ...
+  "hostname": "mymachine.mynetwork",
+  // ...
+}
+```
+
+This can also be specified on the command line with `--hostname`.
+
+There are a few important caveats when doing this:
+
+1. This name must either be an IP or a name that can really be resolved on your
+   system. Otherwise, you will get `ENOTFOUND` errors.
+2. This name must correspond to an IP assigned to one of the network interfaces
+   on your system. Otherwise, you will get `EADDRNOTAVAIL` errors.
+3. If this name matches the [HSTS preload list](https://hstspreload.org/),
+   browsers will force the connection to HTTPS.  If you are not using TLS, you
+   will get an error that says `The browser tried to speak HTTPS to an HTTP
+   server.  Misconfiguration is likely.`  You may be surprised by the names on
+   that preload list, which include such favorite local network hostnames as:
+    - dev
+    - foo
+    - app
+    - nexus
+    - windows
+    - office
+    - dad
+  You can see a full list in [Chromium source](https://raw.githubusercontent.com/chromium/chromium/main/net/http/transport_security_state_static.json)
+  or query your hostname at the [HSTS preload site](https://hstspreload.org/).
+
+
 ## ES module support
 
 If a source, spec, or helper file's name ends in `.mjs`, it will be loaded as

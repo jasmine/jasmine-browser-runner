@@ -1,8 +1,8 @@
-const ConsoleReporter = require('./lib/console_reporter'),
-  webdriverModule = require('./lib/webdriver'),
-  Server = require('./lib/server'),
-  Runner = require('./lib/runner'),
-  ModuleLoader = require('./lib/moduleLoader');
+const ConsoleReporter = require('./lib/console_reporter');
+const webdriverModule = require('./lib/webdriver');
+const Server = require('./lib/server');
+const Runner = require('./lib/runner');
+const ModuleLoader = require('./lib/moduleLoader');
 
 async function createReporters(options, deps) {
   const result = [];
@@ -98,7 +98,7 @@ module.exports = {
       const webdriver = buildWebdriver(options.browser);
 
       try {
-        const host = `http://localhost:${server.port()}`;
+        const host = `${server.scheme()}://${server.hostname()}:${server.port()}`;
         const runner = new RunnerClass({ webdriver, reporters, host });
 
         console.log('Running tests in the browser...');
