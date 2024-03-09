@@ -41,7 +41,11 @@ function getIP() {
         validFamilies.includes(addressInfo.family) &&
         addressInfo.internal == false
       ) {
-        return addressInfo.address;
+        const address = addressInfo.address;
+        if (addressInfo.family == 'IPv6') {
+          return '[' + address + ']';
+        }
+        return address;
       }
     }
   }
