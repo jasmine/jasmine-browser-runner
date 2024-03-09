@@ -60,7 +60,7 @@ describe('server', function() {
       specFiles: ['**/*[sS]pec.js'],
     });
 
-    await server.start({ port: 0});
+    await server.start({ port: 0 });
 
     const baseUrl = `http://localhost:${server.port()}`;
 
