@@ -60,7 +60,7 @@ describe('server', function() {
       specFiles: ['**/*[sS]pec.js'],
     });
 
-    await server.start({});
+    await server.start({ port: 0});
 
     const baseUrl = `http://localhost:${server.port()}`;
 
@@ -597,7 +597,7 @@ describe('server', function() {
       },
     });
 
-    await server.start();
+    await server.start({ port: 0 });
 
     expect(app.use).toHaveBeenCalledWith('/foo', middleware1);
     expect(app.use).toHaveBeenCalledWith('/bar', middleware2);
