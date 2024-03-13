@@ -95,7 +95,7 @@ whether you use the Asset Pipeline or Webpacker.
 
 ### Webpacker
 
-1. Run `yarn add --dev jasmine-browser-runner`.
+1. Run `yarn add --dev jasmine-browser-runner jasmine-core`.
 2. Run `npx jasmine-browser-runner init`.
 3. Edit `spec/support/jasmine-browser.json` as follows:
 ```
