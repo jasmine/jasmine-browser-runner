@@ -49,6 +49,8 @@ describe('server', function() {
   });
 
   it('allows absolute paths for srcDir and specDir', async function() {
+    spyOn(console, 'log');
+
     const projectDir = path.resolve(__dirname, 'fixtures/sampleProject');
     const srcDir = path.resolve(projectDir, 'sources');
     const specDir = path.resolve(projectDir, 'specs');
