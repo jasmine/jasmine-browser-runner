@@ -48,6 +48,29 @@ describe('server', function() {
     expect(server.projectBaseDir).toEqual(path.resolve());
   });
 
+  it('allows absolute paths for srcDir and specDir', async function() {
+    const projectDir = path.resolve(__dirname, 'fixtures/sampleProject');
+    const srcDir = path.resolve(projectDir, 'sources');
+    const specDir = path.resolve(projectDir, 'specs');
+    const server = new Server({
+      srcDir,
+      specDir,
+      srcFiles: ['thing2.js', '**/*.js'],
+      helpers: ['helpers/**/*.js'],
+      specFiles: ['**/*[sS]pec.js'],
+    });
+
+    await server.start({ port: 0 });
+
+    const baseUrl = `http://localhost:${server.port()}`;
+
+    // Even though the base dir isn't set on the server, we can still get the
+    // source file through the absolute path.
+    expect(server.projectBaseDir).toEqual(path.resolve());
+    expect(server.projectBaseDir).not.toEqual(projectDir);
+    await getFile(baseUrl + '/__src__/thing2.js');
+  });
+
   it('appends specified css files after Jasmines own', function() {
     const server = new Server({
       projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
@@ -574,7 +597,7 @@ describe('server', function() {
       },
     });
 
-    await server.start();
+    await server.start({ port: 0 });
 
     expect(app.use).toHaveBeenCalledWith('/foo', middleware1);
     expect(app.use).toHaveBeenCalledWith('/bar', middleware2);
