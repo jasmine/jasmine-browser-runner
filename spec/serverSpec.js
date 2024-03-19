@@ -37,12 +37,9 @@ function getIP() {
 
   for (const addressInfos of Object.values(interfaces)) {
     for (const addressInfo of addressInfos) {
-      if (
-        validFamilies.includes(addressInfo.family) &&
-        addressInfo.internal == false
-      ) {
+      if (validFamilies.includes(addressInfo.family) && !addressInfo.internal) {
         const address = addressInfo.address;
-        if (addressInfo.family == 'IPv6') {
+        if (addressInfo.family === 'IPv6') {
           return '[' + address + ']';
         }
         return address;
@@ -423,7 +420,7 @@ describe('server', function() {
     it('starts a server with the specified hostname', async function() {
       const ip = getIP();
 
-      if (ip == '127.0.0.1') {
+      if (ip === '127.0.0.1') {
         pending('Cannot test hostname without a non-localhost interface.');
       }
 

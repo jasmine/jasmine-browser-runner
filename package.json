@@ -102,6 +102,7 @@
           "functions": "never"
         }
       ],
+      "eqeqeq": "error",
       "func-call-spacing": [
         "error",
         "never"
