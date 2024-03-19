@@ -13,6 +13,8 @@ describe('index', function() {
           'start',
           'stop',
           'port',
+          'scheme',
+          'hostname',
         ]));
         server.start.and.callFake(() => Promise.reject(new Error('stop here')));
         const runner = jasmine.createSpyObj('Runner', ['run']);
@@ -472,6 +474,8 @@ describe('index', function() {
           'start',
           'stop',
           'port',
+          'scheme',
+          'hostname',
         ]);
         server.start.and.returnValue(Promise.resolve(server));
         server.stop.and.returnValue(Promise.resolve());
@@ -506,7 +510,13 @@ describe('index', function() {
     });
 
     it('does not launch a browser if the server fails to start', async function() {
-      const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
+      const server = jasmine.createSpyObj('Server', [
+        'start',
+        'stop',
+        'port',
+        'scheme',
+        'hostname',
+      ]);
       server.start.and.returnValue(Promise.reject(new Error('nope')));
       const runner = jasmine.createSpyObj('Runner', ['run']);
       const buildWebdriver = jasmine
@@ -532,7 +542,13 @@ describe('index', function() {
     });
 
     it('stops the browser and server if the runner fails to start', async function() {
-      const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
+      const server = jasmine.createSpyObj('Server', [
+        'start',
+        'stop',
+        'port',
+        'scheme',
+        'hostname',
+      ]);
       server.start.and.returnValue(Promise.resolve(server));
       server.stop.and.returnValue(Promise.resolve());
       server.port.and.returnValue(0);
@@ -573,9 +589,16 @@ function buildStubWebdriver() {
 }
 
 function buildSpyServer() {
-  const server = jasmine.createSpyObj('Server', ['start', 'stop', 'port']);
+  const server = jasmine.createSpyObj('Server', [
+    'start',
+    'stop',
+    'port',
+    'scheme',
+    'hostname',
+  ]);
   server.start.and.returnValue(Promise.resolve(server));
   server.stop.and.returnValue(Promise.resolve());
   server.port.and.returnValue(0);
+  server.scheme.and.returnValue('http');
   return server;
 }

@@ -1,11 +1,18 @@
-const path = require('path'),
-  http = require('http'),
-  Server = require('../lib/server');
+const os = require('os');
+const path = require('path');
+const http = require('http');
+const https = require('https');
+const Server = require('../lib/server');
 
 function getFile(url) {
   return new Promise(function(resolve, reject) {
-    http
-      .get(url, function(response) {
+    const requestModule = url.startsWith('https:') ? https : http;
+    const options = {
+      // Allow testing with a self-signed TLS certificate.
+      rejectUnauthorized: false,
+    };
+    requestModule
+      .get(url, options, function(response) {
         if (response.statusCode !== 200) {
           reject(
             new Error(`${url} failed with status code ${response.statusCode}`)
@@ -22,6 +29,29 @@ function getFile(url) {
       })
       .on('error', reject);
   });
+}
+
+function getIP() {
+  const interfaces = os.networkInterfaces();
+  const validFamilies = ['IPv4', 'IPv6'];
+
+  for (const addressInfos of Object.values(interfaces)) {
+    for (const addressInfo of addressInfos) {
+      if (
+        validFamilies.includes(addressInfo.family) &&
+        addressInfo.internal == false
+      ) {
+        const address = addressInfo.address;
+        if (addressInfo.family == 'IPv6') {
+          return '[' + address + ']';
+        }
+        return address;
+      }
+    }
+  }
+
+  // Can't find a non-localhost IP.
+  return '127.0.0.1';
 }
 
 // Note: various payload specs check for \r?\n instead of either \n or os.EOL
@@ -376,6 +406,45 @@ describe('server', function() {
 
       const html = await getFile(baseUrl);
       expect(html).toContain('/__support__/loaders.js');
+    });
+
+    it('starts a server with TLS', async function() {
+      const tlsDir = path.resolve(__dirname, 'fixtures');
+      await this.startServer({
+        tlsCert: path.resolve(tlsDir, 'tls-cert.pem'),
+        tlsKey: path.resolve(tlsDir, 'tls-key.pem'),
+      });
+      const baseUrl = `https://localhost:${this.server.port()}`;
+
+      const jazz = await getFile(baseUrl + '/__jasmine__/jazz.js');
+      expect(jazz).toMatch(/^Jazzy\r?\n$/);
+    });
+
+    it('starts a server with the specified hostname', async function() {
+      const ip = getIP();
+
+      if (ip == '127.0.0.1') {
+        pending('Cannot test hostname without a non-localhost interface.');
+      }
+
+      await this.startServer({
+        hostname: ip,
+      });
+
+      // The server is listening on a specific IP.  We should be able to use
+      // that, but not localhost.
+      const workingBaseUrl = `http://${ip}:${this.server.port()}`;
+      const nonWorkingBaseUrl = `http://localhost:${this.server.port()}`;
+
+      const jazz = await getFile(workingBaseUrl + '/__jasmine__/jazz.js');
+      expect(jazz).toMatch(/^Jazzy\r?\n$/);
+
+      try {
+        await getFile(nonWorkingBaseUrl);
+        fail('We should not be listening on localhost');
+      } catch (error) {
+        expect(error.code).toBe('ECONNREFUSED');
+      }
     });
 
     describe('loading specs and helpers', function() {
