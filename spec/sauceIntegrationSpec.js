@@ -5,129 +5,76 @@ const { runJasmine, expectSuccess } = require('./integrationSupport');
 const timeoutMs = 240 * 1000;
 
 describe('Sauce parameter handling', function() {
-  // To reduce the amount of output that devs have to scroll past, pend a single
-  // spec and don't create the rest if Sauce isn't available.
-  if (
-    !(
-      process.env.USE_SAUCE &&
-      process.env.SAUCE_USERNAME &&
-      process.env.SAUCE_ACCESS_KEY
-    )
-  ) {
-    it('passes params to Saucelabs correctly', function() {
-      pending(
-        "Can't run Sauce integration tests unless USE_SAUCE, SAUCE_USERNAME, and SAUCE_ACCESS_KEY are set"
-      );
-    });
-    return;
-  }
-
-  // These specs use browser+version+OS combos that are supported by Saucelabs.
+  // Test one browser+version+OS that's supported by both Jasmine and Saucelabs,
+  // to make sure we pass those parameters correctly.
   // When more than one OS is supported, we use the older one to make sure that
   // the OS parameter is actually being passed correctly. (Saucelabs generally
   // defaults to the newest OS that has the requested browser version if the OS
   // is not specified.)
+  // This test can be updated to use a different browser if we stop supporting
+  // Firefox 115.
+  const browser = 'firefox';
+  const version = '115';
+  const osName = 'Windows 10';
+  const expectedUserAgentRegex = /Windows NT 10.0;.* Firefox\/115\.0$/;
 
-  createSpec('firefox', '', '', /Gecko\/[0-9]+ Firefox\/[0-9.]+$/);
-  createSpec(
-    'firefox',
-    '102',
-    'Windows 10',
-    /Windows NT 10.0;.* Firefox\/102\.0$/
-  );
-  createSpec(
-    'firefox',
-    '115',
-    'Windows 10',
-    /Windows NT 10.0;.* Firefox\/115\.0$/
-  );
-  // As of 2023-09-30, Chrome latest on the default Linux is broken on
-  // Saucelabs. Use Mac OS for now instead.
-  createSpec(
-    'chrome',
-    '',
-    'macOS 12',
-    /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/
-  );
-  createSpec(
-    'safari',
-    '15',
-    'macOS 12',
-    // Safari on 12.x reports the OS as 10_15_7
-    /Mac OS X 10_15.*Version\/15[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '16',
-    'macOS 12',
-    // Safari on 12.x reports the OS as 10_15_7
-    /Mac OS X 10_15.*Version\/16[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '17',
-    'macOS 13',
-    // Safari on 13.x reports the OS as 10_15_7
-    /Mac OS X 10_15.*Version\/17[0-9.]+ Safari/
-  );
-  createSpec(
-    'MicrosoftEdge',
-    '',
-    'Windows 10',
-    /Windows NT 10\.0.*Edg\/[0-9]+\.[0-9.]+$/
+  it(
+    'passes browser, version, and OS correctly',
+    async function() {
+      if (
+        !(
+          process.env.USE_SAUCE &&
+          process.env.SAUCE_USERNAME &&
+          process.env.SAUCE_ACCESS_KEY
+        )
+      ) {
+        pending(
+          "Can't run Sauce integration tests unless USE_SAUCE, SAUCE_USERNAME, and SAUCE_ACCESS_KEY are set"
+        );
+      }
+
+      const suiteDir = createSuite();
+      console.log('Sauce test may take a minute or two');
+
+      const result = await runJasmine(suiteDir, {
+        extraArgs: '--config=jasmine-browser.json',
+        timeoutMs,
+      });
+
+      expectSuccess(result, '1 spec, 0 failures');
+    },
+    timeoutMs
   );
 
-  function createSpec(browser, version, sauceOS, expectedUserAgentRegex) {
-    const displayVersion = version
-      ? `version ${version}`
-      : 'unspecified version';
-    const displayOS = sauceOS ? `OS ${sauceOS}` : 'unspecified OS';
-    it(
-      `passes browser ${browser}, ${displayVersion}, and ${displayOS} correctly`,
-      async function() {
-        const suiteDir = createSuite();
-        console.log('Sauce test may take a minute or two');
-
-        const result = await runJasmine(suiteDir, {
-          extraArgs: '--config=jasmine-browser.json',
-          timeoutMs,
-        });
-
-        expectSuccess(result, '1 spec, 0 failures');
-      },
-      timeoutMs
+  function createSuite() {
+    const dir = fs.mkdtempSync(`${os.tmpdir()}/jasmine-browser-sauce-`);
+    processTemplate(
+      'spec/fixtures/sauceIntegration/jasmine-browser.json',
+      `${dir}/jasmine-browser.json`,
+      {
+        JASMINE_BROWSER: browser,
+        SAUCE_BROWSER_VERSION: version,
+        SAUCE_OS: osName,
+        SAUCE_TUNNEL_IDENTIFIER: process.env.SAUCE_TUNNEL_IDENTIFIER || '',
+        SAUCE_USERNAME: process.env.SAUCE_USERNAME,
+        SAUCE_ACCESS_KEY: process.env.SAUCE_ACCESS_KEY,
+      }
     );
+    processTemplate(
+      'spec/fixtures/sauceIntegration/sauceParamsSpec.js',
+      `${dir}/sauceParamsSpec.js`,
+      { EXPECTED: expectedUserAgentRegex }
+    );
+    return dir;
+  }
 
-    function createSuite() {
-      const dir = fs.mkdtempSync(`${os.tmpdir()}/jasmine-browser-sauce-`);
-      processTemplate(
-        'spec/fixtures/sauceIntegration/jasmine-browser.json',
-        `${dir}/jasmine-browser.json`,
-        {
-          JASMINE_BROWSER: browser,
-          SAUCE_BROWSER_VERSION: version,
-          SAUCE_OS: sauceOS,
-          SAUCE_TUNNEL_IDENTIFIER: process.env.SAUCE_TUNNEL_IDENTIFIER || '',
-          SAUCE_USERNAME: process.env.SAUCE_USERNAME,
-          SAUCE_ACCESS_KEY: process.env.SAUCE_ACCESS_KEY,
-        }
-      );
-      processTemplate(
-        'spec/fixtures/sauceIntegration/sauceParamsSpec.js',
-        `${dir}/sauceParamsSpec.js`,
-        { EXPECTED: expectedUserAgentRegex }
-      );
-      return dir;
-    }
+  function processTemplate(inPath, outPath, vars) {
+    const template = fs.readFileSync(inPath, { encoding: 'utf8' });
 
-    function processTemplate(inPath, outPath, vars) {
-      const template = fs.readFileSync(inPath, { encoding: 'utf8' });
+    const output = Object.keys(vars).reduce(function(prev, k) {
+      return prev.replace(`<< ${k} >>`, vars[k]);
+    }, template);
 
-      const output = Object.keys(vars).reduce(function(prev, k) {
-        return prev.replace(`<< ${k} >>`, vars[k]);
-      }, template);
-
-      fs.writeFileSync(outPath, output);
-    }
+    fs.writeFileSync(outPath, output);
   }
 });
