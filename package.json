@@ -38,7 +38,7 @@
   "homepage": "https://github.com/jasmine/jasmine-browser-runner#readme",
   "dependencies": {
     "ejs": "^3.1.6",
-    "express": "^4.16.4",
+    "express": "^4.19.2",
     "glob": "^10.0.0",
     "selenium-webdriver": "^4.12.0"
   },
