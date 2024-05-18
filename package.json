@@ -13,8 +13,8 @@
     "run.html.ejs",
     "bin/*.js",
     "lib/**/*.js",
-    "lib/examples/default_config.json",
-    "lib/examples/default_esm_config.json"
+    "lib/examples/default_config.mjs",
+    "lib/examples/default_esm_config.mjs"
   ],
   "scripts": {
     "posttest": "eslint bin/* lib spec index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js",
