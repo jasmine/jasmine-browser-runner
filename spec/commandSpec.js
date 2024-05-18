@@ -206,11 +206,15 @@ describe('Command', function() {
           await command.run(['init', '--esm']);
 
           const rawActualContents = fs.readFileSync(
-            'spec/support/jasmine-browser.json',
+            'spec/support/jasmine-browser.mjs',
             { encoding: 'utf8' }
           );
           expect(rawActualContents).toEqual(defaultEsmConfig());
-          const actualContents = JSON.parse(rawActualContents);
+          const actualContents = (
+            await import(
+              `file://${process.cwd()}/spec/support/jasmine-browser.mjs`
+            )
+          ).default;
           expect(actualContents.srcFiles).toEqual([]);
           expect(actualContents.specDir).toEqual('.');
           expect(actualContents.specFiles).toEqual(['spec/**/*[sS]pec.?(m)js']);
@@ -229,11 +233,15 @@ describe('Command', function() {
           await command.run(['init']);
 
           const rawActualContents = fs.readFileSync(
-            'spec/support/jasmine-browser.json',
+            'spec/support/jasmine-browser.mjs',
             { encoding: 'utf8' }
           );
           expect(rawActualContents).toEqual(defaultConfig());
-          const actualContents = JSON.parse(rawActualContents);
+          const actualContents = (
+            await import(
+              `file://${process.cwd()}/spec/support/jasmine-browser.mjs`
+            )
+          ).default;
           expect(actualContents.srcDir).toEqual('src');
           expect(actualContents.srcFiles).toEqual(['**/*.js']);
           expect(actualContents.specDir).toEqual('spec');
