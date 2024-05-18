@@ -300,13 +300,24 @@ second parameter to`startServer`.
 ## Want more control?
 
 ```javascript
+// ESM
+import path from 'path';
+import jasmineBrowser from 'jasmine-browser-runner';
+import config from './spec/support/jasmine-browser.mjs';
+
+config.projectBaseDir = path.resolve('some/path');
+jasmineBrowser.startServer(config, { port: 4321 });
+
+
+// CommonJS
 const path = require('path');
 const jasmineBrowser = require('jasmine-browser-runner');
 
-const config = await import('spec/support/jasmine-browser.mjs');
-config.projectBaseDir = path.resolve('some/path');
-
-jasmineBrowser.startServer(config, { port: 4321 });
+import('./spec/support/jasmine-browser.mjs')
+  .then(function({default: config}) {
+    config.projectBaseDir = path.resolve('some/path');
+    jasmineBrowser.startServer(config, { port: 4321 });
+  });
 ```
 
 ## Supported environments
