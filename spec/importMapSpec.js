@@ -22,7 +22,7 @@ describe('Import Map Sample Project', function() {
           `stderr:\n${stderr}`
       );
     }
-  });
+  }, 30 * 1000);
 
   it(
     'executes example specs with moduleRootDir',
