@@ -444,6 +444,108 @@ describe('server', function() {
       }
     });
 
+    describe('Passing listen options to the Node http/https server', function() {
+      // These tests are less integrationy but more comprehensive than
+      // "starts a server with the specified hostname" above. They work even
+      // when run on a machine with only one network interface.
+      function makeMockNodeServer(name) {
+        const m = jasmine.createSpyObj(name, [
+          'createServer',
+          'listen',
+          'address',
+          'close',
+        ]);
+        m.createServer.and.returnValue(m);
+        m.address.and.returnValue({});
+
+        // In functions that take callbacks, go async to match the behavior of
+        // the real http/https.
+        m.listen.and.callFake(function(listenOptions, callback) {
+          setTimeout(callback);
+          return m;
+        });
+
+        m.close.and.callFake(function(callback) {
+          setTimeout(callback);
+        });
+
+        return m;
+      }
+
+      function baseCtorOptions() {
+        return {
+          // Minimal configuration to not error out
+          projectBaseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+          srcDir: 'sources',
+          specDir: 'specs',
+        };
+      }
+
+      describe('Passing options to the ctor', function() {
+        describe('When hostname is not specified', function() {
+          it('listens to all interfaces', async function() {
+            const options = baseCtorOptions();
+            expect(options.hostname).toBeFalsy();
+            const http = makeMockNodeServer('http');
+            this.server = new Server(options, { http });
+
+            await this.server.start();
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: '' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When hostname is specified', function() {
+          it('listens to the specified hostname', async function() {
+            const options = baseCtorOptions();
+            options.hostname = 'specific.example.com';
+            const http = makeMockNodeServer('http');
+            this.server = new Server(options, { http });
+
+            await this.server.start();
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+      });
+
+      describe('Passing options to start', function() {
+        describe('When hostname is not specified', function() {
+          it('listens to all interfaces', async function() {
+            const http = makeMockNodeServer('http');
+            this.server = new Server(baseCtorOptions(), { http });
+
+            await this.server.start({});
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: '' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When hostname is specified', function() {
+          it('listens to the specified hostname', async function() {
+            const http = makeMockNodeServer('http');
+            this.server = new Server(baseCtorOptions(), { http });
+
+            await this.server.start({ hostname: 'specific.example.com' });
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+      });
+    });
+
     describe('loading specs and helpers', function() {
       function behavesLikeTopLevelAwaitDisabled() {
         it('loads .js files as regular scripts', async function() {
