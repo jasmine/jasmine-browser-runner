@@ -83,10 +83,24 @@ Note that if you are using a self-signed or otherwise invalid certificate, the
 browser will not allow the connection by default.  Additional browser configs
 or command line options may be necessary to use an invalid TLS certificate.
 
+## Controlling which network interfaces are listened to
+
+By default, jasmine-browser-runner listens to all available network interfaces.
+You might need that if you're using a remote grid such as Saucelabs. If you 
+don't need that, you can improve security by listening only to localhost. 
+
+```javascript
+export default {
+  // ...
+  "listenAddress": "localhost",
+  // ...
+}
+```
+
 ## Hostname support
 
-To serve tests on a specific interface or IP, you can specify a hostname in
-`jasmine-browser.mjs`:
+If you need to access your tests via a specific hostname, you can do that by
+setting the `hostname` configuration property:
 
 ```javascript
 export default {
@@ -97,6 +111,11 @@ export default {
 ```
 
 This can also be specified on the command line with `--hostname`.
+
+Setting `hostname` but not `listenAddress` has the same effect as setting
+`listenAddress` to the same value as `hostname`. If you need to set a hostname
+but retain the default behavior of listening to all network interfaces, you can
+do that by setting `listenAddress` to `"*"`.
 
 There are a few important caveats when doing this:
 
