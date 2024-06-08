@@ -482,10 +482,9 @@ describe('server', function() {
       }
 
       describe('Passing options to the ctor', function() {
-        describe('When hostname is not specified', function() {
+        describe('When neither hostname nor listenAddress is specified', function() {
           it('listens to all interfaces', async function() {
             const options = baseCtorOptions();
-            expect(options.hostname).toBeFalsy();
             const http = makeMockNodeServer('http');
             this.server = new Server(options, { http });
 
@@ -498,7 +497,7 @@ describe('server', function() {
           });
         });
 
-        describe('When hostname is specified', function() {
+        describe('When hostname but not listenAddress is specified', function() {
           it('listens to the specified hostname', async function() {
             const options = baseCtorOptions();
             options.hostname = 'specific.example.com';
@@ -513,10 +512,59 @@ describe('server', function() {
             );
           });
         });
+
+        describe('When listenAddress but not hostname is specified', function() {
+          it('listens to the specified listenAddress', async function() {
+            const options = baseCtorOptions();
+            options.listenAddress = 'specific.example.com';
+            const http = makeMockNodeServer('http');
+            this.server = new Server(options, { http });
+
+            await this.server.start();
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When both hostname and listenAddress are specified', function() {
+          it('listens to the specified listenAddress', async function() {
+            const options = baseCtorOptions();
+            options.listenAddress = 'specific.example.com';
+            options.hostname = 'other.example.com';
+            const http = makeMockNodeServer('http');
+            this.server = new Server(options, { http });
+
+            await this.server.start();
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When listenAddress is "*"', function() {
+          it('listens to all interfaces', async function() {
+            const options = baseCtorOptions();
+            options.listenAddress = '*';
+            const http = makeMockNodeServer('http');
+            this.server = new Server(options, { http });
+
+            await this.server.start();
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: '' }),
+              jasmine.any(Function)
+            );
+          });
+        });
       });
 
       describe('Passing options to start', function() {
-        describe('When hostname is not specified', function() {
+        describe('When neither hostname nor listenAddress is specified', function() {
           it('listens to all interfaces', async function() {
             const http = makeMockNodeServer('http');
             this.server = new Server(baseCtorOptions(), { http });
@@ -530,7 +578,7 @@ describe('server', function() {
           });
         });
 
-        describe('When hostname is specified', function() {
+        describe('When hostname but not listenAddress is specified', function() {
           it('listens to the specified hostname', async function() {
             const http = makeMockNodeServer('http');
             this.server = new Server(baseCtorOptions(), { http });
@@ -539,6 +587,53 @@ describe('server', function() {
 
             expect(http.listen).toHaveBeenCalledWith(
               jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When listenAddress but not hostname is specified', function() {
+          it('listens to the specified listenAddress', async function() {
+            const http = makeMockNodeServer('http');
+            this.server = new Server(baseCtorOptions(), { http });
+
+            await this.server.start({
+              listenAddress: 'specific.example.com',
+            });
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When both hostname and listenAddress are specified', function() {
+          it('listens to the specified listenAddress', async function() {
+            const http = makeMockNodeServer('http');
+            this.server = new Server(baseCtorOptions(), { http });
+
+            await this.server.start({
+              listenAddress: 'specific.example.com',
+              hostname: 'other.example.com',
+            });
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: 'specific.example.com' }),
+              jasmine.any(Function)
+            );
+          });
+        });
+
+        describe('When listenAddress is "*"', function() {
+          it('listens to all interfaces', async function() {
+            const http = makeMockNodeServer('http');
+            this.server = new Server(baseCtorOptions(), { http });
+
+            await this.server.start({ listenAddress: '*' });
+
+            expect(http.listen).toHaveBeenCalledWith(
+              jasmine.objectContaining({ host: '' }),
               jasmine.any(Function)
             );
           });
