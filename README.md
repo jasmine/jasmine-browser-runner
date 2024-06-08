@@ -1,6 +1,7 @@
 jasmine-browser-runner runs your Jasmine specs in a browser. It's suitable for
 interactive use with normal browsers as well as running specs in CI builds
-using either headless Chrome or Saucelabs.
+using either headless browsers or with a remote Selenuium grid provider
+such as Saucelabs.
 
 # Getting started
 
