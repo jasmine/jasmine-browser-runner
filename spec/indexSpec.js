@@ -437,6 +437,93 @@ describe('index', function() {
         expect(setExitCode).toHaveBeenCalledWith(2);
       });
 
+      describe('Sending the result to Saucelabs', function() {
+        describe('When legacy Saucelabs support is used', function() {
+          it('sets sauce:job-result to true when the run passes', async function() {
+            const webdriver = await runWithSauceWithOverallStatus('passed');
+            expect(webdriver.executeScript).toHaveBeenCalledWith(
+              'sauce:job-result=true'
+            );
+          });
+
+          it('sets sauce:job-result to false when the run fails', async function() {
+            const webdriver = await runWithSauceWithOverallStatus('failed');
+            expect(webdriver.executeScript).toHaveBeenCalledWith(
+              'sauce:job-result=false'
+            );
+          });
+
+          it('sets sauce:job-result to false when the run is incomplete', async function() {
+            const webdriver = await runWithSauceWithOverallStatus('incomplete');
+            expect(webdriver.executeScript).toHaveBeenCalledWith(
+              'sauce:job-result=false'
+            );
+          });
+
+          async function runWithSauceWithOverallStatus(overallStatus) {
+            const server = buildSpyServer();
+            const runner = jasmine.createSpyObj('Runner', ['run']);
+            runner.run.and.returnValue(Promise.resolve({ overallStatus }));
+            const webdriver = jasmine.createSpyObj('webdriver', [
+              'close',
+              'executeScript',
+            ]);
+            webdriver.close.and.returnValue(Promise.resolve());
+            webdriver.executeScript.and.returnValue(Promise.resolve());
+            await runSpecs(
+              {
+                browser: {
+                  useSauce: true,
+                },
+              },
+              {
+                Server: function() {
+                  return server;
+                },
+                Runner: function() {
+                  return runner;
+                },
+                buildWebdriver: () => webdriver,
+              }
+            );
+
+            return webdriver;
+          }
+        });
+
+        describe('In all other cases', function() {
+          it('does not set sauce:job-result', async function() {
+            const server = buildSpyServer();
+            const runner = jasmine.createSpyObj('Runner', ['run']);
+            runner.run.and.returnValue(
+              Promise.resolve({ overallStatus: 'passed' })
+            );
+            const webdriver = jasmine.createSpyObj('webdriver', [
+              'close',
+              'executeScript',
+            ]);
+            webdriver.close.and.returnValue(Promise.resolve());
+            webdriver.executeScript.and.returnValue(Promise.resolve());
+            await runSpecs(
+              {},
+              {
+                Server: function() {
+                  return server;
+                },
+                Runner: function() {
+                  return runner;
+                },
+                buildWebdriver: () => webdriver,
+              }
+            );
+
+            expect(webdriver.executeScript).not.toHaveBeenCalledWith(
+              jasmine.stringContaining('sauce:job-result')
+            );
+          });
+        });
+      });
+
       it('stops the server', async function() {
         const server = buildSpyServer();
         const runner = jasmine.createSpyObj('Runner', ['run']);
