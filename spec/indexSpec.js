@@ -438,7 +438,7 @@ describe('index', function() {
       });
 
       describe('Sending the result to Saucelabs', function() {
-        describe('When legacy Saucelabs support is used', function() {
+        function hasSaucelabsResultReporting(browserConfig) {
           it('sets sauce:job-result to true when the run passes', async function() {
             const webdriver = await runWithSauceWithOverallStatus('passed');
             expect(webdriver.executeScript).toHaveBeenCalledWith(
@@ -471,11 +471,7 @@ describe('index', function() {
             webdriver.close.and.returnValue(Promise.resolve());
             webdriver.executeScript.and.returnValue(Promise.resolve());
             await runSpecs(
-              {
-                browser: {
-                  useSauce: true,
-                },
-              },
+              { browser: browserConfig },
               {
                 Server: function() {
                   return server;
@@ -489,9 +485,9 @@ describe('index', function() {
 
             return webdriver;
           }
-        });
+        }
 
-        describe('In all other cases', function() {
+        function doesNotHaveSaucelabsResultReporting(browserConfig) {
           it('does not set sauce:job-result', async function() {
             const server = buildSpyServer();
             const runner = jasmine.createSpyObj('Runner', ['run']);
@@ -505,7 +501,7 @@ describe('index', function() {
             webdriver.close.and.returnValue(Promise.resolve());
             webdriver.executeScript.and.returnValue(Promise.resolve());
             await runSpecs(
-              {},
+              { browser: browserConfig },
               {
                 Server: function() {
                   return server;
@@ -521,6 +517,32 @@ describe('index', function() {
               jasmine.stringContaining('sauce:job-result')
             );
           });
+        }
+
+        describe('When legacy Saucelabs support is used', function() {
+          hasSaucelabsResultReporting({ useSauce: true });
+        });
+
+        describe('When the remote grid URL includes saucelabs.com', function() {
+          hasSaucelabsResultReporting({
+            useRemoteSeleniumGrid: true,
+            remoteSeleniumGrid: {
+              url: 'https://ondemand.saucelabs.com/wd/hub',
+            },
+          });
+        });
+
+        describe('When the remote grid URL does not include saucelabs.com', function() {
+          doesNotHaveSaucelabsResultReporting({
+            useRemoteSeleniumGrid: true,
+            remoteSeleniumGrid: {
+              url: 'https://some-other-grid.example.com/',
+            },
+          });
+        });
+
+        describe('In all other cases', function() {
+          doesNotHaveSaucelabsResultReporting({});
         });
       });
 

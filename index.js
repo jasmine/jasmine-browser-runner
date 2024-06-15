@@ -80,13 +80,17 @@ module.exports = {
     const server = new ServerClass(options);
 
     const reporters = await createReporters(options, deps);
-    const useSauce = options.browser && options.browser.useSauce;
+    const useLegacySauce = options.browser && options.browser.useSauce;
     const useRemote = options.browser && options.browser.useRemoteSeleniumGrid;
+    const useSauceCompletionReporting =
+      useLegacySauce ||
+      (useRemote &&
+        options.browser.remoteSeleniumGrid?.url?.includes('saucelabs.com'));
     let portRequest;
 
     if (options.port) {
       portRequest = options.port;
-    } else if (useSauce || useRemote) {
+    } else if (useLegacySauce || useRemote) {
       portRequest = 5555;
     } else {
       portRequest = 0;
@@ -122,7 +126,7 @@ module.exports = {
 
         return details;
       } finally {
-        if (useSauce) {
+        if (useSauceCompletionReporting) {
           await webdriver.executeScript(
             `sauce:job-result=${process.exitCode === 0}`
           );
