@@ -33,16 +33,11 @@ function getFile(url) {
 
 function getIP() {
   const interfaces = os.networkInterfaces();
-  const validFamilies = ['IPv4', 'IPv6'];
 
   for (const addressInfos of Object.values(interfaces)) {
     for (const addressInfo of addressInfos) {
-      if (validFamilies.includes(addressInfo.family) && !addressInfo.internal) {
-        const address = addressInfo.address;
-        if (addressInfo.family === 'IPv6') {
-          return '[' + address + ']';
-        }
-        return address;
+      if (addressInfo.family === 'IPv4' && !addressInfo.internal) {
+        return addressInfo.address;
       }
     }
   }
