@@ -37,7 +37,7 @@ describe('index', function() {
         };
       });
 
-      describe('When not using Sauce Connect or remote grid', function() {
+      describe('When not using or remote grid', function() {
         it('uses the specified port', async function() {
           const promise = runSpecs({ port: 12345 }, this.deps);
           await this.waitForServerStart(promise);
@@ -74,38 +74,6 @@ describe('index', function() {
             {
               browser: {
                 useRemoteSeleniumGrid: true,
-              },
-              port: 1234,
-            },
-            this.deps
-          );
-          await this.waitForServerStart(promise);
-
-          expect(this.server.start).toHaveBeenCalledWith({ port: 1234 });
-        });
-      });
-
-      describe('When using Sauce Connect', function() {
-        it('uses port 5555', async function() {
-          const promise = runSpecs(
-            {
-              browser: {
-                useSauce: true,
-              },
-            },
-            this.deps
-          );
-          await this.waitForServerStart(promise);
-
-          expect(this.server.start).toHaveBeenCalledWith({ port: 5555 });
-        });
-
-        it('uses the specified port', async function() {
-          spyOn(console, 'warn');
-          const promise = runSpecs(
-            {
-              browser: {
-                useSauce: true,
               },
               port: 1234,
             },
@@ -518,10 +486,6 @@ describe('index', function() {
             );
           });
         }
-
-        describe('When legacy Saucelabs support is used', function() {
-          hasSaucelabsResultReporting({ useSauce: true });
-        });
 
         describe('When the remote grid URL includes saucelabs.com', function() {
           hasSaucelabsResultReporting({
