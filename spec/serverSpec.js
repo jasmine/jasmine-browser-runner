@@ -479,7 +479,7 @@ describe('server', function() {
       }
 
       describe('When listenAddress is not specified', function() {
-        it('listens to all interfaces', async function() {
+        it('listens to localhost', async function() {
           const options = baseCtorOptions();
           const http = makeMockNodeServer('http');
           this.server = new Server(options, { http });
@@ -487,7 +487,7 @@ describe('server', function() {
           await this.server.start();
 
           expect(http.listen).toHaveBeenCalledWith(
-            jasmine.objectContaining({ host: '' }),
+            jasmine.objectContaining({ host: 'localhost' }),
             jasmine.any(Function)
           );
         });
