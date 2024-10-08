@@ -478,7 +478,7 @@ describe('server', function() {
         };
       }
 
-      describe('When neither hostname nor listenAddress is specified', function() {
+      describe('When listenAddress is not specified', function() {
         it('listens to all interfaces', async function() {
           const options = baseCtorOptions();
           const http = makeMockNodeServer('http');
@@ -493,43 +493,10 @@ describe('server', function() {
         });
       });
 
-      describe('When hostname but not listenAddress is specified', function() {
-        it('listens to the specified hostname', async function() {
-          const options = baseCtorOptions();
-          options.hostname = 'specific.example.com';
-          const http = makeMockNodeServer('http');
-          this.server = new Server(options, { http });
-
-          await this.server.start();
-
-          expect(http.listen).toHaveBeenCalledWith(
-            jasmine.objectContaining({ host: 'specific.example.com' }),
-            jasmine.any(Function)
-          );
-        });
-      });
-
-      describe('When listenAddress but not hostname is specified', function() {
+      describe('When listenAddress is specified', function() {
         it('listens to the specified listenAddress', async function() {
           const options = baseCtorOptions();
           options.listenAddress = 'specific.example.com';
-          const http = makeMockNodeServer('http');
-          this.server = new Server(options, { http });
-
-          await this.server.start();
-
-          expect(http.listen).toHaveBeenCalledWith(
-            jasmine.objectContaining({ host: 'specific.example.com' }),
-            jasmine.any(Function)
-          );
-        });
-      });
-
-      describe('When both hostname and listenAddress are specified', function() {
-        it('listens to the specified listenAddress', async function() {
-          const options = baseCtorOptions();
-          options.listenAddress = 'specific.example.com';
-          options.hostname = 'other.example.com';
           const http = makeMockNodeServer('http');
           this.server = new Server(options, { http });
 
