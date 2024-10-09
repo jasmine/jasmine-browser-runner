@@ -36,7 +36,13 @@ function getIP() {
 
   for (const addressInfos of Object.values(interfaces)) {
     for (const addressInfo of addressInfos) {
-      if (addressInfo.family === 'IPv4' && !addressInfo.internal) {
+      const isIPv4 =
+        // Node 18.0-18.3
+        addressInfo.family === 4 ||
+        // Node >= 18.4
+        addressInfo.family === 'IPv4';
+
+      if (isIPv4 && !addressInfo.internal) {
         return addressInfo.address;
       }
     }
@@ -423,6 +429,7 @@ describe('server', function() {
 
       await this.startServer({
         hostname: ip,
+        listenAddress: ip,
       });
 
       // The server is listening on a specific IP.  We should be able to use
