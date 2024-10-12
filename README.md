@@ -345,13 +345,13 @@ import('./spec/support/jasmine-browser.mjs')
 jasmine-browser-runner tests itself across popular browsers (Safari, Chrome, 
 Firefox, and Microsoft Edge) as well as Node.
 
-| Environment       | Supported versions     |
-|-------------------|------------------------|
-| Node              | 18, 20, 22             |
-| Safari            | 15-17                  |
-| Chrome            | Evergreen              |
-| Firefox           | Evergreen, 102, 115    |
-| Edge              | Evergreen              |
+| Environment       | Supported versions       |
+|-------------------|--------------------------|
+| Node              | 18, 20, 22               |
+| Safari            | 15-17                    |
+| Chrome            | Evergreen                |
+| Firefox           | Evergreen, 102, 115, 128 |
+| Edge              | Evergreen                |
 
 For evergreen browsers, each version of jasmine-browser-runner is tested against
 the version of the browser that is available to us at the time of release. Other 
