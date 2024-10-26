@@ -56,7 +56,7 @@ To use a browser other than Firefox, add a `browser` field to
 ```javascript
 export default {
   // ...
-  "browser": "chrome"
+  browser: "chrome"
 }
 ```
 
@@ -71,8 +71,8 @@ in PEM format in `jasmine-browser.mjs`:
 ```javascript
 export default {
   // ...
-  "tlsKey": "/path/to/tlsKey.pem",
-  "tlsCert": "/path/to/tlsCert.pem",
+  tlsKey: "/path/to/tlsKey.pem",
+  tlsCert: "/path/to/tlsCert.pem",
   // ...
 }
 ```
@@ -85,19 +85,27 @@ or command line options may be necessary to use an invalid TLS certificate.
 
 ## Controlling which network interfaces are listened to
 
-By default, jasmine-browser-runner listens to all available network interfaces.
-You might need that if you're using a remote grid such as Saucelabs. If you 
-don't need that, you can improve security by listening only to localhost. 
+**Note: This behavior differs between 2.x and 3.x. If you are using 2.x, please
+consult the README for the version you're using.**
+
+By default, jasmine-browser-runner listens to the network interface that
+corresponds to localhost. To listen on a different interface, set `listenAddress`
+to the corresponding hostname or IP address. To listen on all available network
+interfaces, set `listenAddress` to `"*"`. You might need to do that if you're
+using a remote grid such as Saucelabs.
 
 ```javascript
 export default {
   // ...
-  "listenAddress": "localhost",
+  listenAddress: "*",
   // ...
 }
 ```
 
 ## Hostname support
+
+**Note: This behavior differs between 2.x and 3.x. If you are using 2.x, please
+consult the README for the version you're using.**
 
 If you need to access your tests via a specific hostname, you can do that by
 setting the `hostname` configuration property:
@@ -105,17 +113,12 @@ setting the `hostname` configuration property:
 ```javascript
 export default {
   // ...
-  "hostname": "mymachine.mynetwork",
+  hostname: "mymachine.mynetwork",
   // ...
 }
 ```
 
 This can also be specified on the command line with `--hostname`.
-
-Setting `hostname` but not `listenAddress` has the same effect as setting
-`listenAddress` to the same value as `hostname`. If you need to set a hostname
-but retain the default behavior of listening to all network interfaces, you can
-do that by setting `listenAddress` to `"*"`.
 
 There are a few important caveats when doing this:
 
@@ -326,7 +329,7 @@ import jasmineBrowser from 'jasmine-browser-runner';
 import config from './spec/support/jasmine-browser.mjs';
 
 config.projectBaseDir = path.resolve('some/path');
-jasmineBrowser.startServer(config, { port: 4321 });
+jasmineBrowser.startServer(config);
 
 
 // CommonJS
@@ -336,7 +339,7 @@ const jasmineBrowser = require('jasmine-browser-runner');
 import('./spec/support/jasmine-browser.mjs')
   .then(function({default: config}) {
     config.projectBaseDir = path.resolve('some/path');
-    jasmineBrowser.startServer(config, { port: 4321 });
+    jasmineBrowser.startServer(config);
   });
 ```
 
