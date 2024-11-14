@@ -6,5 +6,7 @@
     "!fixtures/**"
   ],
   "helpers": [],
-  "random": true
+  "env": {
+    "forbidDuplicateNames": true
+  }
 }
