@@ -157,7 +157,7 @@ files, and set `srcFiles` to `[]`. You can autogenerate such a configuration by
 running `npx jasmine-browser-runner init --esm`.
 
 If you want to load ES module source directly on load instead of loading it from
-the corresponding spec, set the `allowModuleSrcFiles` config property to `true`.
+the corresponding spec, set the `modulesWithSideEffectsInSrcFiles` config property to `true`.
 
 If you have specs or helper files that use top-level await, set the
 `enableTopLevelAwait` config property to `true`.
