@@ -43,13 +43,13 @@
     "selenium-webdriver": "^4.12.0"
   },
   "peerDependencies": {
-    "jasmine-core": "github:jasmine/jasmine"
+    "jasmine-core": "^5.5.0"
   },
   "devDependencies": {
     "eslint": "^8.50.0",
     "eslint-plugin-jasmine": "^4.1.3",
     "jasmine": "^5.0.0",
-    "jasmine-core": "^5.0.0",
+    "jasmine-core": "^5.5.0",
     "prettier": "^1.17.1",
     "shelljs": "^0.8.3",
     "temp": "^0.9.4"
