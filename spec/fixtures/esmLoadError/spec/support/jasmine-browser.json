@@ -1,0 +1,13 @@
+{
+  "srcDir": "src",
+  "srcFiles": [],
+  "specDir": "spec",
+  "specFiles": [
+    "**/*Spec.mjs"
+  ],
+  "helpers": [],
+  "random": false,
+  "browser": {
+    "name": "headlessChrome"
+  }
+}

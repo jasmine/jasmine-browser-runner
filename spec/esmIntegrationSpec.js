@@ -39,4 +39,12 @@ describe('ESM integration', function() {
     },
     timeoutMs
   );
+
+  it('detects load-time errors in ES modules', async function() {
+    const result = await runJasmine('spec/fixtures/esmLoadError');
+    expect (result.exitCode).withContext('exit code').toEqual(1);
+    expect(result.stdout).toContain('missing ) after argument list');
+    jasmine.debugLog('stdout: ' + result.stdout);
+    jasmine.debugLog('stderr: ' + result.stderr);
+  }, timeoutMs);
 });
