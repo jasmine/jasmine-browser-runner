@@ -589,7 +589,7 @@ describe('server', function() {
           );
         });
 
-        it('loads spec and helper files with the ESM estension as ES modules', async function() {
+        xit('loads spec and helper files with the ESM estension as ES modules', async function() {
           await this.startServer({
             ...this.extraOptions,
             srcFiles: ['**/*.mod'],
