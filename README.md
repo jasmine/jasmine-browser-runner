@@ -348,19 +348,24 @@ import('./spec/support/jasmine-browser.mjs')
 jasmine-browser-runner tests itself across popular browsers (Safari, Chrome, 
 Firefox, and Microsoft Edge) as well as Node.
 
-| Environment       | Supported versions       |
-|-------------------|--------------------------|
-| Node              | 18, 20, 22               |
-| Safari            | 15-17                    |
-| Chrome            | Evergreen                |
-| Firefox           | Evergreen, 102, 115, 128 |
-| Edge              | Evergreen                |
+| Environment       | Supported versions         |
+|-------------------|----------------------------|
+| Node              | 18, 20, 22                 |
+| Safari            | 15*, 16, 17                |
+| Chrome            | Evergreen                  |
+| Firefox           | Evergreen, 102*, 115*, 128 |
+| Edge              | Evergreen                  |
 
 For evergreen browsers, each version of jasmine-browser-runner is tested against
 the version of the browser that is available to us at the time of release. Other 
 browsers, as well as older & newer versions of some supported browsers, are
 likely to work. However, jasmine-browser-runner isn't tested against them and 
 they aren't actively supported.
+
+\* Environments that are past end of life are supported on a best-effort
+basis. They may be dropped in a future minor release if continued support
+becomes impractical.
+
 
 To find out what environments work with a particular Jasmine release, see the [release notes](https://github.com/jasmine/jasmine/tree/main/release_notes).
 
