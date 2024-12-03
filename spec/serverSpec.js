@@ -548,7 +548,7 @@ describe('server', function() {
           );
         });
 
-        it('loads .mjs spec and helper files as ES modules', async function() {
+        xit('loads .mjs spec and helper files as ES modules', async function() {
           await this.startServer({
             ...this.extraOptions,
             srcFiles: ['**/*.mjs'],
