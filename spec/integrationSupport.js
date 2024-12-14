@@ -47,8 +47,12 @@ function runJasmine(cwd, { extraArgs, timeoutMs } = {}) {
 }
 
 function expectSuccess({ exitCode, stdout, stderr }, expectedOutput) {
-  expect(exitCode).toEqual(0);
-  expect(stdout).toContain(expectedOutput);
+  expect(exitCode)
+    .withContext('exitCode')
+    .toEqual(0);
+  expect(stdout)
+    .withContext('stdout')
+    .toContain(expectedOutput);
   jasmine.debugLog('stdout: ' + stdout);
   jasmine.debugLog('stderr: ' + stderr);
 }
