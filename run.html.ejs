@@ -30,6 +30,8 @@
     <% userJsFiles.forEach(function(jsFile) { %>
       <% if (jsFile.endsWith(esmFilenameExtension)) { %>
         <script src="<%= jsFile %>" type="module"></script>
+      <% } else if (modulesWithSideEffectsInSrcFiles) { %>
+        <script src="<%= jsFile %>" type="text/javascript" defer></script>
       <% } else { %>
         <script src="<%= jsFile %>" type="text/javascript"></script>
       <% } %>
