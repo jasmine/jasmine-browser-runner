@@ -559,10 +559,10 @@ describe('server', function() {
 
           const html = await getFile(baseUrl);
           expect(html).toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
+            '<script src="/__spec__/helpers/esm.mjs" type="module"></script>'
           );
           expect(html).toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
+            '<script src="/__spec__/esmSpec.mjs" type="module"></script>'
           );
         });
 
@@ -600,10 +600,10 @@ describe('server', function() {
 
           const html = await getFile(baseUrl);
           expect(html).toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mod\')</script>'
+            '<script src="/__spec__/helpers/esm.mod" type="module"></script>'
           );
           expect(html).toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mod\')</script>'
+            '<script src="/__spec__/esmSpec.mod" type="module"></script>'
           );
         });
       }
@@ -648,11 +648,11 @@ describe('server', function() {
           );
           expect(html).toContain('/__spec__/helpers/esm.mjs');
           expect(html).not.toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/helpers/esm.mjs\')</script>'
+            '<script src="/__spec__/helpers/esm.mjs" type="module"></script>'
           );
           expect(html).toContain('/__spec__/esmSpec.mjs');
           expect(html).not.toContain(
-            '<script type="module">_jasmine_loadEsModule(\'/__spec__/esmSpec.mjs\')</script>'
+            '<script src="/__spec__/esmSpec.mjs" type="module"></script>'
           );
         });
       });
