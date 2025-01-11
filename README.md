@@ -156,8 +156,11 @@ config field to something that's high enough up to include both spec and source
 files, and set `srcFiles` to `[]`. You can autogenerate such a configuration by
 running `npx jasmine-browser-runner init --esm`.
 
+If you want to load ES module source directly on load instead of loading it from
+the corresponding spec, set the `modulesWithSideEffectsInSrcFiles` config property to `true`.
+
 If you have specs or helper files that use top-level await, set the
-`enableTopLevelAwait` config property is set to `true`.
+`enableTopLevelAwait` config property to `true`.
 
 [Import maps](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap)
 are also supported:
