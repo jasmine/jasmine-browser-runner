@@ -354,7 +354,7 @@ Firefox, and Microsoft Edge) as well as Node.
 | Environment       | Supported versions         |
 |-------------------|----------------------------|
 | Node              | 18, 20, 22                 |
-| Safari            | 15*, 16, 17                |
+| Safari            | 15*, 16*, 17*              |
 | Chrome            | Evergreen                  |
 | Firefox           | Evergreen, 102*, 115*, 128 |
 | Edge              | Evergreen                  |
@@ -365,9 +365,9 @@ browsers, as well as older & newer versions of some supported browsers, are
 likely to work. However, jasmine-browser-runner isn't tested against them and 
 they aren't actively supported.
 
-\* Environments that are past end of life are supported on a best-effort
-basis. They may be dropped in a future minor release if continued support
-becomes impractical.
+\* Supported on a best-effort basis. Support for these versions may be dropped
+if it becomes impractical, and bugs affecting only these versions may not be
+treated as release blockers.
 
 
 To find out what environments work with a particular Jasmine release, see the [release notes](https://github.com/jasmine/jasmine/tree/main/release_notes).
