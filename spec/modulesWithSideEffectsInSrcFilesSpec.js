@@ -11,7 +11,7 @@ describe('ESM in Specs', function() {
       const result = await runJasmine(
         'spec/fixtures/modulesWithSideEffectsInSrcFiles'
       );
-      expectSuccess(result, '1 spec, 0 failures');
+      expectSuccess(result, '2 specs, 0 failures');
     },
     timeoutMs
   );
