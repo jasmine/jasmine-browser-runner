@@ -1,0 +1,78 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run esmIntegration",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/spec/fixtures/esmIntegration",
+            "program": "${workspaceFolder}/bin/jasmine-browser-runner",
+            "args": ["serve"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run esmIntegrationJsExtension",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/spec/fixtures/esmIntegrationJsExtension",
+            "program": "${workspaceFolder}/bin/jasmine-browser-runner",
+            "args": ["serve"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run importMap",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/spec/fixtures/importMap",
+            "program": "${workspaceFolder}/bin/jasmine-browser-runner",
+            "args": ["serve", "--config=spec/support/jasmine-browser.module-root-dir.json"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run modulesWithSideEffectsInSrcFiles",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/spec/fixtures/modulesWithSideEffectsInSrcFiles",
+            "program": "${workspaceFolder}/bin/jasmine-browser-runner",
+            "args": ["serve"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "run random",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/spec/fixtures/random",
+            "program": "${workspaceFolder}/bin/jasmine-browser-runner",
+            "args": ["serve"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        }
+    ]
+}
