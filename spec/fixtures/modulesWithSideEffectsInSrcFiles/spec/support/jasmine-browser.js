@@ -12,5 +12,10 @@ module.exports = {
   "modulesWithSideEffectsInSrcFiles": true,
   "browser": {
     "name": "headlessChrome"
+  },
+  "importMap": {
+    "imports": {
+      "myPackage/moduleWithSideEffects.mjs": "./src/moduleWithSideEffects.mjs"
+    }
   }
 }
