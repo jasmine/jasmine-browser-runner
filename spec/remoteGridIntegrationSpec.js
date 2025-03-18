@@ -113,7 +113,7 @@ describe('remote grid parameter handling', function() {
           JASMINE_BROWSER: browser,
           SAUCE_BROWSER_VERSION: version,
           SAUCE_OS: sauceOS,
-          SAUCE_TUNNEL_IDENTIFIER: process.env.SAUCE_TUNNEL_IDENTIFIER || '',
+          SAUCE_TUNNEL_NAME: process.env.SAUCE_TUNNEL_NAME,
           SAUCE_USERNAME: process.env.SAUCE_USERNAME,
           SAUCE_ACCESS_KEY: process.env.SAUCE_ACCESS_KEY,
         }

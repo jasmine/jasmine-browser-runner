@@ -300,7 +300,7 @@ export default {
       "url": "https://ondemand.saucelabs.com/wd/hub",
       "platformName": "macOS 12",
       "sauce:options": {
-        "tunnel-identifier": "tunnel ID",
+        "tunnelName": "the same tunnel name that was provided to Sauce Connect",
         "userName": "your Saucelabs username",
         "accessKey": "your Saucelabs access key"
       }

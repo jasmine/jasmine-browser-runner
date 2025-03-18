@@ -16,7 +16,7 @@
       "platformName": "<< SAUCE_OS >>",
       "sauce:options": {
         "tags": ["jasmine-browser"],
-        "tunnel-identifier": "<< SAUCE_TUNNEL_IDENTIFIER >>",
+        "tunnelName": "<< SAUCE_TUNNEL_NAME >>",
         "username": "<< SAUCE_USERNAME >>",
         "accessKey": "<< SAUCE_ACCESS_KEY >>"
       }
