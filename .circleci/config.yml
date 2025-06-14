@@ -22,7 +22,7 @@ executors:
     working_directory: ~/workspace
   node18:
     docker:
-      - image: cimg/node:18.0.0-browsers
+      - image: cimg/node:18.20.5-browsers
     working_directory: ~/workspace
 
 jobs:
