@@ -1,11 +1,12 @@
 const path = require('path');
-const temp = require('temp').track();
 const fs = require('fs');
+const os = require('os');
 const child_process = require('child_process');
 
 describe('npm package', function() {
   beforeAll(function() {
-    this.tmpDir = temp.mkdirSync(); // automatically deleted on exit
+    const prefix = path.join(os.tmpdir(), 'jasmine-npm-package');
+    this.tmpDir = fs.mkdtempSync(prefix);
     const packOutput = child_process.execSync('npm pack', {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -20,6 +21,8 @@ describe('npm package', function() {
     if (this.tarball) {
       fs.unlinkSync(this.tarball);
     }
+
+    fs.rmSync(this.tmpDir, { recursive: true });
   });
 
   it('does not have any unexpected files in the package directory', function() {
