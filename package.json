@@ -17,7 +17,7 @@
     "lib/examples/default_esm_config.mjs"
   ],
   "scripts": {
-    "posttest": "eslint bin/* lib spec index.js --ignore-path=.styleIgnore && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js",
+    "posttest": "eslint && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js",
     "test": "jasmine",
     "cleanup": "prettier --write --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js"
   },
@@ -46,8 +46,11 @@
     "jasmine-core": "^5.5.0"
   },
   "devDependencies": {
-    "eslint": "^8.50.0",
-    "eslint-plugin-jasmine": "^4.1.3",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.29.0",
+    "eslint": "^9.29.0",
+    "eslint-plugin-jasmine": "^4.2.2",
+    "globals": "^16.2.0",
     "jasmine": "^5.0.0",
     "jasmine-core": "^5.5.0",
     "prettier": "^1.17.1"
@@ -55,74 +58,5 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5"
-  },
-  "eslintConfig": {
-    "env": {
-      "commonjs": true,
-      "es6": true,
-      "node": true
-    },
-    "extends": "eslint:recommended",
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly",
-      "expectAsync": "readonly"
-    },
-    "parserOptions": {
-      "ecmaVersion": 2022
-    },
-    "plugins": [
-      "jasmine"
-    ],
-    "rules": {
-      "quotes": [
-        "error",
-        "single",
-        {
-          "avoidEscape": true
-        }
-      ],
-      "no-unused-vars": [
-        "error",
-        {
-          "args": "none"
-        }
-      ],
-      "block-spacing": "error",
-      "comma-dangle": [
-        "error",
-        {
-          "arrays": "always-multiline",
-          "objects": "always-multiline",
-          "imports": "always-multiline",
-          "exports": "always-multiline",
-          "functions": "never"
-        }
-      ],
-      "eqeqeq": "error",
-      "func-call-spacing": [
-        "error",
-        "never"
-      ],
-      "key-spacing": "error",
-      "no-tabs": "error",
-      "no-trailing-spaces": "error",
-      "no-whitespace-before-property": "error",
-      "semi": [
-        "error",
-        "always"
-      ],
-      "space-before-blocks": "error",
-      "no-console": "off",
-      "no-var": "error"
-    },
-    "overrides": [
-      {
-        "files": "spec/**/*.js",
-        "env": {
-          "jasmine": true
-        }
-      }
-    ]
   }
 }
