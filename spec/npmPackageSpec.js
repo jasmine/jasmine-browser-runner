@@ -5,12 +5,6 @@ const path = require('path'),
 
 describe('npm package', function() {
   beforeAll(function() {
-    this.hasTar = shell.exec('tar --help', { silent: true }).code === 0;
-
-    if (!this.hasTar) {
-      return;
-    }
-
     const pack = shell.exec('npm pack', { silent: true });
 
     this.tarball = pack.stdout.split('\n')[0];
@@ -32,10 +26,6 @@ describe('npm package', function() {
   });
 
   it('does not have any unexpected files in the package directory', function() {
-    if (!this.hasTar) {
-      pending('System does not appear to have a tar command');
-    }
-
     const files = fs.readdirSync(path.resolve(this.tmpDir, 'package'));
     files.sort();
     expect(files).toEqual([
@@ -51,20 +41,12 @@ describe('npm package', function() {
   });
 
   it('only has jasmine-browser-runner in the bin dir', function() {
-    if (!this.hasTar) {
-      pending('System does not appear to have a tar command');
-    }
-
     const files = fs.readdirSync(path.resolve(this.tmpDir, 'package/bin'));
     files.sort();
     expect(files).toEqual(['jasmine-browser-runner']);
   });
 
   it('only has JS files and default config in the lib dir', function() {
-    if (!this.hasTar) {
-      pending('System does not appear to have a tar command');
-    }
-
     const files = [];
 
     function getFiles(dir) {
