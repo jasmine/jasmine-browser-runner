@@ -1,22 +1,19 @@
-const path = require('path'),
-  temp = require('temp').track(),
-  fs = require('fs'),
-  shell = require('shelljs');
+const path = require('path');
+const temp = require('temp').track();
+const fs = require('fs');
+const child_process = require('child_process');
 
 describe('npm package', function() {
   beforeAll(function() {
-    const pack = shell.exec('npm pack', { silent: true });
-
-    this.tarball = pack.stdout.split('\n')[0];
     this.tmpDir = temp.mkdirSync(); // automatically deleted on exit
-
-    const untar = shell.exec(
-      'tar -xzf ' + this.tarball + ' -C ' + this.tmpDir,
-      {
-        silent: true,
-      }
-    );
-    expect(untar.code).toBe(0);
+    const packOutput = child_process.execSync('npm pack', {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    this.tarball = packOutput.split('\n')[0];
+    child_process.execSync(`tar -xzf ${this.tarball} -C ${this.tmpDir}`, {
+      encoding: 'utf8',
+    });
   });
 
   afterAll(function() {
