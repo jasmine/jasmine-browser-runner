@@ -354,7 +354,7 @@ Firefox, and Microsoft Edge) as well as Node.
 | Environment       | Supported versions         |
 |-------------------|----------------------------|
 | Node              | 18.20.5+*, 20, 22, 24      |
-| Safari            | 15*, 16*, 17*              |
+| Safari            | 16*, 17*                   |
 | Chrome            | Evergreen                  |
 | Firefox           | Evergreen, 102*, 115*, 128 |
 | Edge              | Evergreen                  |
