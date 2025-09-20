@@ -20,10 +20,6 @@ executors:
     docker:
       - image: cimg/node:20.0.0-browsers
     working_directory: ~/workspace
-  node18:
-    docker:
-      - image: cimg/node:18.20.5-browsers
-    working_directory: ~/workspace
 
 jobs:
   test:
@@ -59,7 +55,7 @@ jobs:
       - checkout
       - run:
           name: Install Node.js
-          command: nvm install 18.0.0 && nvm use 18.0.0
+          command: nvm install 20.0.0 && nvm use 20.0.0
       - run:
           name: Report Node and NPM versions
           command: echo "Using Node $(node --version) and NPM $(npm --version)"
@@ -74,7 +70,7 @@ jobs:
           command: npm test
 
   saucelabs_integration_test:
-    executor: node18
+    executor: node20
     steps:
     - attach_workspace:
         at: .
@@ -110,11 +106,11 @@ workflows:
       - test:
           matrix:
             parameters:
-                executor: ["node24", "node22", "node20", "node18"]
+                executor: ["node24", "node22", "node20"]
       - test_win
       - saucelabs_integration_test:
           requires:
-            - "test-node18"
+            - "test-node20"
           filters:
             branches:
               ignore: /pull\/.*/ # Don't run on pull requests.
