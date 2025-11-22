@@ -680,22 +680,30 @@ describe('ConsoleReporter', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
       print: this.out.print,
-      showColors: true,
+      color: false,
     });
 
     reporter.suiteDone({
+      fullName: 'suite 1',
       failedExpectations: [{ message: 'After All Exception' }],
     });
     reporter.suiteDone({
+      fullName: 'suite 2',
       failedExpectations: [{ message: 'Some Other Exception' }],
     });
     reporter.jasmineDone({
       failedExpectations: [{ message: 'Global Exception' }],
     });
 
-    expect(this.out.getOutput()).toMatch(/After All Exception/);
-    expect(this.out.getOutput()).toMatch(/Some Other Exception/);
-    expect(this.out.getOutput()).toMatch(/Global Exception/);
+    expect(this.out.getOutput()).toMatch(
+      /Suite error: suite 1\s+Message:\s+After All Exception/
+    );
+    expect(this.out.getOutput()).toMatch(
+      /Suite error: suite 2\s+Message:\s+Some Other Exception/
+    );
+    expect(this.out.getOutput()).toMatch(
+      /Suite error: top suite\s+Message:\s+Global Exception/
+    );
   });
 
   describe('with color', function() {
