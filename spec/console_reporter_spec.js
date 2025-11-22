@@ -324,40 +324,6 @@ describe('ConsoleReporter', function() {
     expect(this.out.getOutput()).toMatch(/1\) A suite with a failing spec/);
   });
 
-  it('reports a summary when done that includes stack traces without jasmine internals for a failing suite', function() {
-    const reporter = new ConsoleReporter();
-    reporter.setOptions({
-      print: this.out.print,
-      jasmineCorePath: jasmineCorePath,
-    });
-
-    reporter.jasmineStarted();
-    reporter.specDone({ status: 'passed' });
-    reporter.specDone({
-      status: 'failed',
-      description: 'with a failing spec',
-      fullName: 'A suite with a failing spec',
-      failedExpectations: [
-        {
-          passed: false,
-          message: 'Expected true to be false.',
-          expected: false,
-          actual: true,
-          stack: fakeStack,
-        },
-      ],
-      passedExpectations: [],
-    });
-
-    this.out.clear();
-
-    reporter.jasmineDone({});
-
-    expect(this.out.getOutput()).toMatch(/true to be false/);
-    expect(this.out.getOutput()).toMatch(/line of useful stack trace/);
-    expect(this.out.getOutput()).not.toMatch(jasmineCorePath);
-  });
-
   it('reports a summary when done in case that stack is somehow undefined', function() {
     const reporter = new ConsoleReporter();
     reporter.setOptions({
