@@ -48,6 +48,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.29.0",
+    "@jasminejs/reporters": "file:../reporters",
     "eslint": "^9.29.0",
     "eslint-plugin-jasmine": "^4.2.2",
     "globals": "^16.2.0",

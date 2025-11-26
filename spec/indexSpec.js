@@ -102,7 +102,7 @@ describe('index', function() {
         });
         const MockConsoleReporter = jasmine
           .createSpy('MockConsoleReporter')
-          .and.returnValue(jasmine.createSpyObj('reporter', ['setOptions']));
+          .and.returnValue(jasmine.createSpyObj('reporter', ['configure']));
 
         await runSpecs(
           { color: false, alwaysListPendingSpecs: false },
@@ -118,9 +118,10 @@ describe('index', function() {
         expect(MockConsoleReporter).toHaveBeenCalled();
         const reporter = MockConsoleReporter.calls.first().returnValue;
         expect(Runner.calls.argsFor(0)[0].reporters).toEqual([reporter]);
-        expect(reporter.setOptions).toHaveBeenCalledWith({
+        expect(reporter.configure).toHaveBeenCalledWith({
           color: false,
           alwaysListPendingSpecs: false,
+          randomSeedReproductionCmd: jasmine.any(Function),
         });
       });
 

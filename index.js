@@ -1,4 +1,4 @@
-const ConsoleReporter = require('./lib/console_reporter');
+const ConsoleReporter = require('@jasminejs/reporters/console');
 const webdriverModule = require('./lib/webdriver');
 const Server = require('./lib/server');
 const Runner = require('./lib/runner');
@@ -11,9 +11,12 @@ async function createReporters(options, deps) {
     deps = deps || {};
     const ReporterCtor = deps.ConsoleReporter || ConsoleReporter;
     const consoleReporter = new ReporterCtor();
-    consoleReporter.setOptions({
+    consoleReporter.configure({
       color: options.color,
       alwaysListPendingSpecs: options.alwaysListPendingSpecs,
+      randomSeedReproductionCmd(seed) {
+        return 'jasmine-browser-runner runSpecs --seed=' + seed;
+      },
     });
     result.push(consoleReporter);
   }
