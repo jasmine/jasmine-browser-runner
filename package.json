@@ -52,8 +52,8 @@
     "eslint": "^9.29.0",
     "eslint-plugin-jasmine": "^4.2.2",
     "globals": "^16.2.0",
-    "jasmine": "github:jasmine/jasmine",
-    "jasmine-core": "github:jasmine/jasmine-npm",
+    "jasmine": "github:jasmine/jasmine-npm",
+    "jasmine-core": "github:jasmine/jasmine",
     "prettier": "^1.17.1"
   },
   "prettier": {
