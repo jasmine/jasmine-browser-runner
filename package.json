@@ -44,7 +44,7 @@
     "selenium-webdriver": "^4.12.0"
   },
   "peerDependencies": {
-    "jasmine-core": "^5.5.0"
+    "jasmine-core": "6.0.0-beta.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -52,8 +52,8 @@
     "eslint": "^9.29.0",
     "eslint-plugin-jasmine": "^4.2.2",
     "globals": "^16.2.0",
-    "jasmine": "^5.0.0",
-    "jasmine-core": "^5.5.0",
+    "jasmine": "github:jasmine/jasmine",
+    "jasmine-core": "github:jasmine/jasmine-npm",
     "prettier": "^1.17.1"
   },
   "prettier": {
