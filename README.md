@@ -373,5 +373,5 @@ treated as release blockers.
 To find out what environments work with a particular Jasmine release, see the [release notes](https://github.com/jasmine/jasmine/tree/main/release_notes).
 
 Copyright (c) 2019 Pivotal Labs<br>
-Copyright (c) 2020-2025 The Jasmine developers<br>
+Copyright (c) 2020-2026 The Jasmine developers<br>
 This software is licensed under the MIT License.
