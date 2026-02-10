@@ -692,6 +692,18 @@ describe('server', function() {
       const html = await getFile(baseUrl);
       expect(html).toContain('/__support__/batchReporter.js');
     });
+
+    it('loads spec and helper files with starting dots in their names', async function() {
+      await this.startServer({
+        srcFiles: ['.dotFolder/*.js'],
+        specFiles: ['.dotFolder/*.js'],
+      });
+      const baseUrl = `http://localhost:${this.server.port()}`;
+
+      const html = await getFile(baseUrl);
+      expect(html).toContain('.dotFolder/file.js');
+      expect(html).toContain('.dotFolder/specFile.js');
+    });
   });
 
   it('uses specified Express middleware', async function() {
