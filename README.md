@@ -329,7 +329,7 @@ Firefox, and Microsoft Edge) as well as Node.
 | Environment       | Supported versions         |
 |-------------------|----------------------------|
 | Node              | 20, 22, 24                 |
-| Safari            | 16*, 17*                   |
+| Safari            | 26*                        |
 | Chrome            | Evergreen                  |
 | Firefox           | Evergreen, 102*, 115*, 128 |
 | Edge              | Evergreen                  |
