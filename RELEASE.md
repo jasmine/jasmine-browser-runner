@@ -2,7 +2,8 @@
 
 ## Prepare the release
 
-1. Make sure that all specs are green on CI.
+1. Make sure that all specs are green on CI. Also test in Safari via
+   [jasmine-core's CI](https://github.com/jasmine/jasmine/actions/workflows/safari.yml). 
 2. Make sure the `jasmine-core` peer dependency and the `jasmine-core` and
    `jasmine` dev dependencies are correct (pointing to a release rather than
     github, and the version number is right)
@@ -13,7 +14,10 @@ them.
       currently tested versions of evergreen browsers (everything that doesn't
       have a version specified in jasmine-core's scripts/run-all-browsers),
       trigger a jasmine-core build on Circle CI and check 
-      <https://app.saucelabs.com/dashboard/tests/vdc> after it finishes.
+      <https://app.saucelabs.com/dashboard/tests/vdc> after it finishes. To get
+      the currently tested version of Safari, check the output of the "Report
+      Safari version" step of the GitHub Action run that you triggered in
+      step 1.
 4. Update the version in `package.json`.
 5. Commit the release notes and `package.json` change.
 6. Push.

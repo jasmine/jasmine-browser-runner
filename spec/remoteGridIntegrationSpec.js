@@ -56,20 +56,6 @@ describe('remote grid parameter handling', function() {
     /\(KHTML, like Gecko\) Chrome\/[0-9]+[0-9.]+/
   );
   createSpec(
-    'safari',
-    '16',
-    'macOS 12',
-    // Safari on 12.x reports the OS as 10_15_7
-    /Mac OS X 10_15.*Version\/16[0-9.]+ Safari/
-  );
-  createSpec(
-    'safari',
-    '17',
-    'macOS 13',
-    // Safari on 13.x reports the OS as 10_15_7
-    /Mac OS X 10_15.*Version\/17[0-9.]+ Safari/
-  );
-  createSpec(
     'MicrosoftEdge',
     '',
     'Windows 10',
