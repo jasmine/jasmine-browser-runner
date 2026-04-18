@@ -17,8 +17,8 @@
     "lib/examples/default_esm_config.mjs"
   ],
   "scripts": {
-    "posttest": "eslint && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js",
-    "test": "jasmine",
+    "lint": "eslint && prettier --check --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js",
+    "test": "jasmine && npm run lint",
     "cleanup": "prettier --write --ignore-path=.styleIgnore \"lib/**/*.js\" \"spec/**/*.js\" index.js"
   },
   "repository": {
