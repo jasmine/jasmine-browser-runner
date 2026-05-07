@@ -694,42 +694,84 @@ describe('server', function() {
     });
   });
 
-  it('uses specified Express middleware', async function() {
-    spyOn(console, 'log');
+  describe('middleware', function() {
+    beforeEach(function() {
+      spyOn(console, 'log');
+    });
 
-    const app = jasmine.createSpyObj('app', ['use', 'get', 'listen']);
-    app.listen.and.callFake(function(port, cb) {
-      setImmediate(cb);
-      return {
-        address() {
-          return {};
+    it('uses specified middleware', async function() {
+      let middleware1Called = false;
+      let middleware2Called = false;
+
+      function middleware1(req, res, next) {
+        middleware1Called = true;
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('from middleware1');
+      }
+      function middleware2(req, res, next) {
+        middleware2Called = true;
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('from middleware2');
+      }
+
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        specDir: 'spec',
+        middleware: {
+          '/foo': middleware1,
+          '/bar': middleware2,
         },
-      };
-    });
-    const fakeExpress = function() {
-      return app;
-    };
-    fakeExpress.static = function() {};
-    function middleware1() {}
-    function middleware2() {}
+        port: 0,
+      });
 
-    const server = new Server({
-      projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
-      jasmineCore: this.fakeJasmine,
-      express: fakeExpress,
-      srcDir: 'src',
-      specDir: 'spec',
-      middleware: {
-        '/foo': middleware1,
-        '/bar': middleware2,
-      },
-      port: 0,
+      await server.start();
+
+      try {
+        const baseUrl = `http://localhost:${server.port()}`;
+        const result1 = await getFile(baseUrl + '/foo');
+        const result2 = await getFile(baseUrl + '/bar');
+
+        expect(middleware1Called).toBe(true);
+        expect(middleware2Called).toBe(true);
+        expect(result1).toEqual('from middleware1');
+        expect(result2).toEqual('from middleware2');
+      } finally {
+        await server.stop();
+      }
     });
 
-    await server.start();
+    it('runs middleware mounted at / for all requests', async function() {
+      const requestUrls = [];
 
-    expect(app.use).toHaveBeenCalledWith('/foo', middleware1);
-    expect(app.use).toHaveBeenCalledWith('/bar', middleware2);
+      const server = new Server({
+        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+        jasmineCore: this.fakeJasmine,
+        srcDir: 'src',
+        specDir: 'spec',
+        middleware: {
+          '/': function(req, res, next) {
+            requestUrls.push(req.url);
+            next();
+          },
+        },
+        port: 0,
+      });
+
+      await server.start();
+
+      try {
+        const baseUrl = `http://localhost:${server.port()}`;
+        await getFile(baseUrl + '/');
+        await getFile(baseUrl + '/__config__/config.js');
+
+        expect(requestUrls).toContain('/');
+        expect(requestUrls).toContain('/__config__/config.js');
+      } finally {
+        await server.stop();
+      }
+    });
   });
 
   describe('When an importMap is provided', function() {

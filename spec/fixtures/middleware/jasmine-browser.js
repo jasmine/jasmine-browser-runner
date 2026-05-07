@@ -1,4 +1,4 @@
-const express = require('express');
+const serveStatic = require('serve-static');
 
 module.exports = {
   "srcDir": ".",
@@ -10,6 +10,6 @@ module.exports = {
     "name": "headlessChrome"
   },
   "middleware": {
-    "/some-path": express.static('static')
+    "/some-path": serveStatic('static')
   }
 }
