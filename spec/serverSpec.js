@@ -697,6 +697,23 @@ describe('server', function() {
   describe('middleware', function() {
     beforeEach(function() {
       spyOn(console, 'log');
+
+      this.startServer = async function(middleware) {
+        this.server = new Server({
+          projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+          jasmineCore: this.fakeJasmine,
+          srcDir: 'src',
+          specDir: 'spec',
+          middleware,
+          port: 0,
+        });
+        await this.server.start();
+        return `http://localhost:${this.server.port()}`;
+      };
+    });
+
+    afterEach(async function() {
+      await this.server.stop();
     });
 
     it('uses specified middleware', async function() {
@@ -706,71 +723,71 @@ describe('server', function() {
       function middleware1(req, res, next) {
         middleware1Called = true;
         res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('from middleware1');
+        res.end('middleware1-response');
       }
       function middleware2(req, res, next) {
         middleware2Called = true;
         res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('from middleware2');
+        res.end('middleware2-response');
       }
 
-      const server = new Server({
-        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
-        jasmineCore: this.fakeJasmine,
-        srcDir: 'src',
-        specDir: 'spec',
-        middleware: {
-          '/foo': middleware1,
-          '/bar': middleware2,
-        },
-        port: 0,
+      const baseUrl = await this.startServer({
+        '/foo': middleware1,
+        '/bar': middleware2,
       });
 
-      await server.start();
+      const result1 = await getFile(baseUrl + '/foo');
+      const result2 = await getFile(baseUrl + '/bar');
 
-      try {
-        const baseUrl = `http://localhost:${server.port()}`;
-        const result1 = await getFile(baseUrl + '/foo');
-        const result2 = await getFile(baseUrl + '/bar');
-
-        expect(middleware1Called).toBe(true);
-        expect(middleware2Called).toBe(true);
-        expect(result1).toEqual('from middleware1');
-        expect(result2).toEqual('from middleware2');
-      } finally {
-        await server.stop();
-      }
+      expect(middleware1Called).toBe(true);
+      expect(middleware2Called).toBe(true);
+      expect(result1).toEqual('middleware1-response');
+      expect(result2).toEqual('middleware2-response');
     });
 
     it('runs middleware mounted at / for all requests', async function() {
       const requestUrls = [];
 
-      const server = new Server({
-        projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
-        jasmineCore: this.fakeJasmine,
-        srcDir: 'src',
-        specDir: 'spec',
-        middleware: {
-          '/': function(req, res, next) {
-            requestUrls.push(req.url);
-            next();
-          },
+      const baseUrl = await this.startServer({
+        '/': function(req, res, next) {
+          requestUrls.push(req.url);
+          next();
         },
-        port: 0,
       });
 
-      await server.start();
+      await getFile(baseUrl + '/');
+      await getFile(baseUrl + '/__config__/config.js');
 
-      try {
-        const baseUrl = `http://localhost:${server.port()}`;
-        await getFile(baseUrl + '/');
-        await getFile(baseUrl + '/__config__/config.js');
+      expect(requestUrls).toContain('/');
+      expect(requestUrls).toContain('/__config__/config.js');
+    });
 
-        expect(requestUrls).toContain('/');
-        expect(requestUrls).toContain('/__config__/config.js');
-      } finally {
-        await server.stop();
-      }
+    it('responds with 500 when a middleware passes an error to next', async function() {
+      const baseUrl = await this.startServer({
+        '/boom': function(req, res, next) {
+          next(new Error('something went wrong'));
+        },
+      });
+
+      await expectAsync(getFile(baseUrl + '/boom')).toBeRejectedWithError(
+        /status code 500/
+      );
+    });
+
+    it('responds with 404 when no middleware handles the request', async function() {
+      let middlewareCalled = false;
+
+      const baseUrl = await this.startServer({
+        '/': function(req, res, next) {
+          middlewareCalled = true;
+          next();
+        },
+      });
+
+      await expectAsync(getFile(baseUrl + '/missing')).toBeRejectedWithError(
+        /status code 404/
+      );
+      expect(middlewareCalled).toBe(true);
     });
   });
 
