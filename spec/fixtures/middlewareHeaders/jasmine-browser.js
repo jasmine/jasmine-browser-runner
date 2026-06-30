@@ -1,5 +1,3 @@
-const serveStatic = require('serve-static');
-
 module.exports = {
   "srcDir": ".",
   "srcFiles": [],
@@ -10,6 +8,10 @@ module.exports = {
     "name": "headlessChrome"
   },
   "middleware": {
-    "/some-path": serveStatic('static')
+    "/": function(req, res, next) {
+      res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+      res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+      next();
+    }
   }
 }
