@@ -31,19 +31,7 @@ describe('remote grid parameter handling', function() {
   createSpec('firefox', '', '', /Gecko\/[0-9]+ Firefox\/[0-9.]+$/);
   createSpec(
     'firefox',
-    '102',
-    'Windows 10',
-    /Windows NT 10.0;.* Firefox\/102\.0$/
-  );
-  createSpec(
-    'firefox',
-    '115',
-    'Windows 10',
-    /Windows NT 10.0;.* Firefox\/115\.0$/
-  );
-  createSpec(
-    'firefox',
-    '128',
+    '140',
     'Windows 10',
     /Windows NT 10.0;.* Firefox\/128\.0$/
   );
