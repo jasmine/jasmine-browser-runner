@@ -694,42 +694,101 @@ describe('server', function() {
     });
   });
 
-  it('uses specified Express middleware', async function() {
-    spyOn(console, 'log');
+  describe('middleware', function() {
+    beforeEach(function() {
+      spyOn(console, 'log');
 
-    const app = jasmine.createSpyObj('app', ['use', 'get', 'listen']);
-    app.listen.and.callFake(function(port, cb) {
-      setImmediate(cb);
-      return {
-        address() {
-          return {};
-        },
+      this.startServer = async function(middleware) {
+        this.server = new Server({
+          projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
+          jasmineCore: this.fakeJasmine,
+          srcDir: 'src',
+          specDir: 'spec',
+          middleware,
+          port: 0,
+        });
+        await this.server.start();
+        return `http://localhost:${this.server.port()}`;
       };
     });
-    const fakeExpress = function() {
-      return app;
-    };
-    fakeExpress.static = function() {};
-    function middleware1() {}
-    function middleware2() {}
 
-    const server = new Server({
-      projectBaseDir: path.resolve(__dirname, 'fixtures/importMap'),
-      jasmineCore: this.fakeJasmine,
-      express: fakeExpress,
-      srcDir: 'src',
-      specDir: 'spec',
-      middleware: {
-        '/foo': middleware1,
-        '/bar': middleware2,
-      },
-      port: 0,
+    afterEach(async function() {
+      await this.server.stop();
     });
 
-    await server.start();
+    it('uses specified middleware', async function() {
+      let middleware1Called = false;
+      let middleware2Called = false;
 
-    expect(app.use).toHaveBeenCalledWith('/foo', middleware1);
-    expect(app.use).toHaveBeenCalledWith('/bar', middleware2);
+      function middleware1(req, res, next) {
+        middleware1Called = true;
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('middleware1-response');
+      }
+      function middleware2(req, res, next) {
+        middleware2Called = true;
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('middleware2-response');
+      }
+
+      const baseUrl = await this.startServer({
+        '/foo': middleware1,
+        '/bar': middleware2,
+      });
+
+      const result1 = await getFile(baseUrl + '/foo');
+      const result2 = await getFile(baseUrl + '/bar');
+
+      expect(middleware1Called).toBe(true);
+      expect(middleware2Called).toBe(true);
+      expect(result1).toEqual('middleware1-response');
+      expect(result2).toEqual('middleware2-response');
+    });
+
+    it('runs middleware mounted at / for all requests', async function() {
+      const requestUrls = [];
+
+      const baseUrl = await this.startServer({
+        '/': function(req, res, next) {
+          requestUrls.push(req.url);
+          next();
+        },
+      });
+
+      await getFile(baseUrl + '/');
+      await getFile(baseUrl + '/__config__/config.js');
+
+      expect(requestUrls).toContain('/');
+      expect(requestUrls).toContain('/__config__/config.js');
+    });
+
+    it('responds with 500 when a middleware passes an error to next', async function() {
+      const baseUrl = await this.startServer({
+        '/boom': function(req, res, next) {
+          next(new Error('something went wrong'));
+        },
+      });
+
+      await expectAsync(getFile(baseUrl + '/boom')).toBeRejectedWithError(
+        /status code 500/
+      );
+    });
+
+    it('responds with 404 when no middleware handles the request', async function() {
+      let middlewareCalled = false;
+
+      const baseUrl = await this.startServer({
+        '/': function(req, res, next) {
+          middlewareCalled = true;
+          next();
+        },
+      });
+
+      await expectAsync(getFile(baseUrl + '/missing')).toBeRejectedWithError(
+        /status code 404/
+      );
+      expect(middlewareCalled).toBe(true);
+    });
   });
 
   describe('When an importMap is provided', function() {
