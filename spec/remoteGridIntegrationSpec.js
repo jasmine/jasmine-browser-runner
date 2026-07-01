@@ -33,7 +33,7 @@ describe('remote grid parameter handling', function() {
     'firefox',
     '140',
     'Windows 10',
-    /Windows NT 10.0;.* Firefox\/128\.0$/
+    /Windows NT 10.0;.* Firefox\/140\.0$/
   );
   // As of 2023-09-30, Chrome latest on the default Linux is broken on
   // Saucelabs. Use Mac OS for now instead.
