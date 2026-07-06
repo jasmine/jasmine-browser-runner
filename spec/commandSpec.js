@@ -212,6 +212,32 @@ describe('Command', function() {
         jasmine.objectContaining({ consoleReporter: { color: false } })
       );
     });
+
+    it('overrides the console reporter config with --list-not-applicable', async function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+        'runSpecs',
+      ]);
+      const command = new Command({
+        jasmineBrowser: fakeJasmineBrowser,
+        console: this.console,
+        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+      });
+
+      spyOn(command, '_loadConfig').and.returnValue(
+        Promise.resolve({
+          consoleReporter: { listNotApplicableSpecs: false },
+        })
+      );
+      fakeJasmineBrowser.runSpecs.and.returnValue(Promise.resolve());
+
+      await command.run(['runSpecs', '--list-not-applicable']);
+
+      expect(fakeJasmineBrowser.runSpecs).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          consoleReporter: { listNotApplicableSpecs: true },
+        })
+      );
+    });
   });
 
   describe('version', function() {
