@@ -105,7 +105,34 @@ describe('index', function() {
           .and.returnValue(jasmine.createSpyObj('reporter', ['configure']));
 
         await runSpecs(
-          { color: false, alwaysListPendingSpecs: false },
+          {},
+          {
+            Runner,
+            ConsoleReporter: MockConsoleReporter,
+            Server: buildSpyServer,
+            buildWebdriver: buildStubWebdriver,
+          }
+        );
+
+        expect(Runner).toHaveBeenCalled();
+        expect(MockConsoleReporter).toHaveBeenCalled();
+        const reporter = MockConsoleReporter.calls.first().returnValue;
+        expect(Runner.calls.argsFor(0)[0].reporters).toEqual([reporter]);
+        expect(reporter.configure).toHaveBeenCalledWith({
+          randomSeedReproductionCmd: jasmine.any(Function),
+        });
+      });
+
+      it('passes the consoleReporter setting through to the ConsoleReporter', async function() {
+        const Runner = jasmine.createSpy('RunnerCtor').and.returnValue({
+          run: async () => ({}),
+        });
+        const MockConsoleReporter = jasmine
+          .createSpy('MockConsoleReporter')
+          .and.returnValue(jasmine.createSpyObj('reporter', ['configure']));
+
+        await runSpecs(
+          { consoleReporter: { color: false, alwaysListPendingSpecs: false } },
           {
             Runner,
             ConsoleReporter: MockConsoleReporter,

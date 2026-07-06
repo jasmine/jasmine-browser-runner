@@ -12,8 +12,7 @@ async function createReporters(options, deps) {
     const ReporterCtor = deps.ConsoleReporter || ConsoleReporter;
     const consoleReporter = new ReporterCtor();
     consoleReporter.configure({
-      color: options.color,
-      alwaysListPendingSpecs: options.alwaysListPendingSpecs,
+      ...options.consoleReporter,
       randomSeedReproductionCmd(seed) {
         return 'jasmine-browser-runner runSpecs --seed=' + seed;
       },

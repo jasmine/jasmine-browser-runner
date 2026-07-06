@@ -164,6 +164,54 @@ describe('Command', function() {
         );
       });
     });
+
+    it('overrides the console reporter config with --color', async function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+        'runSpecs',
+      ]);
+      const command = new Command({
+        jasmineBrowser: fakeJasmineBrowser,
+        console: this.console,
+        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+      });
+
+      spyOn(command, '_loadConfig').and.returnValue(
+        Promise.resolve({
+          consoleReporter: { color: false },
+        })
+      );
+      fakeJasmineBrowser.runSpecs.and.returnValue(Promise.resolve());
+
+      await command.run(['runSpecs', '--color']);
+
+      expect(fakeJasmineBrowser.runSpecs).toHaveBeenCalledWith(
+        jasmine.objectContaining({ consoleReporter: { color: true } })
+      );
+    });
+
+    it('overrides the console reporter config with --no-color', async function() {
+      const fakeJasmineBrowser = jasmine.createSpyObj('jasmineBrowser', [
+        'runSpecs',
+      ]);
+      const command = new Command({
+        jasmineBrowser: fakeJasmineBrowser,
+        console: this.console,
+        baseDir: path.resolve(__dirname, 'fixtures/sampleProject'),
+      });
+
+      spyOn(command, '_loadConfig').and.returnValue(
+        Promise.resolve({
+          consoleReporter: { color: true },
+        })
+      );
+      fakeJasmineBrowser.runSpecs.and.returnValue(Promise.resolve());
+
+      await command.run(['runSpecs', '--no-color']);
+
+      expect(fakeJasmineBrowser.runSpecs).toHaveBeenCalledWith(
+        jasmine.objectContaining({ consoleReporter: { color: false } })
+      );
+    });
   });
 
   describe('version', function() {
