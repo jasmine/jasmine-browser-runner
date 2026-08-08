@@ -111,6 +111,8 @@ workflows:
       - saucelabs_integration_test:
           requires:
             - "test-node20"
+          context:
+            - saucelabs
           filters:
             branches:
               ignore: /pull\/.*/ # Don't run on pull requests.
