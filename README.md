@@ -331,7 +331,7 @@ Firefox, and Microsoft Edge) as well as Node.
 | Node              | 20*, 22, 24, 26            |
 | Safari            | 26*                        |
 | Chrome            | Evergreen                  |
-| Firefox           | Evergreen, 102*, 115*, 128 |
+| Firefox           | Evergreen, 140             |
 | Edge              | Evergreen                  |
 
 For evergreen browsers, each version of jasmine-browser-runner is tested against
